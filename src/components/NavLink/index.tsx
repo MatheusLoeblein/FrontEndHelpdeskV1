@@ -51,10 +51,8 @@ export function NavLink({visible, texts, onClick, sideOver, sideSubVisible, onMo
           {children}
         </span>
 
-        <div className="w-96 h-96 flex absolute bg-primary-formedica">
-          asmdaçsdl
         { sideSubVisible &&
-         <div className='w-60 bg-white absolute border  border-border-default shadow-md rounded-md -right-64 top-4 flex flex-col'>
+         <div className='w-60 bg-white absolute border  border-border-default shadow-md rounded-md -right-64 top-4 flex flex-col z-10'>
           
          <div className='absolute w-5 h-5 bg-white rotate-45 top-2 -left-[10.6px] z-0 border-b border-l border-b-border-default border-l-border-default  rounded-bl-md' >
          </div>
@@ -75,7 +73,6 @@ export function NavLink({visible, texts, onClick, sideOver, sideSubVisible, onMo
          </div>
        </div>
        }
-        </div>
         
 
       </div>
