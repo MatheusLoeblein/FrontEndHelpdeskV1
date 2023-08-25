@@ -4,13 +4,12 @@ import { MainSearch } from '@/components/MainSearch';
 import {CgMenuGridR} from 'react-icons/cg';
 import { Notification } from '@/components/Notification';
 import { ProfileConf } from '@/components/ProfileConf';
-import '../app/globals.css';
 import 'tailwindcss/tailwind.css';
-
+import '../app/globals.css';
 import {IoMdMenu} from 'react-icons/io';
 import { MenuSideBar } from '@/components/MenuSideBar';
 
-export default function Home() {
+export default function dashboard() {
   
   return (
     <>

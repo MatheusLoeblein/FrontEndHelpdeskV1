@@ -3,9 +3,17 @@
 import '../app/globals.css';
 import 'tailwindcss/tailwind.css';
 import { Logo } from '@/components/Logo';
+import { useForm } from 'react-hook-form';
 
 
 export default function login() {
+  const { register, handleSubmit } = useForm();
+
+  function handleSignIn(data){
+
+    console.log(data);
+
+  }
   
   return (
 
@@ -31,7 +39,7 @@ export default function login() {
 
         </div>
 
-        <div className='col-span-3 rounded-r-md px-7 py-16 flex flex-col items-center justify-between text-gray-600'>
+        <form className='col-span-3 rounded-r-md px-7 py-16 flex flex-col items-center justify-between text-gray-600' onSubmit={handleSubmit(handleSignIn)}>
 
           <div className='text-center'>
             <Logo/>
@@ -40,13 +48,24 @@ export default function login() {
 
           <div className='w-80 flex flex-col gap-3 text-sm'>
             <div className='flex flex-col items-center justify-between'>
-              <label htmlFor="" className='w-full self-start px-3 py-1 '>Login</label>
-              <input type="text" className='border border-border-default rounded-md py-2 px-3 w-full outline-[0.5px] focus:outline-primary-formedica'/>
+              <label htmlFor="" 
+              className='w-full self-start px-3 py-1'
+              >Login</label>
+              <input 
+              type="text" 
+              className='border border-border-default rounded-md py-2 px-3 w-full outline-[0.5px] focus:outline-primary-formedica'
+              {...register('username')}
+              name='username'
+              />
             </div>
 
             <div className='flex flex-col items-center justify-between'>
               <label htmlFor="" className='w-full self-start px-3 py-1'>Senha</label>
-              <input type="text" className='border border-border-default rounded-md py-2 px-3 w-full outline-[0.5px] focus:outline-primary-formedica' />
+              <input type="password" 
+              className='border border-border-default rounded-md py-2 px-3 w-full outline-[0.5px] focus:outline-primary-formedica' 
+              {...register('password')}
+              name='password'
+              />
             </div>
 
             <div className='flex justify-between'>
@@ -60,11 +79,11 @@ export default function login() {
 
 
         <div className='w-80 flex flex-col items-center text-md'>
-          <button className='w-full py-2 rounded-md text-white bg-primary-formedica'>Entrar</button>
+          <button type="submit" className='w-full py-2 rounded-md text-white bg-primary-formedica'>Entrar</button>
           <a href="#" className='text-primary-formedica hover:underline mt-3'>Registrar</a>
         </div>
 
-        </div>
+        </form>
       
       </main>
 
