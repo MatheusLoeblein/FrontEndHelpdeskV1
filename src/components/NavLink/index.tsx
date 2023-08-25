@@ -47,11 +47,13 @@ export function NavLink({visible, texts, onClick, sideOver, sideSubVisible, onMo
   }else{
     return(
       <div className='w-full p-2 flex relative'>
-        <span className='p-3 hover:bg-gray-200 cursor-pointer rounded-md' title={title} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave} >
+        <span className='p-3 hover:bg-gray-200 cursor-pointer rounded-md' title={title} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
           {children}
         </span>
 
-        { sideSubVisible &&
+      
+      { sideSubVisible &&
+
          <div className='w-60 bg-white absolute border  border-border-default shadow-md rounded-md -right-64 top-4 flex flex-col z-10'>
           
          <div className='absolute w-5 h-5 bg-white rotate-45 top-2 -left-[10.6px] z-0 border-b border-l border-b-border-default border-l-border-default  rounded-bl-md' >
@@ -71,8 +73,10 @@ export function NavLink({visible, texts, onClick, sideOver, sideSubVisible, onMo
            })}
            </ul>
          </div>
-       </div>
+        </div>
+
        }
+      
         
 
       </div>

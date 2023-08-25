@@ -25,6 +25,7 @@ const config: Config = {
       emerald: colors.emerald,
       indigo: colors.indigo,
       yellow: colors.yellow,
+      pink: colors.pink,
       
 
     },
