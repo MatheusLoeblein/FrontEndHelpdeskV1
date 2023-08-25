@@ -31,8 +31,9 @@ export function AuthProvider({children}) {
     .then(data => console.log(data))
     .catch(error => console.error(error))
 
-    
+
   }
+  
   return(
     <AuthContext.Provider value={{isAuthenticated}}>
       {children}
