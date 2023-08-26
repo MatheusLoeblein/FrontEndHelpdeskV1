@@ -1,12 +1,12 @@
 import { NavLink } from '@/components/NavLink';
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { FaTruck, FaCodeBranch, FaFileImport } from 'react-icons/fa';
 import { AiFillNotification } from 'react-icons/ai';
 import { BiTask, BiSolidArrowToLeft } from 'react-icons/bi';
 import { PiComputerTowerFill } from 'react-icons/pi';
 import { RiLogoutBoxFill } from 'react-icons/ri';
 import { handleLogout } from '@/utils/logout';
-
+import { LayoutContext } from '@/context/LayoutContext';
 
 const navLinks = [
   {
@@ -55,7 +55,16 @@ const navLinks = [
 
 export function MenuSideBar(){
 
+  const { setMenuOver } = useContext(LayoutContext);
+
   const [siderOver, setSideOver] = useState(false);
+
+
+  useEffect(() => {
+    setMenuOver(siderOver);
+
+  }, [setMenuOver, siderOver])
+
 
   const [sideSubVisible, setSideSubVisible] = useState(-1);
 
@@ -70,7 +79,8 @@ export function MenuSideBar(){
     className={`
     flex flex-col  h-full space-y-96 fixed bg-white 
     py-5 text-xs text-gray-700 border-r border-r-border-default 
-    ${siderOver? 'transition  w-16' : 'transition w-72 pr-5  pl-5'}`}
+     duration-300
+    ${siderOver? ' w-16' : 'w-72 pr-5  pl-5'}`}
     
     >
       <div className=''>
