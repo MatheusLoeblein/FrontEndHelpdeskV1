@@ -1,7 +1,22 @@
-import { createContext } from 'react'
+import { createContext, useEffect, useState } from 'react'
+import { setCookie, parseCookies } from 'nookies';
+import Router from 'next/router'
+import axios from 'axios';
+import jwt_decode from "jwt-decode";
+
+import { api } from '../services/api'
+
+type User = {
+  profileImg: string;
+  userId: string;
+  username: string;
+}
 
 type AuthContextType = {
   isAuthenticated: boolean;
+  signIn: (data: SignInData) => Promise<void>
+  user: User;
+
 } 
 
 type SignInData = {
@@ -11,31 +26,51 @@ type SignInData = {
 
 export const AuthContext = createContext({} as AuthContextType)
 
-export function AuthProvider({children}) {
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState<User | null>(null);
 
-  const isAuthenticated = false;
+  const isAuthenticated = !!user;
+
+  useEffect(() => {
+
+    const { 'helpdeskauth.token': token } = parseCookies()
+
+    if (token) {
+
+      setUser(jwt_decode(token))
+
+    }
+
+  }, [])
 
   async function signIn({username, password}: SignInData) {
 
-    await fetch('http://127.0.0.1:8000/authors/api/token/', {
-      method: 'POST',
-      body: JSON.stringify({
-        username: username,
-        password: password
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    await api.post('/authors/api/token/', {
+      username: username,
+      password: password
+    }).then(function (response) {
+      const {refresh, access} = response.data;
+
+      setCookie(undefined, 'helpdeskauth.token', access, {
+        maxAge: 60 * 60 * 1 // 1 hour
+      })
+
+      const {profileImg, user_id, username}:User = jwt_decode(access)
+
+      setUser(
+        {
+        profileImg: profileImg, 
+        userId: user_id, 
+        username: username}
+        )
     })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error(error))
 
-
+    Router.push('/dashboard')
+  
   }
   
   return(
-    <AuthContext.Provider value={{isAuthenticated}}>
+    <AuthContext.Provider value={{user, isAuthenticated, signIn}}>
       {children}
     </AuthContext.Provider>
   )

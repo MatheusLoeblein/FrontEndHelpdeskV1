@@ -1,17 +1,23 @@
 'use client'
 
-import '../app/globals.css';
-import 'tailwindcss/tailwind.css';
 import { Logo } from '@/components/Logo';
 import { useForm } from 'react-hook-form';
+import { AuthContext } from '@/context/AuthContext';
+import { useContext, useEffect } from 'react'
+import { useState } from 'react'
+import Router from 'next/router'
+import { parseCookies } from 'nookies'
 
 
-export default function login() {
+function Login() {
+  
   const { register, handleSubmit } = useForm();
+  const { user, signIn, isAuthenticated } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
-  function handleSignIn(data){
-
-    console.log(data);
+  async function handleSignIn(data){
+    await signIn(data)
+    setLoading(true)
 
   }
   
@@ -79,7 +85,16 @@ export default function login() {
 
 
         <div className='w-80 flex flex-col items-center text-md'>
-          <button type="submit" className='w-full py-2 rounded-md text-white bg-primary-formedica'>Entrar</button>
+          <button type="submit" className='w-full py-2 rounded-md text-white bg-primary-formedica'>
+
+           {
+              loading ? 
+              <div className='w-6 h-6 border-2 border-white m-auto p-2 rounded-full border-t-pink-400 animate-spin'>
+              </div>
+              :
+              'Entrar'
+            }
+            </button>
           <a href="#" className='text-primary-formedica hover:underline mt-3'>Registrar</a>
         </div>
 
@@ -92,3 +107,25 @@ export default function login() {
   )
 
 }
+
+export default Login;
+
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const {'helpdeskauth.token': token} = parseCookies(ctx)
+
+  if (token){
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: false
+      }
+    }
+  }
+  return {
+    props: {
+
+    }
+  }
+}
+

@@ -5,6 +5,7 @@ import { AiFillNotification } from 'react-icons/ai';
 import { BiTask, BiSolidArrowToLeft } from 'react-icons/bi';
 import { PiComputerTowerFill } from 'react-icons/pi';
 import { RiLogoutBoxFill } from 'react-icons/ri';
+import { handleLogout } from '@/utils/logout';
 
 
 const navLinks = [
@@ -47,7 +48,8 @@ const navLinks = [
   },
   {
     title: 'Logout',
-    children: <RiLogoutBoxFill className='w-5 h-5'/>
+    children: <RiLogoutBoxFill className='w-5 h-5'/>,
+    link: handleLogout
   },
 ]
 
@@ -79,7 +81,7 @@ export function MenuSideBar(){
             key={index}
             visible={index === activeMenuIndex} 
             texts={navLink}
-            onClick={() => setActiveMenuIndex(activeMenuIndex == index ? -1 : index)}
+            onClick={() => navLink.link ? navLink.link() : setActiveMenuIndex(activeMenuIndex == index ? -1 : index)}
             sideOver={siderOver}
             sideSubVisible={index === sideSubVisible}
             onMouseOver={() => setSideSubVisible(index)}

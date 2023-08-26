@@ -1,10 +1,8 @@
 
-import 'tailwindcss/tailwind.css';
-
-export default function index() {
+export default function Main() {
 
   return(
     <h1>Index</h1>
   )
   
-}
+} 

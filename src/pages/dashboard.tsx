@@ -4,12 +4,17 @@ import { MainSearch } from '@/components/MainSearch';
 import {CgMenuGridR} from 'react-icons/cg';
 import { Notification } from '@/components/Notification';
 import { ProfileConf } from '@/components/ProfileConf';
-import 'tailwindcss/tailwind.css';
-import '../app/globals.css';
 import {IoMdMenu} from 'react-icons/io';
 import { MenuSideBar } from '@/components/MenuSideBar';
+import { useContext } from 'react';
+import { AuthContext } from '@/context/AuthContext';
+import { GetServerSideProps } from 'next';
+import { parseCookies } from 'nookies'
 
 export default function dashboard() {
+  
+  const {user, isAuthenticated} = useContext(AuthContext);
+  console.log(isAuthenticated)
   
   return (
     <>
@@ -28,7 +33,7 @@ export default function dashboard() {
           <CgMenuGridR className='w-6 h-6 text-gray-700'/>
         </div>
 
-        <ProfileConf imgSrc='http://helpdeskformedica.com.br/media/helpdesk/profile/imgs/2023/01/16/250311720_302649865262480_2854683294034278713_n.jpg'/>
+        <ProfileConf imgSrc={`http://127.0.0.1:8000${user?.profileImg}`}/>
 
       </div>
       
@@ -38,4 +43,22 @@ export default function dashboard() {
     </>
 
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const {'helpdeskauth.token': token} = parseCookies(ctx)
+
+  if (!token){
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false
+      }
+    }
+  }
+  return {
+    props: {
+
+    }
+  }
 }

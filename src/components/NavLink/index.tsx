@@ -47,7 +47,7 @@ export function NavLink({visible, texts, onClick, sideOver, sideSubVisible, onMo
   }else{
     return(
       <div className='w-full p-2 flex relative'>
-        <span className='p-3 hover:bg-gray-200 cursor-pointer rounded-md' title={title} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
+        <span className='p-3 hover:bg-gray-200 cursor-pointer rounded-md' title={title} onMouseOver={onMouseOver} onClick={onClick} onMouseLeave={onMouseLeave}>
           {children}
         </span>
 
