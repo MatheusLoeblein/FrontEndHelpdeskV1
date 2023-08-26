@@ -38,7 +38,37 @@ export default function dashboard() {
       </div>
       
     </header>
-    <MenuSideBar/>
+
+    <main className=' flex'>
+
+ 
+      <MenuSideBar/>
+
+
+      <section id='graphs' className=" bg-primary-formedica ">
+
+        Bom dia asdknmasdklasndlkasndalskdnaslkdnasldkansdlkasdnl
+
+
+        <div className="">
+
+          
+          <div className=""></div>
+          <div className=""></div>
+
+
+        </div>
+
+        <div className="">
+
+          <div className=""></div>
+          <div className=""></div>
+          <div className=""></div>
+          <div className=""></div>
+        </div>
+
+      </section>
+    </main>
 
     </>
 

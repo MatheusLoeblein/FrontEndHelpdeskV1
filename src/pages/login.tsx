@@ -6,7 +6,14 @@ import { AuthContext } from '@/context/AuthContext';
 import { useContext, useEffect } from 'react'
 import { useState } from 'react'
 import Router from 'next/router'
-import { parseCookies } from 'nookies'
+import {setCookie, parseCookies} from 'nookies';
+import Image from 'next/image';
+
+
+type SignInData = {
+  username: string;
+  password: string;
+} 
 
 
 function Login() {
@@ -15,11 +22,44 @@ function Login() {
   const { user, signIn, isAuthenticated } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
-  async function handleSignIn(data){
-    await signIn(data)
-    setLoading(true)
+  const [rememberMe, setRememberMe] = useState(false);
 
+  async function handleSignIn(data: SignInData) {
+    await signIn(data);
+    setLoading(true)
+  
+    // if (rememberMe) {
+
+    //   setCookie(null, 'rememberedUser', data.username, {
+    //     maxAge: 30 * 24 * 60 * 60, // Um mês em segundos
+    //     path: '/',
+    //   });
+    //   setCookie(null, 'rememberedPassword', data.password, {
+    //     maxAge: 30 * 24 * 60 * 60, // Um mês em segundos
+    //     path: '/',
+    //   });
+    // }
+  
+    // setLoading(true);
   }
+  
+  // useEffect(() => {
+  //   const {'rememberedUser': rememberedUser} = parseCookies();
+  //   const {'rememberedPassword': rememberedPassword} = parseCookies();
+  
+  //   if (rememberedUser && rememberedPassword) {
+
+  //     const username = document.getElementById('username') as HTMLInputElement;
+  //     const password = document.getElementById('password') as HTMLInputElement;
+
+  //     username.value = rememberedUser
+  //     password.value = rememberedPassword
+
+  //     setRememberMe(true);
+  //   }
+
+  // }, []);
+  
   
   return (
 
@@ -36,11 +76,22 @@ function Login() {
           </p>
 
           <div className='bg-white w-24 h-20 z-10 shadow-md rounded-xl flex items-center justify-center'>
-          <img src="assets/formedica.png" className='w-20 h-22' />
+            <Image 
+            src="/assets/formedica.png" 
+            alt='Formedica'
+            width={500}
+            height={500}
+            className='w-20 h-22' 
+            />
           </div>
 
           <div  className='absolute top-0  z-0' >
-            <img src="assets/bg-login.png" className='h-[40rem]'/>
+            <Image 
+            src="/assets/bg-login.png" 
+            alt='Bg'
+            width={500}
+            height={500}            
+            className='h-[40rem]'/>
           </div>
 
         </div>
@@ -59,24 +110,34 @@ function Login() {
               >Login</label>
               <input 
               type="text" 
-              className='border border-border-default rounded-md py-2 px-3 w-full outline-[0.5px] focus:outline-primary-formedica'
+              className='border border-border-default rounded-md py-2 px-3 w-full focus:ring-primary-formedica'
               {...register('username')}
               name='username'
+              id='username'
               />
             </div>
 
             <div className='flex flex-col items-center justify-between'>
               <label htmlFor="" className='w-full self-start px-3 py-1'>Senha</label>
-              <input type="password" 
-              className='border border-border-default rounded-md py-2 px-3 w-full outline-[0.5px] focus:outline-primary-formedica' 
+              <input 
+              type="password" 
+              className='border border-border-default rounded-md py-2 px-3 w-full focus:ring-primary-formedica ' 
               {...register('password')}
               name='password'
+              id='password'
               />
             </div>
 
             <div className='flex justify-between'>
               <div className=' space-x-1 flex items-center'>
-                <input type="checkbox" name="" id="" />
+                <input 
+                type="checkbox" 
+                id="rememberMe"
+                name="rememberMe"
+                className='rounded border-gray-300  text-primary-formedica focus:ring-primary-formedica' 
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                />
                 <span>Lembrar-me</span>
               </div>
               <a href="#" className='text-primary-formedica hover:underline'>Esqueceu a senha?</a>
@@ -101,6 +162,7 @@ function Login() {
         </form>
       
       </main>
+          
 
     </section>
 

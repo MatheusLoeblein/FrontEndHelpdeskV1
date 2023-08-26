@@ -45,11 +45,15 @@ export function AuthProvider({ children }) {
 
   async function signIn({username, password}: SignInData) {
 
+    
+
     await api.post('/authors/api/token/', {
       username: username,
       password: password
     }).then(function (response) {
       const {refresh, access} = response.data;
+
+      console.log(response)
 
       setCookie(undefined, 'helpdeskauth.token', access, {
         maxAge: 60 * 60 * 1 // 1 hour
