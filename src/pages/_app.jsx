@@ -3,18 +3,11 @@ import { LayoutProvider } from '../context/LayoutContext'; // Importe o AuthProv
 import 'tailwindcss/tailwind.css';
 import '../app/globals.css';
 
-
-
-
-
-
-
-
 function HelpDesk({ Component, pageProps }) {
   return (
     <AuthProvider>
       <LayoutProvider>
-        <Component {...pageProps} />
+        <Component {...pageProps}/>
       </LayoutProvider>
     </AuthProvider>
   );

@@ -1,5 +1,5 @@
 import { BiSolidRightArrow} from 'react-icons/bi';
-
+import { motion } from 'framer-motion'
 
 interface NavLinkProps {
   visible: boolean;
@@ -34,14 +34,23 @@ export function NavLink({visible, texts, onClick, sideOver, sideSubVisible, onMo
           
           {title}
         </span>
-    
-        <ul className={`flex flex-col duration-300  ${visible && subtitles  ? 'animate-menuDropDownIn' : 'hidden' }`}>
+        <motion.ul 
+        initial={{ opacity: 0, height: 0, scale: 0, x: '-10px'}}
+        animate={{
+          opacity: visible && subtitles ? 1 : 0,
+          height: visible && subtitles ? 'auto' : 0,
+          scale: visible && subtitles ? 1 : 0,
+          x: visible && subtitles ? 0 : '-10px',
+        }}
+        transition={{ duration: 0.2 }}
+  
+        className='flex-col flex'>
             {subtitles && subtitles.map((obj: { subtitle: string, link: string,}) => {
             return(
               <li className='hover:bg-gray-200 pl-20 py-2 rounded-md cursor-pointer' key={obj.subtitle}>{obj.subtitle}</li>
             )
             })}
-          </ul>
+          </motion.ul>
       </div>
     );
   }else{
