@@ -26,6 +26,8 @@ const config: Config = {
       indigo: colors.indigo,
       yellow: colors.yellow,
       pink: colors.pink,
+      red: colors.red,
+      blue: colors.blue,
       
 
     },

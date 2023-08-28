@@ -23,7 +23,7 @@ export function ProfileConf({ imgSrc }: ProfileConfProps) {
 
   return (
     <div className='w-10 h-10 rounded-full bg-gray-300 relative' onClick={() => setContentVisible(!contentVisible)} ref={notificationRef}>
-      <img src={imgSrc} alt="Profile" className='rounded-full w-10 h-10' />
+      <img src={imgSrc} alt="Profile" className='w-10 h-10 rounded-full object-cover align-middle' />
 
       { 
         contentVisible &&

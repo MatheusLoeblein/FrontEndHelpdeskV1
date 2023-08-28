@@ -16,6 +16,8 @@ type AuthContextType = {
   isAuthenticated: boolean;
   signIn: (data: SignInData) => Promise<void>
   user: User;
+  authError: string;
+  setAuthError: () => void;
 
 } 
 
@@ -28,6 +30,7 @@ export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState<User | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const isAuthenticated = !!user;
 
@@ -53,8 +56,6 @@ export function AuthProvider({ children }) {
     }).then(function (response) {
       const {refresh, access} = response.data;
 
-      console.log(response)
-
       setCookie(undefined, 'helpdeskauth.token', access, {
         maxAge: 60 * 60 * 1 // 1 hour
       })
@@ -67,14 +68,26 @@ export function AuthProvider({ children }) {
         userId: user_id, 
         username: username}
         )
-    })
+    }).catch(
+      function(obj){
+
+        console.log(obj.response)
+        console.log(obj.response.status)
+
+        if (obj.response.status == 401) {
+          console.log(obj.response.data.detail)
+          setAuthError(obj.response.data.detail)
+        }
+        
+      }
+    )
 
     Router.push('/dashboard')
   
   }
   
   return(
-    <AuthContext.Provider value={{user, isAuthenticated, signIn}}>
+    <AuthContext.Provider value={{user, isAuthenticated, signIn, authError, setAuthError}}>
       {children}
     </AuthContext.Provider>
   )
