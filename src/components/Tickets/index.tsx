@@ -84,8 +84,14 @@ export function Tickets() {
       </div>
 
     </div>
-    <div className='h-screen  bg-primary-formedica'>
+    <div className='min-h-screen'>
        { !isFetching && ticketSearch.length > 0 ? filteredTickets?.map(ticket => {
+
+        if(ticket.length === 0){
+          return(
+            <h2>Nenhum Ticket Encontrado</h2>
+          )
+        } 
 
         const formattedDate = format(new Date(ticket.data_up_at), 'dd/MM/yyyy HH:mm');
         return(
