@@ -18,7 +18,6 @@ type AuthContextType = {
   user: User;
   authError: string;
   setAuthError: () => void;
-
 } 
 
 type SignInData = {
@@ -39,16 +38,12 @@ export function AuthProvider({ children }) {
     const { 'helpdeskauth.token': token } = parseCookies()
 
     if (token) {
-
       setUser(jwt_decode(token))
-
     }
 
   }, [])
 
   async function signIn({username, password}: SignInData) {
-
-    
 
     await api.post('/authors/api/token/', {
       username: username,
@@ -68,6 +63,9 @@ export function AuthProvider({ children }) {
         userId: user_id, 
         username: username}
         )
+
+
+      Router.push('/dashboard')
     }).catch(
       function(obj){
 
@@ -82,7 +80,7 @@ export function AuthProvider({ children }) {
       }
     )
 
-    Router.push('/dashboard')
+    
   
   }
   
