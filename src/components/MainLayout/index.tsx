@@ -8,14 +8,14 @@ import { MenuSideBar } from '@/components/MenuSideBar';
 import { useContext } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 import { LayoutContext } from '@/context/LayoutContext';
-import { GetServerSideProps } from 'next';
-import { parseCookies } from 'nookies'
 import { Message } from '@/components/Message';
+import Link from 'next/link'
 
 export function MainLayout({children}){
 
 
-  const { menuOver } = useContext(LayoutContext);
+  const { menuOver, pageLoading, setPageLoading } = useContext(LayoutContext);
+  
   const { user, isAuthenticated } = useContext(AuthContext);
 
   return(
@@ -25,7 +25,7 @@ export function MainLayout({children}){
 
         <IoMdMenu className="block md:hidden w-8 h-8  text-gray-600" />
 
-        <a href="#"><Logo /></a>
+        <Link href="/"><Logo /></Link>
 
         <MainSearch />
 
@@ -49,6 +49,7 @@ export function MainLayout({children}){
 
           <div className={` duration-300 ${menuOver ? 'w-16' : 'w-72'}`}/>
 
+          
           {children}
 
 
@@ -58,23 +59,5 @@ export function MainLayout({children}){
 
   </>
   )
-}
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { 'helpdeskauth.token': token } = parseCookies(ctx)
-
-  if (!token) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false
-      }
-    }
-  }
-  return {
-    props: {
-
-    }
-  }
 }
 

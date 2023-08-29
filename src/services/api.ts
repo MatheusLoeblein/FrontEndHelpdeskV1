@@ -1,13 +1,14 @@
 import axios from 'axios';
 import { parseCookies } from 'nookies';
 
-const { 'helpdeskauth.token': token } = parseCookies()
+const { 'helpdeskauth.token': token } = parseCookies();
 
 export const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000'
+  baseURL: 'http://127.0.0.1:8000'
+});
 
-})
+// Adicione um interceptor de solicitação
 
 if (token) {
-    api.defaults.headers['Authorization'] = `Bearer ${token}`
+    api.defaults.headers['Authorization'] = `Bearer ${token}`;
 }

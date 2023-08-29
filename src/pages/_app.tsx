@@ -3,20 +3,27 @@ import { LayoutProvider } from '../context/LayoutContext'; // Importe o AuthProv
 import 'tailwindcss/tailwind.css';
 import '../app/globals.css';
 import Head from 'next/head';
+import { QueryClientProvider } from 'react-query'
+import { queryClient } from '@/services/queryClient';
 
 
 function HelpDesk({ Component, pageProps }) {
   return (
-    <AuthProvider>
-      <LayoutProvider>
-        <Head>
-          <title>Help Desk</title>
-          <link rel="icon" href="assets/helpicon.png" />
-        </Head>
-        <Component {...pageProps}/>
-      </LayoutProvider>
-    </AuthProvider>
-  );
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <LayoutProvider>
+          <Head>
+            <title>Help Desk</title>
+            <link rel="icon" href="assets/helpicon.png" />
+          </Head>
+          <Component {...pageProps}/>
+        </LayoutProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  )
 }
 
+
 export default HelpDesk;
+
+

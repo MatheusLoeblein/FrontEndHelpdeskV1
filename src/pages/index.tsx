@@ -9,7 +9,6 @@ import Router from 'next/router'
 import {setCookie, parseCookies} from 'nookies';
 import Image from 'next/image';
 
-
 type SignInData = {
   username: string;
   password: string;
@@ -24,14 +23,14 @@ function Login() {
   const [rememberMe, setRememberMe] = useState(false);
 
   async function handleSignIn(data: SignInData) {
-    try {
-      setLoading(true); // Inicia o carregamento
-      await signIn(data); // Realiza o login
-    } catch (error) {
-      console.error('Erro durante o login:', error);
-    } finally {
-      setLoading(false); // Encerra o carregamento após a tentativa de login, seja com sucesso ou erro
+    try{
+      console.log(data)
+      setLoading(true)
+      await signIn(data); 
+    }finally{
+      setLoading(false)
     }
+    
   // if (rememberMe) {
 
     //   setCookie(null, 'rememberedUser', data.username, {
@@ -120,7 +119,7 @@ function Login() {
               {...register('username')}
               name='username'
               id='username'              
-              onChange={() => setAuthError(null) }
+              onInput={() => setAuthError(null)}
               />
             </div>
 
@@ -132,7 +131,7 @@ function Login() {
               {...register('password')}
               name='password'
               id='password'
-              onChange={() => setAuthError(null) }
+              onInput={() => setAuthError(null)}
               />
             </div>
 

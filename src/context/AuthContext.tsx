@@ -36,11 +36,13 @@ export function AuthProvider({ children }) {
   useEffect(() => {
 
     const { 'helpdeskauth.token': token } = parseCookies()
-
+    
     if (token) {
-      setUser(jwt_decode(token))
-    }
 
+      api.defaults.headers['Authorization'] = `Bearer ${token}`
+      setUser(jwt_decode(token))
+      console.log('Token RECUPERADO', token)
+    }
   }, [])
 
   async function signIn({username, password}: SignInData) {
@@ -50,6 +52,8 @@ export function AuthProvider({ children }) {
       password: password
     }).then(function (response) {
       const {refresh, access} = response.data;
+
+      console.log('Token OBTIDO', access)
 
       setCookie(undefined, 'helpdeskauth.token', access, {
         maxAge: 60 * 60 * 1 // 1 hour
@@ -68,9 +72,14 @@ export function AuthProvider({ children }) {
       Router.push('/dashboard')
     }).catch(
       function(obj){
+        console.log('OBJETO', obj)
+
+        if(obj.response.status  && obj.response.status == 400){
+          setAuthError('Bad Request')
+        }
 
         console.log(obj.response)
-        console.log(obj.response.status)
+        console.log(obj.response.status)        
 
         if (obj.response.status == 401) {
           console.log(obj.response.data.detail)
@@ -79,9 +88,6 @@ export function AuthProvider({ children }) {
         
       }
     )
-
-    
-  
   }
   
   return(
