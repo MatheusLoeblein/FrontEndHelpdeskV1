@@ -2,15 +2,10 @@ import { AiOutlineCheck, AiOutlineInfoCircle, AiOutlineWarning, AiOutlineClose }
 import { VscError } from 'react-icons/vsc';
 import {useEffect, useState} from 'react'
 import { motion } from 'framer-motion'
+
 type MessageType = {
   type: string;
   message: string;
-}
-
-
-type typesType = {
-  style: string;
-  icon: React.ReactNode
 }
 
 const types = {
@@ -40,7 +35,7 @@ const types = {
 export function Message({type, message}:MessageType){
 
   const [close, setClose] = useState(false);
-  let hidden;
+  const [hidden, setHidden] = useState(false);
 
   const messageType = types[type] || types.info;
 
@@ -54,20 +49,21 @@ export function Message({type, message}:MessageType){
     }
   }, [])
 
+
   function handleClose() {
     setClose(true)
     const interval = setInterval(() => {
-      hidden = true;
+      console.log('setado para ', hidden)
+      setHidden(true)
+      clearInterval(interval)
     }, 300)
-
-    return () => {
-      clearInterval(interval);
-    }
   }
 
   return(
+
+    <div className={`fixed right-5 bottom-5 flex flex-col gap-2 ${hidden && 'hidden'}`}>
     <motion.div 
-    className={` w-96 py-2 px-5 rounded-md border text-white border-border-default shadow-md flex text-sm items-center ${messageType.style} relative ${hidden && 'hidden'}`}
+    className={` w-96 py-2 px-5 rounded-md border text-white border-border-default shadow-md flex text-sm items-center ${messageType.style} relative `}
     initial={{opacity:0, scale: 0}}
     animate={{
       opacity: close? 0 : 1,
@@ -88,9 +84,11 @@ export function Message({type, message}:MessageType){
         {message}
       </p>
 
-      <AiOutlineClose size={15} className="absolute top-[8.5px] right-2 cursor-pointer " onClick={() => setClose(true)}/>
+      <AiOutlineClose size={15} className="absolute top-[8.5px] right-2 cursor-pointer " onClick={() => handleClose()}/>
 
     </motion.div>  
+
+    </div>
   )
 }
 

@@ -6,13 +6,13 @@ import {status, prioridade} from '../../components/Tickets'
 import { format } from 'date-fns';
 import { useQuery } from 'react-query'
 import { parseCookies } from 'nookies';
+import Image from 'next/image';
 
 
 export default function TicketPage() {
   const router = useRouter();
-  
 
-  const {data: ticket, isFetching } = useQuery('tickets', async () => {
+  const {data: ticket, isFetching, error, isLoading } = useQuery('tickets', async () => {
     const {'helpdeskauth.token': token} = parseCookies();
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -22,9 +22,25 @@ export default function TicketPage() {
 
     console.log(response.data)
 
-    return response.data;
 
+    
+    return response.data;
+    
   })
+  
+  console.log(ticket, isFetching, error, isLoading)
+
+  if (isLoading){
+
+    return(
+      <MainLayout>
+      <p>
+        Loading...
+      </p>
+    </MainLayout>
+    )
+  }
+
 
 
   return (
@@ -41,7 +57,13 @@ export default function TicketPage() {
 
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
-                <img src={ticket.author.profile.cover_profile} alt=""  className='w-16 h-16 rounded-full object-cover '/>
+                <Image 
+                src={ticket.author?.profile.cover_profile} 
+                alt="7868687"  
+                className='w-16 h-16 rounded-full object-cover'
+                width={500}
+                height={500}
+                />
 
                 <div className="">
                   <h1 className='text-xl font-medium'>{ticket.tipe.tipe}</h1>
@@ -142,7 +164,13 @@ export default function TicketPage() {
                 
                   <div className='flex grow bg-white rounded-md p-5 space-x-4 shadow-md'>
                     <div>
-                      <img src={`http://127.0.0.1:8000${comment.author.profile.cover_profile}`} alt="" className='w-16 h-16 rounded-full object-cover '/>
+                      <Image 
+                      src={`http://127.0.0.1:8000${comment.author.profile.cover_profile}`} 
+                      alt=""
+                      className='w-16 h-16 rounded-full object-cover'
+                      width={500}
+                      height={500}
+                      />
                     </div>
                     <div className='flex flex-col justify-start grow'>
                       <h3 className='border-b border-b-border-default text-md font-medium w-full py-3' >{comment.author.first_name} {comment.author.last_name}</h3>

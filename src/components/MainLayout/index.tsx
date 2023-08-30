@@ -11,12 +11,14 @@ import { LayoutContext } from '@/context/LayoutContext';
 import { Message } from '@/components/Message';
 import Link from 'next/link'
 
-export function MainLayout({children}){
+export function MainLayout({children, props}){
 
 
   const { menuOver, pageLoading, setPageLoading } = useContext(LayoutContext);
   
   const { user, isAuthenticated } = useContext(AuthContext);
+
+  console.log(user)
 
   return(
 
@@ -35,15 +37,15 @@ export function MainLayout({children}){
             <CgMenuGridR className='w-6 h-6 text-gray-700' />
           </div>
 
-          <ProfileConf imgSrc={`http://127.0.0.1:8000${user?.profileImg}`} />
+          <ProfileConf/>
 
         </div>
 
       </header>
 
-        <div className='fixed right-5 bottom-5 flex flex-col gap-2'>
-        {isAuthenticated && <Message message="Seja bem vindo! Log in efetuado com sucesso." type="success"/>}
-        </div>
+       
+        {<Message message="Seja bem vindo! Log in efetuado com sucesso." type="success"/>}
+        
         <MenuSideBar />
         <div className='grid grid-cols-[auto,1fr] mt-20'>
 

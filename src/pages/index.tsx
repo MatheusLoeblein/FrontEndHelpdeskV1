@@ -17,7 +17,7 @@ type SignInData = {
 function Login() {
   
   const { register, handleSubmit } = useForm();
-  const { user, signIn, authError, setAuthError } = useContext(AuthContext);
+  const { signIn, authError, setAuthError } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
   const [rememberMe, setRememberMe] = useState(false);
@@ -25,10 +25,10 @@ function Login() {
   async function handleSignIn(data: SignInData) {
     try{
       console.log(data)
-      setLoading(true)
+      setLoading(true);
       await signIn(data); 
-    }finally{
-      setLoading(false)
+    }catch{
+      setLoading(false);
     }
     
   // if (rememberMe) {
@@ -82,8 +82,8 @@ function Login() {
             <Image 
             src="/assets/formedica.png" 
             alt='Formedica'
-            width={500}
-            height={500}
+            width={100}
+            height={100}
             className='w-20 h-22' 
             />
           </div>
@@ -92,8 +92,8 @@ function Login() {
             <Image 
             src="/assets/bg-login.png" 
             alt='Bg'
-            width={500}
-            height={500}            
+            width={380}
+            height={0}            
             className='h-[40rem]'/>
           </div>
 

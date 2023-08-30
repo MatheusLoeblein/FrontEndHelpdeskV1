@@ -1,12 +1,23 @@
 import { useState, useEffect, useRef, ReactNode } from 'react';
+import Image from 'next/image';
+import { useContext } from 'react';
+import { AuthContext } from '@/context/AuthContext';
 
-interface ProfileConfProps {
-  imgSrc: string;
-}
 
-export function ProfileConf({ imgSrc }: ProfileConfProps) {
+export function ProfileConf() {
   const [contentVisible, setContentVisible] = useState(false);
+  const [userData, setUserData] = useState({});
   const notificationRef = useRef<HTMLDivElement>(null);
+  const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+
+    setUserData(user)
+
+    console.log('userdata', userData)
+    console.log('USER', user)
+    
+  }, [user])
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -23,7 +34,12 @@ export function ProfileConf({ imgSrc }: ProfileConfProps) {
 
   return (
     <div className='w-10 h-10 rounded-full bg-gray-300 relative' onClick={() => setContentVisible(!contentVisible)} ref={notificationRef}>
-      <img src={imgSrc} alt="Profile" className='w-10 h-10 rounded-full object-cover align-middle' />
+      {/* <Image src={`http://127.0.0.1:8000${user?.profileImg}`}
+       alt="Profile" 
+       className='w-10 h-10 rounded-full object-cover align-middle' 
+       width={500}
+       height={500}
+       /> */}
 
       { 
         contentVisible &&

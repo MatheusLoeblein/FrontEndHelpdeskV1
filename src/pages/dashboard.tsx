@@ -1,7 +1,7 @@
-"use client"
-
 import { Tickets } from '@/components/Tickets';
 import { MainLayout } from '@/components/MainLayout';
+
+
 
 export default function dashboard() {
 

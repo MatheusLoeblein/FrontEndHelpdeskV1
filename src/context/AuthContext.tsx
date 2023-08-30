@@ -39,8 +39,16 @@ export function AuthProvider({ children }) {
     if (token) {
 
       api.defaults.headers['Authorization'] = `Bearer ${token}`
-      setUser(jwt_decode(token))
-      console.log('Token RECUPERADO', token)
+
+      const {profileImg, user_id, username}:User = jwt_decode(token)
+
+      setUser(
+        {
+        profileImg: profileImg, 
+        userId: user_id, 
+        username: username}
+        )
+
     }
   }, [])
 
