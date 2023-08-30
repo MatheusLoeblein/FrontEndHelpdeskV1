@@ -1,7 +1,6 @@
 import { createContext, useEffect, useState } from 'react'
 import { setCookie, parseCookies } from 'nookies';
 import Router from 'next/router'
-import axios from 'axios';
 import jwt_decode from "jwt-decode";
 
 import { api } from '../services/api'

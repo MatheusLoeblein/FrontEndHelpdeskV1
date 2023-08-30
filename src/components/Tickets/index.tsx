@@ -84,7 +84,7 @@ export function Tickets() {
       </div>
 
     </div>
-    <div className='min-h-screen'>
+    <div className='min-h-[300px]'>
        { !isFetching && ticketSearch.length > 0 ? filteredTickets?.map(ticket => {
 
         if(ticket.length === 0){

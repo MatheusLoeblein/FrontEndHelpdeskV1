@@ -34,9 +34,10 @@ export default function TicketPage() {
 
       {!isFetching && ticket && 
       
-      
-        <div className='max-md:max-w-7xl xl:flex xl:items-start xl:gap-10 m-auto'>
-          <div className='w-full xl:w-1/2 bg-white px-3 py-5 rounded-md shadow-md'>
+        // xl:flex xl:items-start xl:gap-10
+        <div className='max-md:max-w-7xl  m-auto'>
+          {/* xl:w-1/2 */}
+          <div className='w-full  bg-white px-3 py-5 rounded-md shadow-md'>
 
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
@@ -126,8 +127,8 @@ export default function TicketPage() {
           {ticket.comments ? ticket.comments.map((comment, index) => {
             return(
 
-
-                <div className='flex gap-20 my-12 xl:mt-0 relative ' key={index}>
+                //xl:mt-0
+                <div className='flex gap-20 my-12  relative ' key={index}>
 
                   <div className='w-60  h-10 text-center flex justify-center items-center bg-white rounded-md z-10 shadow-md'>
                     {format(new Date(comment.created_at), 'dd-MM-yyyy')} ás {format(new Date(comment.created_at), 'HH:mm')}

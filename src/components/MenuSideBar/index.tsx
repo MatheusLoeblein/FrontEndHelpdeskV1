@@ -80,7 +80,7 @@ export function MenuSideBar() {
       className={`
     flex flex-col fixed h-full space-y-96 bg-white top-20
   
-    py-5 text-xs text-gray-700 border-r border-r-border-default 
+    py-5 text-sm text-gray-700 border-r border-r-border-default 
     duration-300
     ${siderOver ? ' w-16' : 'w-72 pr-5  pl-5'}`}
 
