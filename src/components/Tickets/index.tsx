@@ -5,6 +5,7 @@ import { parseCookies } from 'nookies';
 import { useEffect, useState } from 'react';
 import {useQuery} from 'react-query';
 import Image from 'next/image'
+import {AiOutlineCloseCircle, AiOutlineDownCircle  } from 'react-icons/ai'
 
 export const status = {
   'Aberto': 'bg-status-ticket-open',
@@ -25,6 +26,8 @@ export const prioridade = {
 export function Tickets() {
   const [tickets, setTickets] = useState();
   const [page, setPage] = useState(1)
+  const [openFilter, setOpenFilter] = useState(false);
+  const [filter, setFilter] = useState('');
 
   const {'helpdeskauth.token': token} = parseCookies();
 
@@ -32,7 +35,19 @@ export function Tickets() {
       Authorization: `Bearer ${token}`,
     }
 
-  const getData = (page = 1) => api.get( page > 1 ? `/api/tarefa/?page=${page}` : '/api/tarefa/' , {headers});
+  let url = page > 1 ? `/api/tarefa/?page=${page}` : '/api/tarefa/'
+
+  if(filter ){
+    if(page > 1){
+
+      url += `&status=${filter}`
+    }else{
+      url += `?status=${filter}`
+    }
+  }
+
+
+  const getData = (page = 1) => api.get( url, {headers});
 
   const {
     isLoading,
@@ -42,14 +57,16 @@ export function Tickets() {
     isFetching,
     isPreviousData,
   } = useQuery({
-    queryKey: ['tickets', page],
+    queryKey: ['tickets', page, filter],
     queryFn: () => getData(page),
     keepPreviousData : true
   })
 
   useEffect(() => {
-    setTickets(data?.data?.results)
-    console.log('Tickets', tickets)
+    if (data != null){
+      setTickets(data?.data?.results)
+      console.log('Tickets', tickets)
+    }
   }, [data])
 
 
@@ -98,15 +115,36 @@ export function Tickets() {
         <p className="text-sm font-normal">Tickets de atendimento, você pode filtrar de acordo com a sua necessidade</p>
       </div>
 
-      <div className="flex gap-1">
+      <div className="flex">
         {/* <input type="search" className='h-8 w-80 p-2 rounded-md border-border-default text-xs' onChange={event => handleSearch(event.target.value)}/> */}
 
-        <select name="filterTicket" className='h-8 p-2 w-40 rounded-md border-border-default text-xs' id="filterTicket">
-          <option value="valor1">Abertos</option>
-          <option value="valor1">Em execução</option>
-          <option value="valor1">Aguardando Retorno</option>
-          <option value="valor1">Finalizados</option>
-        </select>
+        <div 
+        className='p-2 w-64 rounded-md text-xs relative border border-border-default ' 
+        onClick={() => setOpenFilter(!openFilter)}
+        >
+          <span>{filter ? filter : 'Filtar por status'}</span> 
+
+          {filter ? <div  className="text-xl font-semibold bg-red-500 h-full flex w-10 top-0 right-0 cursor-pointer justify-center items-center rounded-r-md text-white absolute" onClick={() => setFilter('')}>
+              <AiOutlineCloseCircle/>
+            </div>
+            :
+
+            <div  className="text-xl font-semibold bg-emerald-700 h-full flex w-10 top-0 right-0 cursor-pointer justify-center items-center rounded-r-md text-white absolute" onClick={() => setFilter('')}>
+              <AiOutlineDownCircle/>
+            </div>
+
+          }
+          {
+            openFilter &&
+            <div className='absolute w-64 flex flex-col  bg-white rounded-md shadow-md border border-border-default left-0 -bottom-36 '>
+              
+              <span className='hover:bg-gray-300 p-2 cursor-pointer' onClick={() => setFilter('Aberto')}>Aberto</span>
+              <span className='hover:bg-gray-300 p-2 cursor-pointer' onClick={() => setFilter('Execução')}>Execução</span>
+              <span className='hover:bg-gray-300 p-2 cursor-pointer' onClick={() => setFilter('Aguardando Retorno')}>Aguardando Retorno</span>
+              <span className='hover:bg-gray-300 p-2 cursor-pointer' onClick={() => setFilter('Finalizado')}>Finalizado</span>
+            </div>
+          }
+        </div>
       </div>
 
     </div>
@@ -137,13 +175,18 @@ export function Tickets() {
               </div>
               <div className="flex items-center gap-2">
   
-                  <Image 
-                  className="w-7 h-7  text-sm rounded-full object-cover align-middle "
-                  src={ticket.author.profile.cover_profile} 
-                  alt="Teste" 
-                  width={100}
-                  height={100}
-                  />
+                  {   ticket.author.profile.cover_profile ?
+                      <Image 
+                      className="w-7 h-7  text-sm rounded-full object-cover align-middle "
+                      src={ticket.author.profile.cover_profile} 
+                      alt="Teste" 
+                      width={100}
+                      height={100}
+                      />
+                      :
+                      <div
+                      className="w-7 h-7 rounded-full bg-gray-500 "/>
+                  }
   
                   {ticket.author.first_name} {ticket.author.last_name}
   
@@ -153,18 +196,30 @@ export function Tickets() {
   
               { ticket.users ? 
                 ticket.users.map((user, index) => {
-                  
-                  return(
-                    <div key={index + 5}>
-                    <Image 
-                    className="w-7 h-7 rounded-full object-cover align-middle "
-                    src={user.profile.cover_profile} 
-                    alt={user.profile.cover_profile}
-                    width={100}
-                    height={100}
+
+                  if(user.profile.cover_profile){
+
+                    return(
+                      <div key={index + 5}>
+                      <Image 
+                      className="w-7 h-7 rounded-full object-cover align-middle "
+                      src={user.profile.cover_profile} 
+                      alt={user.profile.cover_profile}
+                      width={100}
+                      height={100}
+                      />
+                      </div>
+                    )
+
+                  }else{
+                    return(
+                      <div key={index + 5}>
+                    <div
+                    className="w-7 h-7 rounded-full bg-gray-500 "
                     />
                     </div>
-                  )
+                  )                    
+                }
                 })
                 :
                 

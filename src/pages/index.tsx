@@ -70,7 +70,7 @@ function Login() {
 
       <main className='grid grid-cols-5 w-[60rem] h-[40rem] bg-white rounded-md shadow-md'>
 
-        <div className='bg-gradient-to-b from-primary-formedica via-primary-formedica to-pink-500 h-full w-96 rounded-l-md  col-span-2 px-7 py-16 flex flex-col justify-between items-center relative'>
+        <div className='bg-gradient-to-b from-primary-formedica via-primary-formedica to-pink-800 h-full w-96 rounded-l-md  col-span-2 px-7 py-16 flex flex-col justify-between items-center relative'>
 
           <h1 className=' text-white text-3xl  font-semibold z-10'>Bem vindo de volta!</h1>
 
