@@ -56,15 +56,16 @@ const navLinks = [
 
 export function MenuSideBar() {
 
-  const { setMenuOver } = useContext(LayoutContext);
+  const { menuOver, handleMenuOver } = useContext(LayoutContext);
 
-  const [siderOver, setSideOver] = useState(false);
+  // const [siderOver, setSideOver] = useState(menuOver);
 
 
-  useEffect(() => {
-    setMenuOver(siderOver);
+  // useEffect(() => {
+  //   handleMenuOver(siderOver);
+  //   console.log('MENU FECHADO', siderOver)
 
-  }, [setMenuOver, siderOver])
+  // }, [setSideOver, siderOver])
 
 
   const [sideSubVisible, setSideSubVisible] = useState(-1);
@@ -79,10 +80,11 @@ export function MenuSideBar() {
     <nav
       className={`
     flex flex-col fixed h-full space-y-96 bg-white top-20
+    z-50
   
     py-5 text-sm text-gray-700 border-r border-r-border-default 
     duration-300
-    ${siderOver ? ' w-16' : 'w-72 pr-5  pl-5'}`}
+    ${menuOver ? ' w-16' : 'w-72 pr-5  pl-5'}`}
 
     >
       <div className=''>
@@ -94,7 +96,7 @@ export function MenuSideBar() {
               visible={index === activeMenuIndex}
               texts={navLink}
               onClick={() => navLink.link ? navLink.link() : setActiveMenuIndex(activeMenuIndex == index ? -1 : index)}
-              sideOver={siderOver}
+              sideOver={menuOver}
               sideSubVisible={index === sideSubVisible}
               onMouseOver={() => setSideSubVisible(index)}
               onMouseLeave={handleNavMouseLeave}
@@ -104,9 +106,9 @@ export function MenuSideBar() {
       </div>
 
       {
-        siderOver ?
+        menuOver ?
           <div className='px-2 py-2 bottom-5 w-16 cursor-pointer fixed'
-            onClick={() => setSideOver(!siderOver)}>
+            onClick={() => handleMenuOver(!menuOver)}>
 
             <span className='flex p-2 justify-center items-center cursor-pointer rounded-md hover:bg-gray-200'>
               <BiSolidArrowToLeft className="w-5 h-5 rotate-180 " />
@@ -116,7 +118,7 @@ export function MenuSideBar() {
           :
           <div className=' bottom-5 w-60 fixed'>
             <span className='flex gap-3  pl-6 py-2 items-center cursor-pointer rounded-md hover:bg-gray-200'
-              onClick={() => setSideOver(!siderOver)}
+              onClick={() => handleMenuOver(!menuOver)}
             >
               <BiSolidArrowToLeft className="w-5 h-5" />
               Esconder

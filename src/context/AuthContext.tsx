@@ -75,21 +75,16 @@ export function AuthProvider({ children }) {
         username: username}
         )
 
-
-      Router.push('/dashboard')
+        Router.push('/dashboard')
+        
     }).catch(
       function(obj){
-        console.log('OBJETO', obj)
 
         if(obj.response.status  && obj.response.status == 400){
-          setAuthError('Bad Request')
-        }
-
-        console.log(obj.response)
-        console.log(obj.response.status)        
+          setAuthError('Erro tente novamente')
+        }   
 
         if (obj.response.status == 401) {
-          console.log(obj.response.data.detail)
           setAuthError(obj.response.data.detail)
         }
         

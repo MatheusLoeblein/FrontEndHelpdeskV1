@@ -13,13 +13,8 @@ import Link from 'next/link'
 
 export function MainLayout({children, props}){
 
-
-  const { menuOver, pageLoading, setPageLoading } = useContext(LayoutContext);
+  const { menuOver } = useContext(LayoutContext);
   
-  const { user, isAuthenticated } = useContext(AuthContext);
-
-  console.log(user)
-
   return(
 
   <>

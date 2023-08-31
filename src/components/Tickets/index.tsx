@@ -2,7 +2,7 @@ import {api} from '../../services/api'
 import { format } from 'date-fns';
 import Link from 'next/link'
 import { parseCookies } from 'nookies';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {useQuery} from 'react-query';
 import Image from 'next/image'
 import {AiOutlineCloseCircle, AiOutlineDownCircle  } from 'react-icons/ai'
@@ -28,6 +28,7 @@ export function Tickets() {
   const [page, setPage] = useState(1)
   const [openFilter, setOpenFilter] = useState(false);
   const [filter, setFilter] = useState('');
+  const ticketStatusFilter = useRef(null);
 
   const {'helpdeskauth.token': token} = parseCookies();
 
@@ -69,39 +70,23 @@ export function Tickets() {
     }
   }, [data])
 
+  function handleFilter(filter){
+    setPage(1)
+    setFilter(filter)
+  }
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ticketStatusFilter.current && !ticketStatusFilter.current.contains(event.target)) {
+        setOpenFilter(false);
+      }
+    }
 
-
-  // const {data, isFetching } = useQuery('tickets', async () => {
-  //   const {'helpdeskauth.token': token} = parseCookies();
-  //   const headers = {
-  //     Authorization: `Bearer ${token}`,
-  //   };
-  //   const response = await api.get('/api/tarefa/', {headers});
-
-  //   setTickets(response.data.results);
-  //   // console.log(response.data)
-  //   return response.data;
-
-  // })
-
-
-  // function handleSearch(value){
-  //   setTicketSearch(value)
-    
-
-  //   if (ticketSearch.length >= 0){
-  //     console.log('Maior que zero')
-  //     setFilteredTickets(tickets.filter(ticket => ticket.tipe.tipe.toLowerCase().includes(ticketSearch.toLowerCase())))
-  //   }else{
-  //     console.log('Menor que zero')
-  //     setFilteredTickets([])
-  //   }
-
-  //   console.log(filteredTickets)
-
-  // }
-
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
 
   return(
@@ -119,29 +104,31 @@ export function Tickets() {
         {/* <input type="search" className='h-8 w-80 p-2 rounded-md border-border-default text-xs' onChange={event => handleSearch(event.target.value)}/> */}
 
         <div 
-        className='p-2 w-64 rounded-md text-xs relative border border-border-default ' 
+        className='p-2 w-64 rounded-md text-xs relative border border-border-default cursor-pointer' 
         onClick={() => setOpenFilter(!openFilter)}
         >
           <span>{filter ? filter : 'Filtar por status'}</span> 
 
-          {filter ? <div  className="text-xl font-semibold bg-red-500 h-full flex w-10 top-0 right-0 cursor-pointer justify-center items-center rounded-r-md text-white absolute" onClick={() => setFilter('')}>
+          {filter ? <div  className="text-xl font-semibold bg-primary-text hover:bg-red-300 h-full flex w-10 top-0 right-0 cursor-pointer justify-center items-center rounded-r-md text-white absolute" onClick={() => setFilter('')}>
               <AiOutlineCloseCircle/>
             </div>
             :
 
-            <div  className="text-xl font-semibold bg-emerald-700 h-full flex w-10 top-0 right-0 cursor-pointer justify-center items-center rounded-r-md text-white absolute" onClick={() => setFilter('')}>
+            <div  className="text-xl font-semibold bg-primary-text  h-full flex w-10 top-0 right-0 cursor-pointer justify-center items-center rounded-r-md text-white absolute" onClick={() => setFilter('')}>
               <AiOutlineDownCircle/>
             </div>
 
           }
           {
             openFilter &&
-            <div className='absolute w-64 flex flex-col  bg-white rounded-md shadow-md border border-border-default left-0 -bottom-36 '>
+            <div className='absolute w-64 flex flex-col  bg-white rounded-md shadow-md border border-border-default left-0 -bottom-36 '
+            ref={ticketStatusFilter}
+            >
               
-              <span className='hover:bg-gray-300 p-2 cursor-pointer' onClick={() => setFilter('Aberto')}>Aberto</span>
-              <span className='hover:bg-gray-300 p-2 cursor-pointer' onClick={() => setFilter('Execução')}>Execução</span>
-              <span className='hover:bg-gray-300 p-2 cursor-pointer' onClick={() => setFilter('Aguardando Retorno')}>Aguardando Retorno</span>
-              <span className='hover:bg-gray-300 p-2 cursor-pointer' onClick={() => setFilter('Finalizado')}>Finalizado</span>
+              <span className='hover:bg-gray-300 p-2 cursor-pointer' onClick={() => handleFilter('Aberto')}>Aberto</span>
+              <span className='hover:bg-gray-300 p-2 cursor-pointer' onClick={() => handleFilter('Execução')}>Execução</span>
+              <span className='hover:bg-gray-300 p-2 cursor-pointer' onClick={() => handleFilter('Aguardando Retorno')}>Aguardando Retorno</span>
+              <span className='hover:bg-gray-300 p-2 cursor-pointer' onClick={() => handleFilter('Finalizado')}>Finalizado</span>
             </div>
           }
         </div>
@@ -278,7 +265,7 @@ export function Tickets() {
             <span><strong>Pagina atual</strong> {page} </span>
             <span><strong>Items na pagina</strong> {tickets.length}</span>
             <span><strong>Total</strong> {data?.data?.count}</span>
-            <span><strong>Paginas</strong> {Math.round(data?.data?.count / 20)}</span>
+            <span><strong>Paginas</strong> {Math.ceil(data?.data?.count / 20)}</span>
           </div>
 
           <div className="flex font-semibold text-md space-x-4">
