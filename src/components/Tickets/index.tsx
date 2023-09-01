@@ -162,7 +162,7 @@ export function Tickets() {
               </div>
               <div className="flex items-center gap-2">
   
-                  {   ticket.author.profile.cover_profile ?
+                  {  ticket?.author?.profile?.cover_profile ?
                       <Image 
                       className="w-7 h-7  text-sm rounded-full object-cover align-middle "
                       src={ticket.author.profile.cover_profile} 
@@ -173,10 +173,11 @@ export function Tickets() {
                       :
                       <div
                       className="w-7 h-7 rounded-full bg-gray-500 "/>
+                      
                   }
   
-                  {ticket.author.first_name} {ticket.author.last_name}
-  
+                  
+                    {ticket?.author?.first_name} {ticket?.author?.last_name}
               </div>
               <div className="flex items-center gap-2 justify-center">
   
