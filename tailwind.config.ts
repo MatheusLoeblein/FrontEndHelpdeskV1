@@ -59,19 +59,8 @@ const config: Config = {
 
     }
   },
-  plugins: [require("@tailwindcss/forms")],
+  plugins: [require("@tailwindcss/forms")({
+    strategy: 'class'
+  })],
 }
 export default config
-
-
-/*
-      'primary-bg': '#DFE4EC',
-      'primary-formedica': '#436EB3',
-      'primary-text': '#595959',
-      'status-ticket-open': '#F88E82',
-      'status-ticket-execut': '#D4BF00',
-      'status-ticket-waiting': '#FFC38F',
-      'status-ticket-finaly': '#3C643C',
-      'border-default': '#cbd0dd',
-
-*/

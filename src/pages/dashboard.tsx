@@ -3,6 +3,7 @@ import { parseCookies } from 'nookies'
 import { Tickets } from '@/components/Tickets';
 import { MainLayout } from '@/components/MainLayout';
 import { Charts } from '@/components/Charts';
+import { NewTask } from '@/components/NewTask';
 
 
 
@@ -11,11 +12,11 @@ export default function dashboard() {
   return (
     
       <MainLayout>
-
         <section id='dash' className="flex flex-col gap-4">
           <Charts/>
 
           <Tickets/>          
+          <NewTask/>
 
         </section>
         

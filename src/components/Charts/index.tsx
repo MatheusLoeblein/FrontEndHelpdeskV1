@@ -112,9 +112,6 @@ export function Charts() {
               xaxis: {
                 categories: data?.taskPerTipe.tipes
               },
-              tooltip: {
-                enabled: false,
-              },
               colors
               }} series={[
                 { 

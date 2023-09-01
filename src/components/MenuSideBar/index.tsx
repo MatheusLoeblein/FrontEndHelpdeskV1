@@ -58,22 +58,12 @@ export function MenuSideBar() {
 
   const { menuOver, handleMenuOver } = useContext(LayoutContext);
 
-  // const [siderOver, setSideOver] = useState(menuOver);
-
-
-  // useEffect(() => {
-  //   handleMenuOver(siderOver);
-  //   console.log('MENU FECHADO', siderOver)
-
-  // }, [setSideOver, siderOver])
-
-
   const [sideSubVisible, setSideSubVisible] = useState(-1);
 
   const [activeMenuIndex, setActiveMenuIndex] = useState(-1);
 
   const handleNavMouseLeave = () => {
-    setSideSubVisible(-1); // Define o índice do submenu como -1 quando o mouse sai do nav
+    setSideSubVisible(-1);
   };
 
   return (
