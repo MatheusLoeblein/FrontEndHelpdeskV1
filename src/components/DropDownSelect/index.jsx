@@ -68,7 +68,7 @@ export function DropDownSelect({name, objects, width}) {
             leaveTo="opacity-0"
             afterLeave={() => setQuery('')}
           >
-            <Combobox.Options className="absolute max-h-60 overflow-y-scroll w-full  border border-border-default rounded-md z-10 bg-whitetext-sm shadow-lg ring-opacity-5 focus:outline-none">
+            <Combobox.Options className="absolute max-h-60 overflow-y-scroll w-full bg-white border mt-1 border-border-default rounded-md z-10 bg-whitetext-sm shadow-lg ring-opacity-5 focus:outline-none">
               {filteredPeople.length === 0 && query !== '' ? (
                 <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                   Nothing found.
