@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import ReactQuill, { Quill } from "react-quill";
-// #1 import quill-image-uploader
 import ImageUploader from "quill-image-uploader";
-import './quill-bubble-custom.css';
+// import './quill-bubble-custom.css';
+import './quill-custom-snow.css'
 
 // #2 register module
 Quill.register("modules/imageUploader", ImageUploader);
@@ -86,14 +86,12 @@ class Editor extends Component {
 
         <ReactQuill
           onChange={this.handleChange}
-          theme="bubble"
+          theme="snow"
           modules={this.modules}
           formats={this.formats}
           value={this.state.editorHtml}
           style={{
-            height: '100%',
-            border: '1px #cbd0dd solid',
-            borderRadius: '5px',          
+             height: '100%'
           }}
         />
       </>
