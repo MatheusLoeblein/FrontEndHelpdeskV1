@@ -10,6 +10,7 @@ export function LayoutProvider ({ children }) {
     const [menuOver, setMenuOver] = useState(false);
     const [pageLoading, setPageLoading] = useState(false);
 
+
     useEffect(() => {
         const {'helpdeskLayout.MenuOver': over} = parseCookies()
         if(over){

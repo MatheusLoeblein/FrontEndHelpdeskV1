@@ -4,6 +4,7 @@ import Router from 'next/router'
 import jwt_decode from "jwt-decode";
 
 import { api } from '../services/api'
+import { isNull } from 'util';
 
 type User = {
   profileImg: string;
@@ -29,6 +30,7 @@ export const AuthContext = createContext({} as AuthContextType)
 export function AuthProvider({ children }) {
   const [user, setUser] = useState<User | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [messages, setMessages] = useState([{}]);
 
   const isAuthenticated = !!user;
 
@@ -74,8 +76,12 @@ export function AuthProvider({ children }) {
         userId: user_id, 
         username: username}
         )
-
-        Router.push('/dashboard')
+      
+      setMessages([{
+            text: "Seja bem vindo! Log in efetuado com sucesso.",
+            type: "success"
+        }])
+      Router.push('/dashboard')
         
     }).catch(
       function(obj){
@@ -93,7 +99,7 @@ export function AuthProvider({ children }) {
   }
   
   return(
-    <AuthContext.Provider value={{user, isAuthenticated, signIn, authError, setAuthError}}>
+    <AuthContext.Provider value={{user, isAuthenticated, signIn, authError, setAuthError, messages, setMessages}}>
       {children}
     </AuthContext.Provider>
   )

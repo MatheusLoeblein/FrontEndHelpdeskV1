@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import ReactQuill, { Quill } from "react-quill";
 import ImageUploader from "quill-image-uploader";
-// import './quill-bubble-custom.css';
 import './quill-custom-snow.css'
 
-// #2 register module
+
 Quill.register("modules/imageUploader", ImageUploader);
 
 class Editor extends Component {
@@ -14,9 +13,14 @@ class Editor extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.textInput = React.createRef();
   }
+  
 
   handleChange(html) {
     this.setState({ editorHtml: html });
+
+    if (this.props.onEditorChange) {
+      this.props.onEditorChange(html);
+    }
   }
 
   handleSubmit() {
@@ -77,13 +81,12 @@ class Editor extends Component {
     "indent",
     "link",
     "image",
-    "imageBlot" // #5 Optinal if using custom formats
+    "imageBlot"
   ];
 
   render() {
     return (
       <>
-
         <ReactQuill
           onChange={this.handleChange}
           theme="snow"

@@ -1,7 +1,9 @@
 import { AiOutlineCheck, AiOutlineInfoCircle, AiOutlineWarning, AiOutlineClose } from 'react-icons/ai';
 import { VscError } from 'react-icons/vsc';
-import {useEffect, useState} from 'react'
-import { motion } from 'framer-motion'
+import {useEffect, useState, useContext} from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { truncate } from 'fs';
+import { AuthContext } from '@/context/AuthContext';
 
 type MessageType = {
   type: string;
@@ -35,60 +37,56 @@ const types = {
 export function Message({type, message}:MessageType){
 
   const [close, setClose] = useState(false);
-  const [hidden, setHidden] = useState(false);
+  const { messages, setMessages } = useContext(AuthContext);
 
   const messageType = types[type] || types.info;
 
   useEffect(() => {
     const interval = setInterval(() => {
-      handleClose()
+      setClose(true)
+      setMessages(null)
+      console.log('CLOSE')
     }, 5000)
 
-    return () => {
-      clearInterval(interval);
-    }
+    return () => clearInterval(interval);
+    
   }, [])
 
-
-  function handleClose() {
-    setClose(true)
-    const interval = setInterval(() => {
-      console.log('setado para ', hidden)
-      setHidden(true)
-      clearInterval(interval)
-    }, 300)
-  }
-
   return(
-
-    <div className={`fixed right-5 bottom-5 flex flex-col gap-2 ${hidden && 'hidden'}`}>
-    <motion.div 
-    className={` w-96 py-2 px-5 rounded-md border text-white border-border-default shadow-md flex text-sm items-center ${messageType.style} relative `}
-    initial={{opacity:0, scale: 0}}
-    animate={{
-      opacity: close? 0 : 1,
-      scale: close? 0 : 1, 
-    }}
-    transition={{
-      duration: 0.3
-    }}
-    >
-
-        <span className='text-lg '>
-          {
-          messageType.icon
-          }
-        </span>
-
-      <p className={`px-5 `}>
-        {message}
-      </p>
-
-      <AiOutlineClose size={15} className="absolute top-[8.5px] right-2 cursor-pointer " onClick={() => handleClose()}/>
-
-    </motion.div>  
-
-    </div>
+    <AnimatePresence>
+      { !close &&
+            
+        <motion.div 
+        className={` w-96 py-2 px-5 rounded-md border text-white border-border-default shadow-md flex text-sm items-center ${messageType.style} relative `}
+        initial={{opacity:0, scale: 0}}
+        animate={{
+          opacity: 1,
+          scale: 1, 
+        }}
+        transition={{
+          duration: 0.3
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0, 
+        }}
+        >
+    
+            <span className='text-lg '>
+              {
+              messageType.icon
+              }
+            </span>
+    
+          <p className={`px-5 `}>
+            {message}
+          </p>
+    
+          <AiOutlineClose size={15} className="absolute top-[8.5px] right-2 cursor-pointer " onClick={() => setClose(true)}/>
+    
+        </motion.div>  
+  }
+    </AnimatePresence>
   )
 }
 

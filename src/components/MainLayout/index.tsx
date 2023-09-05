@@ -14,6 +14,7 @@ import Link from 'next/link'
 export function MainLayout({children, props}){
 
   const { menuOver } = useContext(LayoutContext);
+  const { messages } = useContext(AuthContext);
   
   return(
 
@@ -38,8 +39,19 @@ export function MainLayout({children, props}){
 
       </header>
 
+
+      <div className="fixed top-28 right-5 flex flex-col gap-2 z-10">
+                 
+        { messages && messages.map((message, index) =>{ 
+          return(
+            <Message message={message.text} type={message.type} key={index}/>
+          )
+        })}
+
+      </div>
+        
        
-        {<Message message="Seja bem vindo! Log in efetuado com sucesso." type="success"/>}
+
         
         <MenuSideBar />
         <div className='grid grid-cols-[auto,1fr] mt-20'>

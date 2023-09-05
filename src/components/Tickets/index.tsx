@@ -18,8 +18,8 @@ export const status = {
 export const prioridade = {
   'Urgente': 'bg-status-ticket-open',
   'Moderada': 'bg-status-ticket-execut',
- 'Alta':'bg-status-ticket-waiting',
- 'Baixa': 'bg-status-ticket-finaly'
+  'Alta':'bg-status-ticket-waiting',
+  'Baixa': 'bg-status-ticket-finaly'
  
 }
 

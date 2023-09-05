@@ -3,56 +3,45 @@ import { motion, AnimatePresence } from "framer-motion"
 import './quill-bubble-custom.css';
 import dynamic from 'next/dynamic';
 import {DropDownSelect} from '../DropDownSelect'
-import { useForm, FormProvider } from 'react-hook-form';
-import { api } from '@/services/api';
-import { useQuery } from 'react-query';
-import { parseCookies } from 'nookies';
-
+import { useForm, FormProvider, Controller } from 'react-hook-form';
 import React from 'react'
-import Select from 'react-select'
-
-const options = [
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'strawberry', label: 'Strawberry' },
-  { value: 'vanilla', label: 'Vanilla' }
-]
-
- 
-
+import { usePostApi } from '@/hooks/usePostApi';
+import { getTicketTipes } from '@/services/getTicketTipes';
 
 const Editor = dynamic(() => import('./editor'), {
   ssr: false
 });
 
-
-const prioridades = [
-  {id: 1, name: 'Baixa'},
-  {id: 2, name: 'Moderada'},
-  {id: 3, name: 'Alta'},
-  {id: 4, name: 'Urgente'}
-]
-
 export function NewTask() {
+  const [editorContent, setEditorContent] = useState("");
   const [openForm, setOpenForm] = useState(false);
   const methods = useForm();
-  const { register, handleSubmit } = methods
+  const { register, handleSubmit, control, setValue } = methods;
+
+  const {mutate, isLoading: postLoading} = usePostApi('CreateTicket', '/api/tarefa/create/');
+
+  const {data: tipes} = getTicketTipes();
 
 
-  const {'helpdeskauth.token': token} = parseCookies();
-  const headers = {
-    Authorization: `Bearer ${token}`,
-  }
+  useEffect(() => {
+    if(!postLoading){
+      setOpenForm(false)
+    }
 
-  const {data: tipes, isFetching, isLoading} = useQuery('tipes', async () => {
-    const response = await api.get('/api/tarefa/tipes/', {headers})
-
-    return response.data
-  })
+  },
+  [postLoading]
+  )
 
   function CreateTask(data){
     console.log(data);
+    mutate(data)
   }
-  
+
+  const handleEditorChange = (html) => {
+    setEditorContent(html);
+    setValue("description", html);
+  };
+
   return(
 
     <>
@@ -132,7 +121,7 @@ export function NewTask() {
                 >Tipo</label>
 
                 <DropDownSelect 
-                name="tipo"
+                name="tipe"
                 objects={tipes}
                 width="80"
                 />
@@ -145,7 +134,12 @@ export function NewTask() {
               >Prioridade</label>
                 <DropDownSelect 
                 name="prioridade"
-                objects={prioridades}
+                objects={  
+                [{id: 1, name: 'Baixa'},
+                {id: 2, name: 'Moderada'},
+                {id: 3, name: 'Alta'},
+                {id: 4, name: 'Urgente'}]
+              }
                 width="40"
                 />
               </div>
@@ -156,22 +150,40 @@ export function NewTask() {
                 className='text-sm text-gray-500'
                 >Descrição</label>
 
-                <div className='h-100'>
-                <Editor 
+                <div className='h-64'>
 
-                    />
+                <div className='h-52'>
+                  <Controller
+                  name="description"
+                  control={control}
+                  defaultValue=""
+                  render={() => (
+                    <Editor onEditorChange={handleEditorChange} />
+                  )}
+                  />
+                </div>
 
                 </div>
               </div>
 
               <div className='flex gap-2 justify-end'>
                 <button className='px-5 py-1 rounded-md'
-                onClick={() => setOpenForm(false)}
+                onClick={(e) => {
+                  e.preventDefault()
+                   setOpenForm(false)
+                  }}
                 >
                   Cancelar
                 </button>
-                <button className='px-5 py-1 rounded-md text-white bg-primary-formedica'>
-                  Salvar
+                <button className='px-5 py-1 rounded-md text-white bg-primary-formedica flex' disabled={postLoading}>
+                  
+                  {postLoading ? 
+                    <span className=' w-5 h-5 border-2 border-border-default rounded-full border-t-pink-500 animate-spin'></span>
+                    : 'Salvar'
+                  }
+                  
+
+
                 </button>
               </div>
 
