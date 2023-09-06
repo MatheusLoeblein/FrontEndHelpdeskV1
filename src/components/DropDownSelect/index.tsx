@@ -12,7 +12,7 @@ const people = [
 ]
 
 export function DropDownSelect({name, objects, width}) {
-  const [selected, setSelected] = useState(objects[0])
+  const [selected, setSelected] = useState(objects[0] ? objects[0] : 'Carregando...')
   const [query, setQuery] = useState('')
   const selection = useRef()
 

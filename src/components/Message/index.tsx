@@ -59,17 +59,20 @@ export function Message({type, message}:MessageType){
             
         <motion.div 
         className={` w-96 py-2 px-5 rounded-md border text-white border-border-default shadow-md flex text-sm items-center ${messageType.style} relative `}
-        initial={{opacity:0, scale: 0}}
-        animate={{
-          opacity: 1,
-          scale: 1, 
-        }}
-        transition={{
-          duration: 0.3
-        }}
+        initial={{opacity:0, y: -300}}
+        // animate={{
+        //   opacity: 1,
+        //   scale: 1, 
+        // }}
+        // transition={{
+        //   duration: 0.3
+        // }}
+        
+        animate={{opacity:1,  y: 0 }}
+        transition={{ type: "spring", stiffness: 200, damping: 10, duration: 0.3}}
         exit={{
           opacity: 0,
-          scale: 0, 
+          y: -300
         }}
         >
     

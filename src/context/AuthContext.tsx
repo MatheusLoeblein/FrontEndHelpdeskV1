@@ -1,10 +1,9 @@
 import { createContext, useEffect, useState } from 'react'
-import { setCookie, parseCookies } from 'nookies';
+import { setCookie, parseCookies, destroyCookie } from 'nookies';
 import Router from 'next/router'
 import jwt_decode from "jwt-decode";
-
+import { ReactNode } from 'react';
 import { api } from '../services/api'
-import { isNull } from 'util';
 
 type User = {
   profileImg: string;
@@ -16,21 +15,46 @@ type AuthContextType = {
   isAuthenticated: boolean;
   signIn: (data: SignInData) => Promise<void>
   user: User;
-  authError: string;
+  authError: string | null;
   setAuthError: () => void;
-} 
+  messages: messagesType
+  setMessages: () => void;
+  refreshToken: string | null;
+  setRefreshToken: () => void ;
+}
+
+
+type messagesType = [{
+  text: string,
+  type: string
+}] | null;
+
+
 
 type SignInData = {
   username: string;
   password: string;
-} 
+}  | null;
+
+type TokenType = {
+  'helpdeskauth.token': string
+}
+
+
+interface AuthProviderType {
+  children: ReactNode;
+}
+
+
+
 
 export const AuthContext = createContext({} as AuthContextType)
 
-export function AuthProvider({ children }) {
+export function AuthProvider({ children }: AuthProviderType) {
   const [user, setUser] = useState<User | null>(null);
+  const [refreshToken, setRefreshToken ] = useState<string | null>(null)
   const [authError, setAuthError] = useState<string | null>(null);
-  const [messages, setMessages] = useState([{}]);
+  const [messages, setMessages] = useState<messagesType>(null);
 
   const isAuthenticated = !!user;
 
@@ -40,9 +64,16 @@ export function AuthProvider({ children }) {
     
     if (token) {
 
-      api.defaults.headers['Authorization'] = `Bearer ${token}`
 
-      const {profileImg, user_id, username}:User = jwt_decode(token)
+      if (!refreshToken) {
+      destroyCookie(undefined, 'helpdeskauth.token');
+      Router.push('/')
+      }
+
+
+      const decodedToken = jwt_decode<TokenType>(token)
+
+      const {profileImg, user_id, username}:User = decodedToken
 
       setUser(
         {
@@ -68,12 +99,15 @@ export function AuthProvider({ children }) {
         maxAge: 60 * 60 * 1 // 1 hour
       })
 
-      const {profileImg, user_id, username}:User = jwt_decode(access)
+
+      setRefreshToken(refresh)
+
+      const {profileImg, user_id: userId, username}:User = jwt_decode(access)
 
       setUser(
         {
         profileImg: profileImg, 
-        userId: user_id, 
+        userId: userId, 
         username: username}
         )
       
@@ -99,7 +133,7 @@ export function AuthProvider({ children }) {
   }
   
   return(
-    <AuthContext.Provider value={{user, isAuthenticated, signIn, authError, setAuthError, messages, setMessages}}>
+    <AuthContext.Provider value={{user, isAuthenticated, signIn, authError, setAuthError, messages, setMessages, refreshToken, setRefreshToken}}>
       {children}
     </AuthContext.Provider>
   )

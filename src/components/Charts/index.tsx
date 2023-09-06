@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useQuery } from 'react-query'
-import { api } from '@/services/api';
-import { parseCookies } from 'nookies';
+import { usePrivateApi } from '@/hooks/usePrivateApi';
 
 
 const Chart = dynamic(() => import('react-apexcharts'), {
@@ -12,19 +10,16 @@ const Chart = dynamic(() => import('react-apexcharts'), {
 
 export function Charts() {
 
+  
+  const api = usePrivateApi()
   const {data, isLoading, isFetching, error} = useQuery({ 
     queryKey: 'FinalyTasksChart', 
     queryFn: async () => {
-
-      const {'helpdeskauth.token': token} = parseCookies();
-    
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-      const taskPerTipe = await api.get('/authors/api/graphs/tasks_per_tipe/', {headers})
-      const createdTasks = await api.get('/authors/api/graphs/created-tasks-result/', {headers})
-      const countStatusTask = await api.get('/authors/api/graphs/count-status-tasks/', {headers})
-      const taskPerUser = await api.get('/authors/api/graphs/tasks_finalizadas_per_user/', {headers})
+      
+      const taskPerTipe = await api.get('/authors/api/graphs/tasks_per_tipe/')
+      const createdTasks = await api.get('/authors/api/graphs/created-tasks-result/')
+      const countStatusTask = await api.get('/authors/api/graphs/count-status-tasks/')
+      const taskPerUser = await api.get('/authors/api/graphs/tasks_finalizadas_per_user/')
     
       return {
         taskPerTipe: taskPerTipe.data,
@@ -34,12 +29,10 @@ export function Charts() {
       }    
       },
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
   })
 
-
-
   const colors = ['#436EB3', '#c95e81']
-
 
   return (
 

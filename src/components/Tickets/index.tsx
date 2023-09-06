@@ -1,11 +1,13 @@
-import {api} from '../../services/api'
+import { api } from '../../services/api'
 import { format } from 'date-fns';
 import Link from 'next/link'
-import { parseCookies } from 'nookies';
 import { useEffect, useState, useRef } from 'react';
 import {useQuery} from 'react-query';
 import Image from 'next/image'
 import {AiOutlineCloseCircle, AiOutlineDownCircle  } from 'react-icons/ai'
+import { usePrivateApi } from '@/hooks/usePrivateApi';
+
+
 
 export const status = {
   'Aberto': 'bg-status-ticket-open',
@@ -29,13 +31,7 @@ export function Tickets() {
   const [openFilter, setOpenFilter] = useState(false);
   const [filter, setFilter] = useState('');
   const ticketStatusFilter = useRef(null);
-
-  const {'helpdeskauth.token': token} = parseCookies();
-
-  const headers = {
-      Authorization: `Bearer ${token}`,
-    }
-
+;
   let url = page > 1 ? `/api/tarefa/?page=${page}` : '/api/tarefa/'
 
   if(filter ){
@@ -46,9 +42,8 @@ export function Tickets() {
       url += `?status=${filter}`
     }
   }
-
-
-  const getData = (page = 1) => api.get( url, {headers});
+  const api = usePrivateApi();
+  const getData = (page = 1) => api.get(url);
 
   const {
     isLoading,
@@ -141,8 +136,8 @@ export function Tickets() {
           
           const formattedDate = format(new Date(ticket.data_up_at), 'dd/MM/yyyy HH:mm');
           return(
-          <>
-            <div className="flex flex-col py-1 border-b border-b-border-default"  key={ticket.id}>
+          <div key={ticket.id}>
+            <div className="flex flex-col py-1 border-b border-b-border-default"  >
   
             <div className="grid grid-cols-[4fr,2fr,3fr,1fr] w-full py-1 items-center">
   
@@ -240,7 +235,7 @@ export function Tickets() {
           </div>
 
 
-        </>
+        </div>
           
           )
           })

@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import { MainLayout } from '@/components/MainLayout';
-import { useEffect, useState } from 'react';
 import { api } from '@/services/api';
 import {status, prioridade} from '../../components/Tickets'
 import { format } from 'date-fns';
@@ -13,12 +12,8 @@ export default function TicketPage() {
   const router = useRouter();
 
   const {data: ticket, isFetching, error, isLoading } = useQuery('tickets', async () => {
-    const {'helpdeskauth.token': token} = parseCookies();
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
     const { id } = router.query;
-    const response = await api.get(`/api/tarefa/${id}`, {headers});
+    const response = await api.get(`/api/tarefa/${id}`,);
 
     console.log(response.data)
 

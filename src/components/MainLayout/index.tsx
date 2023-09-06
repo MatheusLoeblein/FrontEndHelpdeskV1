@@ -5,13 +5,18 @@ import { Notification } from '@/components/Notification';
 import { ProfileConf } from '@/components/ProfileConf';
 import { IoMdMenu } from 'react-icons/io';
 import { MenuSideBar } from '@/components/MenuSideBar';
-import { useContext } from 'react';
+import { ReactNode, useContext } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 import { LayoutContext } from '@/context/LayoutContext';
 import { Message } from '@/components/Message';
 import Link from 'next/link'
 
-export function MainLayout({children, props}){
+interface MainLayout {
+  children: ReactNode;
+}
+
+
+export function MainLayout({children}: MainLayout){
 
   const { menuOver } = useContext(LayoutContext);
   const { messages } = useContext(AuthContext);

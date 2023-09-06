@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import {DropDownSelect} from '../DropDownSelect'
 import { useForm, FormProvider, Controller } from 'react-hook-form';
 import React from 'react'
-import { api } from '@/services/api';
+import { usePrivateApi } from '@/hooks/usePrivateApi';
 import { useMutation, useQuery } from 'react-query';
 import { AuthContext } from '@/context/AuthContext';
 
@@ -21,12 +21,13 @@ export function NewTask() {
   const methods = useForm();
   const { register, handleSubmit, control, setValue } = methods;
 
-  const {mutate, isLoading: postLoading, isSuccess} = useMutation('CreateTicket', async (data) => {
+  const {mutate, isLoading: postLoading, isSuccess, data: teste} = useMutation('CreateTicket', async (data) => {
     const response = await api.post('/api/tarefa/create/', data)
+    
     return response.data
   }
   )
-
+  const api = usePrivateApi()
   const {data: tipes} = useQuery('tipes', async () => {
     const response = await api.get('/api/tarefa/tipes/')
     return response.data
@@ -54,6 +55,7 @@ export function NewTask() {
   function CreateTask(data){
     console.log(data);
     mutate(data)
+    console.log(teste)
   }
 
   const handleEditorChange = (html) => {
@@ -66,7 +68,7 @@ export function NewTask() {
     <>
       { !openForm &&
         <div 
-        className='fixed bottom-5 right-5 bg-white px-7 py-2 border border-border-default rounded-lg shadow-md cursor-pointer'
+        className='fixed bottom-10 right-10 bg-white px-7 py-2 border border-border-default rounded-lg shadow-md cursor-pointer'
         onClick={() => setOpenForm(true)}
         
         >
@@ -91,12 +93,12 @@ export function NewTask() {
           exit={{
             opacity: 0, 
           }}
-        className='fixed flex  justify-center items-center bottom-0 right-0 left-0 top-0 bg-[#00000070]  px-7 py-2 border border-border-default rounded-lg shadow-md'>
+        className='fixed flex  justify-center items-center bottom-0 right-0 left-0 top-0 bg-[#0000006b] backdrop-opacity-100 backdrop-blur-lg px-7 py-2 border border-border-default rounded-lg shadow-md'>
           <motion.form
           onSubmit={handleSubmit(CreateTask)}
-          className='w-1/3 h-3/4 bg-white rounded-md shadow-md border text-sm border-border-default py-5 px-8 space-y-4' 
+          className='w-[550px] h-[660px]  bg-white rounded-md shadow-md border text-sm border-border-default py-5 px-8 space-y-4' 
           initial={{  
-            x: 2000,
+            x: 2500,
             y: 1000,           
             opacity: 0, 
             scale: 0 
@@ -104,17 +106,17 @@ export function NewTask() {
           animate={{
             x: 0,
             y: 0,
-            scale: 1,
+            scale: [0, 0.1, 0.1, 0.2, 0.3, 0.4, 1],
             opacity: 1,
           }} 
           transition={{
             duration: 0.5
           }}
           exit={{
-            x: 1000,
+            x: 2500,
             y: 500,
             opacity: 0, 
-            scale: 0
+            scale: [1 , 0.4, 0.3, 0.2, 0.1, 0.1, 0],
           }}
           >
             <FormProvider {...methods}>
@@ -186,15 +188,20 @@ export function NewTask() {
               </div>
 
               <div className='flex gap-2 justify-end'>
-                <button className='px-5 py-1 rounded-md'
+                <motion.button className='px-5 py-1 rounded-md'
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 onClick={(e) => {
                   e.preventDefault()
                    setOpenForm(false)
                   }}
                 >
                   Cancelar
-                </button>
-                <button className='px-5 py-1 rounded-md text-white bg-primary-formedica flex' disabled={postLoading}>
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                className='px-5 py-1 rounded-md text-white bg-primary-formedica flex' disabled={postLoading}>
                   
                   {postLoading ? 
                     <span className=' w-5 h-5 border-2 border-border-default rounded-full border-t-pink-500 animate-spin'></span>
@@ -203,7 +210,7 @@ export function NewTask() {
                   
 
 
-                </button>
+                </motion.button>
               </div>
 
             </FormProvider>

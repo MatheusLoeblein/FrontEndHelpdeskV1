@@ -22,7 +22,9 @@ export function LayoutProvider ({ children }) {
     
     function handleMenuOver(value){
         setMenuOver(value);
-        setCookie(undefined, 'helpdeskLayout.MenuOver', value.toString())
+        setCookie(undefined, 'helpdeskLayout.MenuOver', value.toString(), {
+            maxAge: 60 * 60 * 24 * 365
+        })
     }
 
     return(

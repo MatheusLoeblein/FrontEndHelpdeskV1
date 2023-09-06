@@ -1,12 +1,11 @@
 import axios from 'axios';
-import { parseCookies } from 'nookies';
 
-const { 'helpdeskauth.token': token } = parseCookies();
+const URL = 'http://127.0.0.1:8000'
 
-export const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000'
+export const privateApi = axios.create({
+  baseURL: URL
 });
 
-if (token) {
-    api.defaults.headers['Authorization'] = `Bearer ${token}`;
-}
+export const api = axios.create({
+  baseURL: URL
+});
