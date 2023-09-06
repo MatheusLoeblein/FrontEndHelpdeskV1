@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from "framer-motion"
 import './quill-bubble-custom.css';
 import dynamic from 'next/dynamic';
@@ -7,6 +7,7 @@ import { useForm, FormProvider, Controller } from 'react-hook-form';
 import React from 'react'
 import { api } from '@/services/api';
 import { useMutation, useQuery } from 'react-query';
+import { AuthContext } from '@/context/AuthContext';
 
 
 const Editor = dynamic(() => import('./editor'), {
@@ -16,10 +17,11 @@ const Editor = dynamic(() => import('./editor'), {
 export function NewTask() {
   const [editorContent, setEditorContent] = useState("");
   const [openForm, setOpenForm] = useState(false);
+  const {setMessages} = useContext(AuthContext)
   const methods = useForm();
   const { register, handleSubmit, control, setValue } = methods;
 
-  const {mutate, isLoading: postLoading} = useMutation('CreateTicket', async (data) => {
+  const {mutate, isLoading: postLoading, isSuccess} = useMutation('CreateTicket', async (data) => {
     const response = await api.post('/api/tarefa/create/', data)
     return response.data
   }
@@ -34,14 +36,19 @@ export function NewTask() {
   }
   )
 
-
   useEffect(() => {
-    if(!postLoading){
+    if(!postLoading && isSuccess){
       setOpenForm(false)
+      if (isSuccess){
+        setMessages([{
+          text: "Ticket criado com sucesso!",
+          type: "success"
+        }])
+      }
     }
 
   },
-  [postLoading]
+  [postLoading, isSuccess, setMessages]
   )
 
   function CreateTask(data){
