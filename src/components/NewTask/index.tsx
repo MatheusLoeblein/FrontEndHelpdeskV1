@@ -97,26 +97,17 @@ export function NewTask() {
           <motion.form
           onSubmit={handleSubmit(CreateTask)}
           className='w-[550px] h-[660px]  bg-white rounded-md shadow-md border text-sm border-border-default py-5 px-8 space-y-4' 
-          initial={{  
-            x: 2500,
-            y: 1000,           
+          initial={{          
             opacity: 0, 
             scale: 0 
           }}
           animate={{
-            x: 0,
-            y: 0,
-            scale: [0, 0.1, 0.1, 0.2, 0.3, 0.4, 1],
+            scale: 1,
             opacity: 1,
           }} 
-          transition={{
-            duration: 0.5
-          }}
           exit={{
-            x: 2500,
-            y: 500,
             opacity: 0, 
-            scale: [1 , 0.4, 0.3, 0.2, 0.1, 0.1, 0],
+            scale: 0,
           }}
           >
             <FormProvider {...methods}>

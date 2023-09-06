@@ -46,8 +46,6 @@ interface AuthProviderType {
 }
 
 
-
-
 export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }: AuthProviderType) {

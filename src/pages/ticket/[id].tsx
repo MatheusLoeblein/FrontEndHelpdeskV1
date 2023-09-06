@@ -1,18 +1,19 @@
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { MainLayout } from '@/components/MainLayout';
-import { api } from '@/services/api';
 import {status, prioridade} from '../../components/Tickets'
 import { format } from 'date-fns';
 import { useQuery } from 'react-query'
 import { parseCookies } from 'nookies';
 import Image from 'next/image';
-
+import { usePrivateApi } from '@/hooks/usePrivateApi';
 
 export default function TicketPage() {
   const router = useRouter();
 
   const {data: ticket, isFetching, error, isLoading } = useQuery('tickets', async () => {
     const { id } = router.query;
+    const api = usePrivateApi()
     const response = await api.get(`/api/tarefa/${id}`,);
 
     console.log(response.data)
@@ -195,7 +196,6 @@ export default function TicketPage() {
   );
 }
 
-import { GetServerSideProps } from 'next';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { 'helpdeskauth.token': token } = parseCookies(ctx)

@@ -10,6 +10,7 @@ import { AuthContext } from '@/context/AuthContext';
 import { LayoutContext } from '@/context/LayoutContext';
 import { Message } from '@/components/Message';
 import Link from 'next/link'
+import { getServerSideProps } from '@/pages';
 
 interface MainLayout {
   children: ReactNode;
@@ -74,4 +75,3 @@ export function MainLayout({children}: MainLayout){
   </>
   )
 }
-
