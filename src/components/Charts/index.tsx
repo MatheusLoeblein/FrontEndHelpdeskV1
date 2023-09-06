@@ -37,11 +37,6 @@ export function Charts() {
   })
 
 
-  useEffect(() => {
-    console.log(data)
-
-  }, [isFetching])
-  
 
   const colors = ['#436EB3', '#c95e81']
 

@@ -5,8 +5,9 @@ import dynamic from 'next/dynamic';
 import {DropDownSelect} from '../DropDownSelect'
 import { useForm, FormProvider, Controller } from 'react-hook-form';
 import React from 'react'
-import { usePostApi } from '@/hooks/usePostApi';
-import { getTicketTipes } from '@/services/getTicketTipes';
+import { api } from '@/services/api';
+import { useMutation, useQuery } from 'react-query';
+
 
 const Editor = dynamic(() => import('./editor'), {
   ssr: false
@@ -18,9 +19,20 @@ export function NewTask() {
   const methods = useForm();
   const { register, handleSubmit, control, setValue } = methods;
 
-  const {mutate, isLoading: postLoading} = usePostApi('CreateTicket', '/api/tarefa/create/');
+  const {mutate, isLoading: postLoading} = useMutation('CreateTicket', async (data) => {
+    const response = await api.post('/api/tarefa/create/', data)
+    return response.data
+  }
+  )
 
-  const {data: tipes} = getTicketTipes();
+  const {data: tipes} = useQuery('tipes', async () => {
+    const response = await api.get('/api/tarefa/tipes/')
+    return response.data
+  },
+  {
+    refetchOnWindowFocus: false,
+  }
+  )
 
 
   useEffect(() => {

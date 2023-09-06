@@ -68,7 +68,7 @@ export function Tickets() {
       setTickets(data?.data?.results)
       console.log('Tickets', tickets)
     }
-  }, [data])
+  }, [data, tickets])
 
   function handleFilter(filter){
     setPage(1)

@@ -41,6 +41,7 @@ export function Message({type, message}:MessageType){
 
   const messageType = types[type] || types.info;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const interval = setInterval(() => {
       setClose(true)
@@ -50,7 +51,7 @@ export function Message({type, message}:MessageType){
 
     return () => clearInterval(interval);
     
-  }, [])
+  }, [setMessages])
 
   return(
     <AnimatePresence>

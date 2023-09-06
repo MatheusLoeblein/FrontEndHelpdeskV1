@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useState, useRef } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
@@ -14,13 +14,13 @@ const people = [
 export function DropDownSelect({name, objects, width}) {
   const [selected, setSelected] = useState(objects[0])
   const [query, setQuery] = useState('')
+  const selection = useRef()
 
   const {register} = useFormContext()
 
-  let selection = selected.name;
 
   useEffect(() => {
-    selection = selected.name
+    selection.current = selected.name
   },[selected])
 
   const filteredPeople =
@@ -50,7 +50,7 @@ export function DropDownSelect({name, objects, width}) {
               
             />
             <input type="text"
-            value={selection}
+            value={selection.current}
             className='hidden'
             {...register(name)}
             />
