@@ -1,16 +1,11 @@
 import { api } from '@/services/api';
 import { useAuth } from './useAuth';
-import { setCookie, destroyCookie } from 'nookies';
-import { Router } from 'next/router';
+import { setCookie } from 'nookies';
+
 
 export function useRefreshToken() {
 
   const {refreshToken} = useAuth();
-
-  // if (!refreshToken) {
-  //   destroyCookie(undefined, 'helpdeskauth.token');
-  //   Router.push('/')
-  // }
 
   const getNewToken = async () => {
     console.log('TOKEN NO SCOPO', refreshToken) 

@@ -18,7 +18,7 @@ type AuthContextType = {
   authError: string | null;
   setAuthError: () => void;
   messages: messagesType
-  setMessages: () => void;
+  setMessages: (message:messagesType) => void;
   refreshToken: string | null;
   setRefreshToken: () => void ;
 }

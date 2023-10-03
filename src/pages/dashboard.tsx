@@ -4,6 +4,7 @@ import { Tickets } from '@/components/Tickets';
 import { MainLayout } from '@/components/MainLayout';
 import { Charts } from '@/components/Charts';
 import { NewTask } from '@/components/NewTask';
+import { NewTaskProvider } from '@/context/NewTaskContext';
 
 
 
@@ -16,8 +17,11 @@ export default function dashboard() {
         <section id='dash' className="flex flex-col gap-4">
           <Charts/>
 
-          <Tickets/>          
-          <NewTask/>
+          <Tickets/>
+          
+          <NewTaskProvider>
+            <NewTask/>
+          </NewTaskProvider> 
 
         </section>
         

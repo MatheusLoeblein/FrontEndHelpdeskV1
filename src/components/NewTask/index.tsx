@@ -8,7 +8,7 @@ import React from 'react'
 import { usePrivateApi } from '@/hooks/usePrivateApi';
 import { useMutation, useQuery } from 'react-query';
 import { AuthContext } from '@/context/AuthContext';
-
+import { TaskFields } from "../TaskFields"
 
 const Editor = dynamic(() => import('./editor'), {
   ssr: false
@@ -18,6 +18,7 @@ export function NewTask() {
   const [editorContent, setEditorContent] = useState("");
   const [openForm, setOpenForm] = useState(false);
   const {setMessages} = useContext(AuthContext)
+  
   const methods = useForm();
   const { register, handleSubmit, control, setValue } = methods;
 
@@ -67,17 +68,19 @@ export function NewTask() {
 
     <>
       { !openForm &&
-        <div 
+        <motion.div 
+        whileHover={{ scale: 1.05 }}
+        transition={{ type: "spring", stiffness: 400, damping: 10 }}
         className='fixed bottom-10 right-10 bg-white px-7 py-2 border border-border-default rounded-lg shadow-md cursor-pointer'
         onClick={() => setOpenForm(true)}
         
         >
           <h2 className='text-lg text-primary-formedica font-medium'>Abrir Ticket</h2>
-        </div>
+        </motion.div>
       }
       <AnimatePresence>
       {
-
+        
         openForm &&
 
 
@@ -93,25 +96,31 @@ export function NewTask() {
           exit={{
             opacity: 0, 
           }}
-        className='fixed flex  justify-center items-center bottom-0 right-0 left-0 top-0 bg-[#0000006b] backdrop-opacity-100 backdrop-blur-lg px-7 py-2 border border-border-default rounded-lg shadow-md'>
+        className='fixed flex justify-center items-center bottom-0 right-0 left-0 top-0 bg-[#0000006b] backdrop-opacity-100 backdrop-blur-lg px-7 py-2 border border-border-default rounded-lg shadow-md'>
+          
+          <div className='flex flex-row m-auto space-x-5'>
+
           <motion.form
           onSubmit={handleSubmit(CreateTask)}
-          className='w-[550px] h-[660px]  bg-white rounded-md shadow-md border text-sm border-border-default py-5 px-8 space-y-4' 
-          initial={{          
-            opacity: 0, 
-            scale: 0 
-          }}
-          animate={{
-            scale: 1,
-            opacity: 1,
-          }} 
-          exit={{
-            opacity: 0, 
-            scale: 0,
-          }}
+          className=''
           >
             <FormProvider {...methods}>
-              <h2 className='text-xl font-medium'>Abrir Ticket</h2>
+              <motion.div
+                className='w-[550px] h-[660px]  bg-white rounded-md shadow-md border text-sm border-border-default py-5 px-8 space-y-4' 
+                initial={{          
+                  opacity: 0, 
+                  scale: 0 
+                }}
+                animate={{
+                  scale: 1,
+                  opacity: 1,
+                }} 
+                exit={{
+                  opacity: 0, 
+                  scale: 0,
+                }}
+              >
+              <h2 className='text-xl font-medium'>Abrir Ticket </h2>
 
               <div className='flex flex-col space-y-2'>
                 <label 
@@ -121,7 +130,7 @@ export function NewTask() {
                 >Título</label>
                 <input 
                 type="text"
-                className='py-1 px-3 h-8 w-96 rounded-md border border-border-default shadow-sm'
+                className='py-1 px-3 h-8 w-96 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1'
                 {...register('titulo') }
                 />
               </div>
@@ -136,6 +145,7 @@ export function NewTask() {
                 name="tipe"
                 objects={tipes}
                 width="80"
+                registerSelected={true}
                 />
               </div>
 
@@ -184,7 +194,7 @@ export function NewTask() {
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 onClick={(e) => {
                   e.preventDefault()
-                   setOpenForm(false)
+                  setOpenForm(false)
                   }}
                 >
                   Cancelar
@@ -203,11 +213,17 @@ export function NewTask() {
 
                 </motion.button>
               </div>
-
+              </motion.div>
             </FormProvider>
-
           </motion.form>
+
+
+          <TaskFields/>
+          </div>
+
+
         </motion.div >
+
       }
       </AnimatePresence>
       

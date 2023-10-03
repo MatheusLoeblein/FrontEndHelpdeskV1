@@ -1,26 +1,24 @@
-import { Fragment, useEffect, useState, useRef } from 'react'
+import { Fragment, useEffect, useState, useRef, useContext } from 'react'
+import {NewTaskContext} from '../../context/NewTaskContext'
 import { Combobox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
 import {useFormContext} from 'react-hook-form'
 
-const people = [
-  { id: 1, name: 'Baixa' },
-  { id: 2, name: 'Moderada' },
-  { id: 3, name: 'Alta' },
-  { id: 4, name: 'Urgente' },
-]
 
-export function DropDownSelect({name, objects, width}) {
+export function DropDownSelect({name, objects, width, registerSelected = false}) {
   const [selected, setSelected] = useState(objects[0] ? objects[0] : 'Carregando...')
   const [query, setQuery] = useState('')
-  const selection = useRef()
+  const selection = useRef(objects[0].name)
+  const { setType } = useContext(NewTaskContext);
 
   const {register} = useFormContext()
 
-
   useEffect(() => {
     selection.current = selected.name
+    if(registerSelected){
+      setType(selected.name)
+    }
   },[selected])
 
   const filteredPeople =
@@ -44,15 +42,13 @@ export function DropDownSelect({name, objects, width}) {
               className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 outline-none "
               displayValue={(person) => person.name}
               {...register(name, {
-                onChange: (event) => setQuery(event.target.value)
+                onChange: (event) => setQuery(event.target.value),
+                defaultValue: objects[0].name
               })}
+
+              defaultValue={objects[0].name}
               
               
-            />
-            <input type="text"
-            value={selection.current}
-            className='hidden'
-            {...register(name)}
             />
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon

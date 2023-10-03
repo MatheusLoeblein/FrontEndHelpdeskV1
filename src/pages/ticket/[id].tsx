@@ -11,15 +11,14 @@ import { usePrivateApi } from '@/hooks/usePrivateApi';
 export default function TicketPage() {
   const router = useRouter();
 
+  const api = usePrivateApi()
+  
   const {data: ticket, isFetching, error, isLoading } = useQuery('tickets', async () => {
     const { id } = router.query;
-    const api = usePrivateApi()
     const response = await api.get(`/api/tarefa/${id}`,);
 
     console.log(response.data)
 
-
-    
     return response.data;
     
   })

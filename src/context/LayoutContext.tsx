@@ -1,8 +1,6 @@
 import { createContext, useState, useEffect } from 'react'
 import { parseCookies, setCookie } from 'nookies'
 
-
-
 export const LayoutContext = createContext({});
 
 export function LayoutProvider ({ children }) {
@@ -10,13 +8,11 @@ export function LayoutProvider ({ children }) {
     const [menuOver, setMenuOver] = useState(false);
     const [pageLoading, setPageLoading] = useState(false);
 
-
     useEffect(() => {
         const {'helpdeskLayout.MenuOver': over} = parseCookies()
         if(over){
             setMenuOver(over === 'true');
         }
-
 
     }, [])
     
