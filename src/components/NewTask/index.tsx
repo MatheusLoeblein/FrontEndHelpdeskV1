@@ -8,7 +8,11 @@ import React from 'react'
 import { usePrivateApi } from '@/hooks/usePrivateApi';
 import { useMutation, useQuery } from 'react-query';
 import { AuthContext } from '@/context/AuthContext';
-import { TaskFields } from "../TaskFields"
+import { TaskFields, handleEdit } from "../TaskFields"
+import { NewTaskContext } from '@/context/NewTaskContext';
+import { MdModeEditOutline } from 'react-icons/md'
+import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
+import { Turret_Road } from 'next/font/google';
 
 const Editor = dynamic(() => import('./editor'), {
   ssr: false
@@ -18,6 +22,7 @@ export function NewTask() {
   const [editorContent, setEditorContent] = useState("");
   const [openForm, setOpenForm] = useState(false);
   const {setMessages} = useContext(AuthContext)
+  const { addtionalData, setEditIndex, setAddtionalData, setOpen } = useContext(NewTaskContext)
   
   const methods = useForm();
   const { register, handleSubmit, control, setValue } = methods;
@@ -106,7 +111,7 @@ export function NewTask() {
           >
             <FormProvider {...methods}>
               <motion.div
-                className='w-[550px] h-[660px]  bg-white rounded-md shadow-md border text-sm border-border-default py-5 px-8 space-y-4' 
+                className='w-[550px]   bg-white rounded-md shadow-md border text-sm border-border-default py-5 px-8 space-y-4' 
                 initial={{          
                   opacity: 0, 
                   scale: 0 
@@ -185,6 +190,55 @@ export function NewTask() {
                   />
                 </div>
 
+                </div>
+              </div>
+
+              <div className='border-b border-b-border-default'>
+                <div className='flex justify-between'>
+                  <span>Medicos </span>
+                  <motion.div 
+                      className=' w-7 h-7 border border-border-default rounded-md shadow-md p-1 flex justify-center items-center text-primary-formedica cursor-pointer'
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      onClick={() => setOpen(true)}
+                    >
+                  <IoMdAddCircle size={20}/>
+                  </motion.div>
+                </div>
+
+
+                <div className='grid grid-cols-2 py-2 max-w-full text-xs gap-2'>
+                    {
+                      addtionalData.map((data, index) => {
+                        return(
+                          <div className='flex flex-row border border-border-default rounded-md shadow-md justify-between' key={index}>
+                            <span className='border-r border-r-border-default py-1 px-2'>CRM</span>
+                            <span className='py-1 px-2'>{data.crm}</span>
+                            <div className='flex justify-center items-center py-1 px-2 space-x-2'>
+                              <motion.span 
+                              className=' text-primary-formedica'
+                              whileHover={{ scale: 1.1 }}
+                              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                              onClick={() => setEditIndex(index)}
+                              ><MdModeEditOutline size={15}/></motion.span>
+                              <motion.span 
+                              className='text-red-500'
+                              whileHover={{ scale: 1.1 }}
+                              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                              onClick={() => {
+                                const updatedData = [...addtionalData];
+                                updatedData.splice(index, 1);
+                                setAddtionalData(updatedData);
+                              }}
+                              >
+                              <IoMdClose size={15}/></motion.span>
+                              
+                            </div>
+    
+                          </div>
+                        )
+                      })
+                    }
                 </div>
               </div>
 

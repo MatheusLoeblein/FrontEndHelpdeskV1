@@ -1,18 +1,29 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useEffect, useContext } from 'react';
 import { NewTaskContext } from '@/context/NewTaskContext';
-
+import axios from 'axios';
 import { useForm  } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-
-import { object, string, number } from 'yup';
+import { object, string } from 'yup';
 
 export function TaskFields() {
+  const [searchCep, setSearchCep] = useState(false)
+  const {
+    type, 
+    addtionalData, setAddtionalData,
+    open, setOpen,
+    editIndex, setEditIndex
+  } = useContext(NewTaskContext);
+
+
+  useEffect(() => {
+    setOpen(type == "Fórmula Certa - (Cadastro Médicos).")
+  }, [type])
 
   const schema = object({
     nome: string().required("Campo obrigatório."),
     crm: string().required("Campo obrigatório.").matches(/^\d{5,10}-[A-Z]{2}$/, "O CRM precisar conter de 5 a 10 numeros e a UF em maiusculo reparados por um traço ex: 343241-PR"),
-    cep: string().required("Campo obrigatório.").matches(/^\d{5}-{3}$/, "O CEP incorretor, ex: 81136-845"),
+    cep: string().required("Campo obrigatório.").max(9, 'Tamanho maximo de 9 caracteres'),
     endereco: string().required("Campo obrigatório."),
     telefone: string(),
     especialidade: string().required("Campo obrigatório."),
@@ -22,26 +33,83 @@ export function TaskFields() {
   const { 
     register, 
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    setValue,
+    setError, 
+    clearErrors,
+    reset
   
   } = useForm({
     resolver: yupResolver(schema)
   });
 
-  const {type} = useContext(NewTaskContext);
+  function getCepInfo(value){
+    setSearchCep(true)
+    clearErrors('cep')
+    const numbAndT = /^\d{5}-\d{3}$/
+    const numb = /^\d{8}$/
+    if(numbAndT.test(value) || numb.test(value)){
+      const cep = value.replace(/\D/g, '')
+      axios.get(`https://viacep.com.br/ws/${cep}/json/`).then(
+        response => {
+          console.log("cepDDDataaa", response.data)
+          if (!response.data.erro){
+            setValue('endereco', `${response.data.logradouro}, ${response.data.bairro}, ${response.data.localidade} - ${response.data.uf}`)
+          }else{
+            setValue('endereco', '')
+            setError('cep', {
+              type: 'api',
+              message: 'Cep não encontrado.'
+            });
 
-  function saveData(data){
-    
-    console.log(data)
-     
+          }
+        }
+      ).catch(
+
+      ).finally(
+        setSearchCep(false)
+      )
+    }
+    if(value.length < 1){
+      setSearchCep(false)
+    }
   }
-  console.log(errors)  
+
+
+  function saveData(data) {
+    if (editIndex !== -1) {
+      const updatedData = [...addtionalData];
+      updatedData[editIndex] = data;
+      setAddtionalData(updatedData);
+      setEditIndex(-1);
+    } else {
+      setAddtionalData((prevData) => [...prevData, data]);
+    }
+    setOpen(false);
+    reset();
+  }
+
+ 
+  useEffect(() => {
+    if(editIndex != -1){
+      const dataToEdit = addtionalData[editIndex];
+      setValue('nome', dataToEdit.nome); 
+      setValue('crm', dataToEdit.crm);
+      setValue('cep', dataToEdit.cep);
+      setValue('endereco', dataToEdit.endereco);
+      setValue('telefone', dataToEdit.telefone);
+      setValue('especialidade', dataToEdit.especialidade);
+      setValue('email', dataToEdit.email);
+      setOpen(true);
+    }
+  }, [editIndex, setEditIndex])
+  
 
   return(
 
     <AnimatePresence>
     {
-      type == "Fórmula Certa - (Cadastro Médicos)." &&
+      open &&
 
       <motion.div className='w-[450px] flex flex-col space-y-5 h-max'
       initial={{       
@@ -103,21 +171,24 @@ export function TaskFields() {
         <div className='flex flex-col space-y-2'>
           <label 
           htmlFor=""
-          className='text-sm text-gray-500'
+          className='text-sm text-gray-500 '
           
           >CEP</label>
           <input 
           type="text"
           className='py-1 px-3 h-8 w-40 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1'
-          {...register('cep') }
-          
+          {...register('cep', {
+            onChange: (event) => getCepInfo(event.target.value)
+          }) }
           />
+         
           <span className='text-xs text-red-400'>
           {errors?.cep?.message}
+          
           </span>
         </div>
       </div>
-      <div className='flex flex-col space-y-2'>
+      <div className='flex flex-col space-y-2 relative'>
         <label 
         htmlFor=""
         className='text-sm text-gray-500'
@@ -125,9 +196,13 @@ export function TaskFields() {
         >Endereço</label>
         <input 
         type="text"
-        className='py-1 px-3 h-8 w-96 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1'
-        {...register('endereco') }
+        className={`py-1 px-3 ${searchCep && 'pr-8'} h-8 w-96 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1`}
+        {...register('endereco')}
+        defaultValue={'Teste'}
         />
+          {
+            searchCep && <span className="w-5 h-5 border-[3px] border-gray-400 border-t-primary-formedica rounded-full right-2 top-[25px] absolute animate-spin"></span>
+          }
           <span className='text-xs text-red-400'>
           {errors?.endereco?.message}
           </span>
