@@ -8,24 +8,51 @@ import React from 'react'
 import { usePrivateApi } from '@/hooks/usePrivateApi';
 import { useMutation, useQuery } from 'react-query';
 import { AuthContext } from '@/context/AuthContext';
-import { TaskFields, handleEdit } from "../TaskFields"
+import { TaskFields } from "../TaskFields"
 import { NewTaskContext } from '@/context/NewTaskContext';
-import { MdModeEditOutline } from 'react-icons/md'
-import { IoMdClose, IoMdAddCircle } from 'react-icons/io'
-import { Turret_Road } from 'next/font/google';
+import { LayoutContext } from '@/context/LayoutContext'; 
+import { MiniMenu } from '../TaskFields/MiniMenu';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { object, string } from 'yup';
 
 const Editor = dynamic(() => import('./editor'), {
   ssr: false
 });
 
 export function NewTask() {
-  const [editorContent, setEditorContent] = useState("");
-  const [openForm, setOpenForm] = useState(false);
-  const {setMessages} = useContext(AuthContext)
-  const { addtionalData, setEditIndex, setAddtionalData, setOpen } = useContext(NewTaskContext)
+  const [ editorContent, setEditorContent ] = useState("");
+  const [ openForm, setOpenForm ] = useState(false);
+  const { setMessages } = useContext(AuthContext);
+  const { menuOver } = useContext(LayoutContext);
+
+  const { addtionalData, 
+    setEditIndex, setAddtionalData, 
+    setOpen, type, 
+    setFormError, formError,
+    requiredFieldsPerType
+  } = useContext(NewTaskContext)
+
+  function removeHTMLTags(input) {
+    return input.replace(/<[^>]*>/g, '');
+  }
   
-  const methods = useForm();
-  const { register, handleSubmit, control, setValue } = methods;
+  const schema = object({
+    titulo: string().required("Campo obrigatório."),
+    description: string()
+      .required("Campo obrigatório.")
+      .test('minimum-text', 'Descrição deve conter pelo menos 25 caracteres.', (value) => {
+        const textWithoutHTML = removeHTMLTags(value);
+        return textWithoutHTML.length >= 25;
+      })
+  });
+  
+  const methods = useForm(
+    {
+      resolver: yupResolver(schema)
+    }
+  );
+
+  const { register, handleSubmit, control, setValue, formState: { errors }, clearErrors, reset } = methods;
 
   const {mutate, isLoading: postLoading, isSuccess, data: teste} = useMutation('CreateTicket', async (data) => {
     const response = await api.post('/api/tarefa/create/', data)
@@ -33,13 +60,14 @@ export function NewTask() {
     return response.data
   }
   )
+
   const api = usePrivateApi()
   const {data: tipes} = useQuery('tipes', async () => {
     const response = await api.get('/api/tarefa/tipes/')
     return response.data
   },
   {
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: false,    
   }
   )
 
@@ -53,14 +81,25 @@ export function NewTask() {
         }])
       }
     }
-
   },
   [postLoading, isSuccess, setMessages]
   )
 
   function CreateTask(data){
+    if(requiredFieldsPerType.includes(type)){
+      if(addtionalData.length >= 1){
+        const dataGroup = { ...data, addtionalData} 
+        // mutate(dataGroup)
+        console.log(dataGroup);
+        console.log(teste)
+      }else{
+        setFormError(true)
+      }
+      return
+    }
+    // mutate(data)
     console.log(data);
-    mutate(data)
+    console.log(addtionalData)
     console.log(teste)
   }
 
@@ -78,7 +117,6 @@ export function NewTask() {
         transition={{ type: "spring", stiffness: 400, damping: 10 }}
         className='fixed bottom-10 right-10 bg-white px-7 py-2 border border-border-default rounded-lg shadow-md cursor-pointer'
         onClick={() => setOpenForm(true)}
-        
         >
           <h2 className='text-lg text-primary-formedica font-medium'>Abrir Ticket</h2>
         </motion.div>
@@ -87,7 +125,6 @@ export function NewTask() {
       {
         
         openForm &&
-
 
         <motion.div 
           initial={{             
@@ -101,7 +138,7 @@ export function NewTask() {
           exit={{
             opacity: 0, 
           }}
-        className='fixed flex justify-center items-center bottom-0 right-0 left-0 top-0 bg-[#0000006b] backdrop-opacity-100 backdrop-blur-lg px-7 py-2 border border-border-default rounded-lg shadow-md'>
+        className={`fixed flex justify-center items-center mt-20 ${menuOver ? ' ml-16' : 'ml-72' } bottom-0 right-0 left-0 top-0 bg-[#0000006b] backdrop-opacity-100 backdrop-blur-lg px-7 py-2 border border-border-default shadow-md`}>
           
           <div className='flex flex-row m-auto space-x-5'>
 
@@ -135,9 +172,12 @@ export function NewTask() {
                 >Título</label>
                 <input 
                 type="text"
-                className='py-1 px-3 h-8 w-96 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1'
+                className='py-1 px-3 h-9 w-96 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1'
                 {...register('titulo') }
                 />
+                <span className='text-red-500 text-xs'>
+                  {errors?.titulo?.message}
+                </span>
               </div>
 
               <div className='flex flex-col space-y-2'>
@@ -191,56 +231,15 @@ export function NewTask() {
                 </div>
 
                 </div>
+                <span className='text-red-500 text-xs'>
+                  {errors?.description?.message}
+                </span>
               </div>
 
-              <div className='border-b border-b-border-default'>
-                <div className='flex justify-between'>
-                  <span>Medicos </span>
-                  <motion.div 
-                      className=' w-7 h-7 border border-border-default rounded-md shadow-md p-1 flex justify-center items-center text-primary-formedica cursor-pointer'
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                      onClick={() => setOpen(true)}
-                    >
-                  <IoMdAddCircle size={20}/>
-                  </motion.div>
-                </div>
-
-
-                <div className='grid grid-cols-2 py-2 max-w-full text-xs gap-2'>
-                    {
-                      addtionalData.map((data, index) => {
-                        return(
-                          <div className='flex flex-row border border-border-default rounded-md shadow-md justify-between' key={index}>
-                            <span className='border-r border-r-border-default py-1 px-2'>CRM</span>
-                            <span className='py-1 px-2'>{data.crm}</span>
-                            <div className='flex justify-center items-center py-1 px-2 space-x-2'>
-                              <motion.span 
-                              className=' text-primary-formedica'
-                              whileHover={{ scale: 1.1 }}
-                              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                              onClick={() => setEditIndex(index)}
-                              ><MdModeEditOutline size={15}/></motion.span>
-                              <motion.span 
-                              className='text-red-500'
-                              whileHover={{ scale: 1.1 }}
-                              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                              onClick={() => {
-                                const updatedData = [...addtionalData];
-                                updatedData.splice(index, 1);
-                                setAddtionalData(updatedData);
-                              }}
-                              >
-                              <IoMdClose size={15}/></motion.span>
-                              
-                            </div>
-    
-                          </div>
-                        )
-                      })
-                    }
-                </div>
-              </div>
+              {
+                addtionalData.length > 0 &&
+                <MiniMenu/>
+              }
 
               <div className='flex gap-2 justify-end'>
                 <motion.button className='px-5 py-1 rounded-md'
@@ -249,6 +248,7 @@ export function NewTask() {
                 onClick={(e) => {
                   e.preventDefault()
                   setOpenForm(false)
+                  reset()
                   }}
                 >
                   Cancelar
@@ -263,8 +263,6 @@ export function NewTask() {
                     : 'Salvar'
                   }
                   
-
-
                 </motion.button>
               </div>
               </motion.div>

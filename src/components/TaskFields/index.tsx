@@ -1,288 +1,38 @@
-import { motion, AnimatePresence } from "framer-motion"
-import { useState, useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { NewTaskContext } from '@/context/NewTaskContext';
-import axios from 'axios';
-import { useForm  } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { object, string } from 'yup';
+
+import { NewMed } from './NewMed';
+import { NewColab } from './NewColab';
+import { DelReq } from './DelReq';
 
 export function TaskFields() {
-  const [searchCep, setSearchCep] = useState(false)
+  const context = useContext(NewTaskContext);
   const {
     type, 
     addtionalData, setAddtionalData,
     open, setOpen,
-    editIndex, setEditIndex
-  } = useContext(NewTaskContext);
+    editIndex, setEditIndex,
+  } = context
 
+  const formTypes = {
+    "Fórmula Certa - (Cadastro Médicos).": <NewMed/>,
+    "Cadastro Novo(a) Colaborador(a)": <NewColab/>,
+    "FC (Exclusão de Requisições)": <DelReq/>,
+  }
 
   useEffect(() => {
-    setOpen(type == "Fórmula Certa - (Cadastro Médicos).")
+    setOpen(type in formTypes)
+    setEditIndex(-1)
+    console.log('Abridooo')
   }, [type])
 
-  const schema = object({
-    nome: string().required("Campo obrigatório."),
-    crm: string().required("Campo obrigatório.").matches(/^\d{5,10}-[A-Z]{2}$/, "O CRM precisar conter de 5 a 10 numeros e a UF em maiusculo reparados por um traço ex: 343241-PR"),
-    cep: string().required("Campo obrigatório.").max(9, 'Tamanho maximo de 9 caracteres'),
-    endereco: string().required("Campo obrigatório."),
-    telefone: string(),
-    especialidade: string().required("Campo obrigatório."),
-    email: string(),
-  })
-
-  const { 
-    register, 
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    setError, 
-    clearErrors,
-    reset
-  
-  } = useForm({
-    resolver: yupResolver(schema)
-  });
-
-  function getCepInfo(value){
-    setSearchCep(true)
-    clearErrors('cep')
-    const numbAndT = /^\d{5}-\d{3}$/
-    const numb = /^\d{8}$/
-    if(numbAndT.test(value) || numb.test(value)){
-      const cep = value.replace(/\D/g, '')
-      axios.get(`https://viacep.com.br/ws/${cep}/json/`).then(
-        response => {
-          console.log("cepDDDataaa", response.data)
-          if (!response.data.erro){
-            setValue('endereco', `${response.data.logradouro}, ${response.data.bairro}, ${response.data.localidade} - ${response.data.uf}`)
-          }else{
-            setValue('endereco', '')
-            setError('cep', {
-              type: 'api',
-              message: 'Cep não encontrado.'
-            });
-
-          }
-        }
-      ).catch(
-
-      ).finally(
-        setSearchCep(false)
-      )
-    }
-    if(value.length < 1){
-      setSearchCep(false)
-    }
-  }
-
-
-  function saveData(data) {
-    if (editIndex !== -1) {
-      const updatedData = [...addtionalData];
-      updatedData[editIndex] = data;
-      setAddtionalData(updatedData);
-      setEditIndex(-1);
-    } else {
-      setAddtionalData((prevData) => [...prevData, data]);
-    }
-    setOpen(false);
-    reset();
-  }
-
- 
   useEffect(() => {
     if(editIndex != -1){
-      const dataToEdit = addtionalData[editIndex];
-      setValue('nome', dataToEdit.nome); 
-      setValue('crm', dataToEdit.crm);
-      setValue('cep', dataToEdit.cep);
-      setValue('endereco', dataToEdit.endereco);
-      setValue('telefone', dataToEdit.telefone);
-      setValue('especialidade', dataToEdit.especialidade);
-      setValue('email', dataToEdit.email);
       setOpen(true);
     }
-  }, [editIndex, setEditIndex])
-  
+  }, [editIndex])
 
   return(
-
-    <AnimatePresence>
-    {
-      open &&
-
-      <motion.div className='w-[450px] flex flex-col space-y-5 h-max'
-      initial={{       
-        opacity: 0, 
-        scale: 0,
-        x: -400
-                         
-      }}
-      animate={{
-        scale: 1,
-        opacity: 1,
-        x: 0,
-      }} 
-      exit={{
-        opacity: 0, 
-        scale: 0,
-        x: -400
-      }}
-      >
-        
-      <form className='bg-white rounded-md shadow-md border text-sm border-border-default py-5 px-8 space-y-4' onSubmit={handleSubmit(saveData)}>
-        <h1 className=' text-xl font-medium'>
-          Dados do Médicos
-        </h1>
-
-        <div className='flex flex-col space-y-2'>
-          <label 
-          htmlFor=""
-          className='text-sm text-gray-500'
-          
-          >Nome Completo</label>
-          <input 
-          type="text"
-          className='py-1 px-3 h-8 w-96 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1'
-          {...register('nome') }
-          />
-          <span className='text-xs text-red-400'>
-          {errors?.nome?.message}
-          </span>
-      </div>
-      
-      <div className="flex flex-row justify-between">
-        <div className='flex flex-col space-y-2'>
-          <label 
-          htmlFor=""
-          className='text-sm text-gray-500'
-          
-          >CRM/UF</label>
-          <input 
-          type="text"
-          className='py-1 px-3 h-8 w-32 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1'
-          {...register('crm') }
-          />
-          <span className='text-xs text-red-400'>
-          {errors?.crm?.message}
-          </span>
-        </div>
-
-        <div className='flex flex-col space-y-2'>
-          <label 
-          htmlFor=""
-          className='text-sm text-gray-500 '
-          
-          >CEP</label>
-          <input 
-          type="text"
-          className='py-1 px-3 h-8 w-40 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1'
-          {...register('cep', {
-            onChange: (event) => getCepInfo(event.target.value)
-          }) }
-          />
-         
-          <span className='text-xs text-red-400'>
-          {errors?.cep?.message}
-          
-          </span>
-        </div>
-      </div>
-      <div className='flex flex-col space-y-2 relative'>
-        <label 
-        htmlFor=""
-        className='text-sm text-gray-500'
-        
-        >Endereço</label>
-        <input 
-        type="text"
-        className={`py-1 px-3 ${searchCep && 'pr-8'} h-8 w-96 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1`}
-        {...register('endereco')}
-        defaultValue={'Teste'}
-        />
-          {
-            searchCep && <span className="w-5 h-5 border-[3px] border-gray-400 border-t-primary-formedica rounded-full right-2 top-[25px] absolute animate-spin"></span>
-          }
-          <span className='text-xs text-red-400'>
-          {errors?.endereco?.message}
-          </span>
-      </div>
-
-      <div className="flex flex-row justify-between">
-        <div className='flex flex-col space-y-2'>
-          <label 
-          htmlFor=""
-          className='text-sm text-gray-500'
-          
-          >Especialidade</label>
-          <input 
-          type="text"
-          className='py-1 px-3 h-8 w-48 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1'
-          {...register('especialidade') }
-          
-          />
-          <span className='text-xs text-red-400'>
-          {errors?.especialidade?.message}
-          </span>
-        </div>
-        <div className='flex flex-col space-y-2'>
-          <label 
-          htmlFor=""
-          className='text-sm text-gray-500'
-          
-          >Telefone</label>
-          <input 
-          type="text"
-          className='py-1 px-3 h-8 w-40 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1'
-          {...register('telefone') }
-          
-          />
-          <span className='text-xs text-red-400'>
-          {errors?.telefone?.message}
-          </span>
-        </div>
-      </div>
-
-      <div className='flex flex-col space-y-2'>
-        <label 
-        htmlFor=""
-        className='text-sm text-gray-500'
-        
-        >E-Mail</label>
-        <input 
-        type="text"
-        className='py-1 px-3 h-8 w-96 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1'
-        {...register('email') }
-        
-        />
-          <span className='text-xs text-red-400'>
-          {errors?.email?.message}
-          </span>
-      </div>
-
-      <div className='flex gap-2 justify-end'>
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        className='px-5 py-1 rounded-md text-white bg-primary-formedica flex'
-        type='submit'
-      >
-        Salvar
-      </motion.button>
-      </div>
-
-
-      </form>
-
-      <div className='w-full bg-yellow-100 opacity-80 rounded-md border border-yellow-600 py-5 px-8'>
-        <p>
-          Para o tipo escolhido, e necessario pelo menos uma coluna de informações do medico cadastrada.
-        </p>
-      </div>
-    </motion.div>
-    }
-    </AnimatePresence>
-    
+    open && formTypes[type]
   )
-
 }
