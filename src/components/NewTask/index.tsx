@@ -89,7 +89,7 @@ export function NewTask() {
     if(requiredFieldsPerType.includes(type)){
       if(addtionalData.length >= 1){
         const dataGroup = { ...data, addtionalData} 
-        // mutate(dataGroup)
+        mutate(dataGroup)
         console.log(dataGroup);
         console.log(teste)
       }else{
@@ -97,7 +97,7 @@ export function NewTask() {
       }
       return
     }
-    // mutate(data)
+    mutate(data)
     console.log(data);
     console.log(addtionalData)
     console.log(teste)

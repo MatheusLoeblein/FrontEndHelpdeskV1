@@ -295,8 +295,6 @@ export function NewMed(){
 
       </form>
 
-      //TODO Preciso criar um componente para esses elementos a baixo e disponibilizar nos outros 2 forms 
-
         { 
           formError ?
           <motion.div 
@@ -308,13 +306,14 @@ export function NewMed(){
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
           <p className='text-sm text-gray-600'>
-            Para o tipo escolhido, e necessario pelo menos uma coluna de informações do medico cadastrada.
+            Para o tipo selecionado, é necessário pelo menos uma coluna de informações do médico cadastrada.
+            Por favor, preencha o formulário.
           </p>
           </motion.div>
           :
           <div className='w-full bg-yellow-100 rounded-md border border-yellow-500 py-5 px-8'>
           <p className='text-sm text-gray-600'>
-            Para o tipo escolhido, e necessario pelo menos uma coluna de informações do medico cadastrada.
+          Para o tipo selecionado, é necessário pelo menos uma coluna de informações do médico cadastrada.
           </p>
           </div>    
         }

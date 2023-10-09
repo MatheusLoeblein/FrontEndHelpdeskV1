@@ -85,7 +85,7 @@ function Login() {
           <h1 className=' text-white text-3xl  font-semibold z-10'>Bem vindo de volta!</h1>
 
           <p className='text-white text-xl text-center font-thin z-10'>
-          Sistema para documentação de tickets e utilitarios da empresa Formédica Farmacia de manipulção
+          Sistema para documentação de tickets e utilitários da empresa Formédica Farmácia de Manipulação.
           </p>
 
           <div className=' w-24 h-24 z-10 shadow-md rounded-xl flex items-center justify-center backdrop-blur-xl backdrop-opacity-50 bg-[rgba(255,255,255,0.27)]'>

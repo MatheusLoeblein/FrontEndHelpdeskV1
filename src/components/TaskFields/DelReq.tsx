@@ -12,10 +12,9 @@ export function DelReq(){
     type, 
     addtionalData, setAddtionalData,
     open, setOpen,
-    editIndex, setEditIndex
+    editIndex, setEditIndex,
+    formError
   } = useContext(NewTaskContext)
-
-  
 
   const schema = object({
     reqs: string().required("Campo obrigatório."),
@@ -133,11 +132,29 @@ export function DelReq(){
 
       </form>
 
-      <div className='w-full bg-yellow-100 opacity-80 rounded-md border border-yellow-600 py-5 px-8'>
-        <p>
-          Para o tipo escolhido, e necessario pelo menos uma coluna de informações do medico cadastrada.
-        </p>
-      </div>
+      { 
+          formError ?
+          <motion.div 
+          className='w-full bg-red-300 rounded-md border border-red-500 py-5 px-8'
+          animate={{ 
+            x: [-25, 25, -25, 25, 0], 
+            y: [25, -25, 25, -25, 0]
+          }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+          <p className='text-sm text-gray-600'>
+            Para o tipo selecionado, é necessário pelo menos uma coluna de informações do médico cadastrada.
+            Por favor, preencha o formulário.
+          </p>
+          </motion.div>
+          :
+          <div className='w-full bg-yellow-100 rounded-md border border-yellow-500 py-5 px-8'>
+          <p className='text-sm text-gray-600'>
+          Para o tipo selecionado, é necessário pelo menos uma coluna de informações do médico cadastrada.
+          </p>
+          </div>    
+      }
+
     </motion.div>
     </AnimatePresence>
     
