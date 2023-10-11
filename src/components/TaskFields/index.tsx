@@ -23,7 +23,6 @@ export function TaskFields() {
   useEffect(() => {
     setOpen(type in formTypes)
     setEditIndex(-1)
-    console.log('Abridooo')
   }, [type])
 
   useEffect(() => {

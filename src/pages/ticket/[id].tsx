@@ -7,6 +7,8 @@ import { useQuery } from 'react-query'
 import { parseCookies } from 'nookies';
 import Image from 'next/image';
 import { usePrivateApi } from '@/hooks/usePrivateApi';
+import { motion } from 'framer-motion'
+import { ActionGear } from '@/components/ActionGear';
 
 export default function TicketPage() {
   const router = useRouter();
@@ -36,19 +38,16 @@ export default function TicketPage() {
     )
   }
 
-
-
-  return (
+   return (
 
     <MainLayout>
       <section className='p-10'>
 
       {!isFetching && ticket && 
       
-        // xl:flex xl:items-start xl:gap-10
         <div className='max-md:max-w-7xl  m-auto'>
           {/* xl:w-1/2 */}
-          <div className='w-full  bg-white px-3 py-5 rounded-md shadow-md'>
+          <div className='w-full  bg-white px-3 py-5 rounded-md shadow-md border border-border-default'>
 
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
@@ -66,22 +65,8 @@ export default function TicketPage() {
                 </div>
               </div>
 
-              <div className="flex gap-3">
+              <ActionGear/>
 
-                <select name="" id="">
-
-                  <option value="">1</option>
-                  <option value="">2</option>
-                  <option value="">3</option>
-                </select>
-
-                <div className="flex items-center">
-                  <span className={`px-5 py-[5px] w-32 text-center  rounded-md text-white shadow-md ${prioridade[ticket.prioridade]}`}>
-                  {ticket.prioridade}
-                  </span>
-                </div>
-
-              </div>
             </div>
 
 
@@ -113,28 +98,32 @@ export default function TicketPage() {
                     <span>{ticket.author.profile.Category ? ticket.author.profile.Category : '--'}</span>
                   </div>
                   <div className='flex justify-between items-center'>
-                    <span><strong>Status</strong></span>
-                    <div className="flex items-center">
-                      <span className={`px-5 py-[5px] text-xs text-center  rounded-md text-white shadow-md ${status[ticket.status]}`}>
-                      {ticket.status}
-                      </span>
-                    </div>
+                      <span><strong>Status</strong></span>
+                      <div className="flex items-center">
+                        <span className={`min-w-[100px] px-5 py-[5px] text-xs text-center  rounded-md text-white shadow-md ${status[ticket.status]}`}>
+                        {ticket.status}
+                        </span>
+                      </div>
+                  </div>
+                  <div className='flex justify-between items-center'>
+                      <span><strong>Prioridade</strong></span>
+                      <div className="flex items-center">
+                        <span className={`min-w-[100px] px-5 py-[5px] text-xs text-center  rounded-md text-white shadow-md ${prioridade[ticket.prioridade]}`}>
+                        {ticket.prioridade}
+                        </span>
+                      </div>
                   </div>
                 </div>
-
 
                 </div>
 
               </div>
-
-
 
               <div className="">
 
                 <h2 className="py-3"><strong>Descrição</strong></h2>
 
                 <div className='container py-3 pb-5 break-words ' dangerouslySetInnerHTML={{__html: ticket.description}}></div>
-
 
                 <div className='flex flex-col gap-5'>
                   {
@@ -146,15 +135,10 @@ export default function TicketPage() {
                           </div>
                       )
                     }) 
-
                   }
                 </div>
               </div>
-              
-
-
           </div>
-
 
           <div className='xl:grow flex flex-col'>
           {ticket.comments ? ticket.comments.map((comment, index) => {
