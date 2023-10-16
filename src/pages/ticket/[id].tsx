@@ -7,8 +7,10 @@ import { useQuery } from 'react-query'
 import { parseCookies } from 'nookies';
 import Image from 'next/image';
 import { usePrivateApi } from '@/hooks/usePrivateApi';
-import { motion } from 'framer-motion'
 import { ActionGear } from '@/components/ActionGear';
+import { CardMedTicket } from '../../components/CardMedTicket'
+import { BurredBackground } from '@/components/BurredBackground';
+import { CardColabTicket } from '@/components/CardColabTicket';
 
 export default function TicketPage() {
   const router = useRouter();
@@ -27,15 +29,92 @@ export default function TicketPage() {
   
   console.log(ticket, isFetching, error, isLoading)
 
-  if (isLoading){
+  if (isLoading || isFetching){
 
     return(
       <MainLayout>
-      <p>
-        Loading...
-      </p>
+      <BurredBackground>
+        <span className='border-[3px] border-t-pink-700 rounded-full w-10 h-10 animate-spin'>
+
+        </span>
+      </BurredBackground>
     </MainLayout>
     )
+  }
+
+  function handleReturnCard(){
+    if(ticket?.cadMedico.length > 0){
+      return (
+
+        <div className='flex flex-col border-t border-t-border-default space-y-4'>
+          <h3 className="pt-3 text-gray-600" ><strong>Dados cadastrais médicos</strong></h3>
+          <span className='text-xs text-yellow-500' >
+            Clique no card para exibir a modal de informações detalhadas.
+          </span>
+
+          <div className='flex space-x-4'>
+
+            {
+              ticket?.cadMedico.map((medico) => {
+                return(
+                  <CardMedTicket medico={medico}/>
+                  )
+                })
+            }
+          </div>
+
+        </div>
+
+      )
+    }
+    if(ticket?.cadColaborador.length > 0){
+      return (
+
+        <div className='flex flex-col border-t border-t-border-default space-y-4'>
+          <h3 className="pt-3 text-gray-600" ><strong>Dados cadastrais colaboradores</strong></h3>
+          <span className='text-xs text-yellow-500' >
+            Clique no card para exibir a modal de informações detalhadas.
+          </span>
+
+          <div className='flex space-x-4'>
+
+            {
+              ticket?.cadColaborador.map((colab) => {
+                return(
+                  <CardColabTicket colab={colab}/>
+                  )
+                })
+            }
+          </div>
+
+        </div>
+
+      )
+    }
+
+    if(ticket?.ex_reqs.length > 0){
+      return (
+
+        <div className='flex flex-col border-t border-t-border-default space-y-4'>
+          <h3 className="pt-3 text-gray-600" ><strong>Requisições para exclusão</strong></h3>
+
+          <div className='flex space-x-4'>
+
+            {
+              ticket?.ex_reqs.map((reqs, index) => {
+                return(
+                  <div key={index}>
+                    {reqs.requisicoes}
+                  </div>
+                  )
+                })
+            }
+          </div>
+
+        </div>
+
+      )
+    }
   }
 
    return (
@@ -121,11 +200,11 @@ export default function TicketPage() {
 
               <div className="">
 
-                <h2 className="py-3"><strong>Descrição</strong></h2>
+                <h2 className="pt-3 text-gray-600"><strong>Descrição</strong></h2>
 
                 <div className='container py-3 pb-5 break-words ' dangerouslySetInnerHTML={{__html: ticket.description}}></div>
 
-                <div className='flex flex-col gap-5'>
+                {/* <div className='flex flex-col gap-5'>
                   {
                     ticket?.additinalData?.map(({tarefa, nome, value}, index) => {
                       return(
@@ -136,6 +215,12 @@ export default function TicketPage() {
                       )
                     }) 
                   }
+                </div> */}
+
+                <div>
+                 {
+                  handleReturnCard()
+                 }
                 </div>
               </div>
           </div>
