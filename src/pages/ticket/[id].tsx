@@ -11,6 +11,7 @@ import { ActionGear } from '@/components/ActionGear';
 import { CardMedTicket } from '../../components/CardMedTicket'
 import { BurredBackground } from '@/components/BurredBackground';
 import { CardColabTicket } from '@/components/CardColabTicket';
+import { NewComment } from '../../components/NewComment'
 
 export default function TicketPage() {
   const router = useRouter();
@@ -124,7 +125,7 @@ export default function TicketPage() {
 
       {!isFetching && ticket && 
       
-        <div className='max-md:max-w-7xl  m-auto'>
+        <div className='flex flex-col max-md:max-w-7xl  m-auto'>
           {/* xl:w-1/2 */}
           <div className='w-full  bg-white px-3 py-5 rounded-md shadow-md border border-border-default'>
 
@@ -226,7 +227,7 @@ export default function TicketPage() {
           </div>
 
           <div className='xl:grow flex flex-col'>
-          {ticket.comments ? ticket.comments.map((comment, index) => {
+          {ticket?.comments?.map((comment, index) => {
             return(
 
                 //xl:mt-0
@@ -265,10 +266,12 @@ export default function TicketPage() {
                 </div>
             )
           })
-          :
-          ''
         }
+
         </div>
+
+        <NewComment taskId={ticket.id}/>
+
         </div>
       }
 

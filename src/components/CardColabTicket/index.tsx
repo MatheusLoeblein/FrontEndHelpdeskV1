@@ -32,11 +32,7 @@ export function CardColabTicket({ colab }) {
       handleCopyLine(linename)
   };
 
-
   const formattedDate = format(new Date(colab.contratacao), 'dd/MM/yyyy');
-
-  // + ' ás ' + format(new Date(colab.contratacao), 'HH:mm');
-
 
   return(
     <>            

@@ -5,6 +5,7 @@ import { NewTaskContext } from '@/context/NewTaskContext';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object, string } from 'yup';
+import { TbTrashXFilled } from 'react-icons/tb';
 
 export function DelReq(){
 
@@ -86,9 +87,20 @@ export function DelReq(){
         
       <form className='bg-white rounded-md shadow-md border text-sm border-border-default py-5 px-8 space-y-4' onSubmit={handleSubmit(saveData)}>
 
-          <h1 className=' text-xl font-medium'>
-            Requisições para exclusão
-          </h1>
+          <div>
+            
+            <h2 className='flex space-x-4 items-center text-xl text-primary-formedica font-medium'>
+              <span>
+                Requisições para exclusão
+              </span>
+              <TbTrashXFilled/>
+            </h2>
+
+            <p className="text-xs text-gray-500">
+              Informe as requisições que gostaria de excluir
+            </p>
+
+          </div>
 
           <div className='flex flex-col space-y-2'>
             <label 

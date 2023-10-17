@@ -4,6 +4,7 @@ import { NewTaskContext } from '@/context/NewTaskContext';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object, string } from 'yup';
+import { BsPersonFillAdd } from 'react-icons/bs';
 
 import { DropDownSelect } from '../DropDownSelect';
 
@@ -101,10 +102,19 @@ export function NewColab(){
 
         <FormProvider {...methods}>
 
-          <h1 className=' text-xl font-medium'>
-            Dados Novo Colaborador
-          </h1>
+          <div>
+            <h2 className='flex space-x-4 items-center text-xl text-primary-formedica font-medium'>
+              <span>
+                Dados Colaborador
+              </span>
+              <BsPersonFillAdd/>
+            </h2>
 
+            <p className="text-xs text-gray-500">
+              Informe os dados cadastrais do colaborador para inclusão
+            </p>
+
+          </div>
           <div className='flex flex-col space-y-2'>
             <label 
             htmlFor=""

@@ -5,6 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { object, string } from 'yup';
 import { useState, useEffect, useContext } from 'react';
 import { NewTaskContext } from '@/context/NewTaskContext';
+import { FaBriefcaseMedical } from 'react-icons/fa';
 
 export function NewMed(){
   const [searchCep, setSearchCep] = useState(false)
@@ -133,9 +134,19 @@ export function NewMed(){
       >
         
       <form className='bg-white rounded-md shadow-md border text-sm border-border-default py-5 px-8 space-y-4' onSubmit={handleSubmit(saveData)}>
-        <h1 className=' text-xl font-medium'>
-          Dados do Médico
-        </h1>
+          <div>
+            <h2 className='flex space-x-4 items-center text-xl text-primary-formedica font-medium'>
+              <span>
+                Dados do Médico
+              </span>
+              <FaBriefcaseMedical/>
+            </h2>
+
+            <p className="text-xs text-gray-500">
+              Informe os dados cadastrais do medico para inclusão
+            </p>
+
+          </div>
 
         <div className='flex flex-col space-y-2'>
           <label 

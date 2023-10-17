@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from "framer-motion"
-import './quill-bubble-custom.css';
 import dynamic from 'next/dynamic';
 import {DropDownSelect} from '../DropDownSelect'
 import { useForm, FormProvider, Controller } from 'react-hook-form';
@@ -15,9 +14,10 @@ import { MiniMenu } from '../TaskFields/MiniMenu';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object, string } from 'yup';
 import { BurredBackground } from '../BurredBackground'
+import { BiTask } from 'react-icons/bi'
 
 
-const Editor = dynamic(() => import('./editor'), {
+const Editor = dynamic(() => import('../Editor'), {
   ssr: false
 });
 
@@ -120,7 +120,12 @@ export function NewTask() {
         className='fixed bottom-10 right-10 bg-white px-7 py-2 border border-border-default rounded-lg shadow-md cursor-pointer'
         onClick={() => setOpenForm(true)}
         >
-          <h2 className='text-lg text-primary-formedica font-medium'>Abrir Ticket</h2>
+          <h2 className='flex space-x-4 items-center text-lg text-primary-formedica font-medium'>
+          <span>
+            Abrir Ticket
+          </span>
+          <BiTask/>
+          </h2>
         </motion.div>
       }
       <AnimatePresence>
@@ -151,7 +156,19 @@ export function NewTask() {
                   scale: 0,
                 }}
               >
-              <h2 className='text-xl font-medium'>Abrir Ticket </h2>
+              
+              <div>
+                <h2 className='flex space-x-4 items-center text-xl text-primary-formedica font-medium'>
+                  <span>
+                    Abrir Ticket
+                  </span>
+                  <BiTask/>
+                </h2>
+
+                <p className="text-xs text-gray-500">
+                  Crie um ticket para o atendimento da sua demanda.
+                </p>
+              </div>
 
               <div className='flex flex-col space-y-2'>
                 <label 
