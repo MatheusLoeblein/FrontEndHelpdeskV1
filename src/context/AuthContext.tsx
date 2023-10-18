@@ -4,6 +4,7 @@ import Router from 'next/router'
 import jwt_decode from "jwt-decode";
 import { ReactNode } from 'react';
 import { api } from '../services/api'
+import { toast } from 'react-toastify';
 
 type User = {
   profileImg: string;
@@ -52,7 +53,6 @@ export function AuthProvider({ children }: AuthProviderType) {
   const [user, setUser] = useState<User | null>(null);
   const [refreshToken, setRefreshToken ] = useState<string | null>(null)
   const [authError, setAuthError] = useState<string | null>(null);
-  const [messages, setMessages] = useState<messagesType>(null);
 
   const isAuthenticated = !!user;
 
@@ -97,7 +97,6 @@ export function AuthProvider({ children }: AuthProviderType) {
         maxAge: 60 * 60 * 1 // 1 hour
       })
 
-
       setRefreshToken(refresh)
 
       const {profileImg, user_id: userId, username}:User = jwt_decode(access)
@@ -109,11 +108,9 @@ export function AuthProvider({ children }: AuthProviderType) {
         username: username}
         )
       
-      setMessages([{
-            text: "Seja bem vindo! Log in efetuado com sucesso.",
-            type: "success"
-        }])
       Router.push('/dashboard')
+      toast.success('Login efetuado com sucesso!')
+      
         
     }).catch(
       function(obj){
@@ -125,13 +122,16 @@ export function AuthProvider({ children }: AuthProviderType) {
         if (obj.response.status == 401) {
           setAuthError(obj.response.data.detail)
         }
+
+        toast.error('Erro ao efetuar login.')
+        toast.warning('Verifique login e senha.')
         
       }
     )
   }
   
   return(
-    <AuthContext.Provider value={{user, isAuthenticated, signIn, authError, setAuthError, messages, setMessages, refreshToken, setRefreshToken}}>
+    <AuthContext.Provider value={{user, isAuthenticated, signIn, authError, setAuthError, refreshToken, setRefreshToken}}>
       {children}
     </AuthContext.Provider>
   )

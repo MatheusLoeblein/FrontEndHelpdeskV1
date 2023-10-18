@@ -12,36 +12,50 @@ import { CardMedTicket } from '../../components/CardMedTicket'
 import { BurredBackground } from '@/components/BurredBackground';
 import { CardColabTicket } from '@/components/CardColabTicket';
 import { NewComment } from '../../components/NewComment'
+import { useEffect, useState } from 'react';
 
 export default function TicketPage() {
+  const [actionsAndComments, SetactionsAndComments] = useState();
   const router = useRouter();
 
   const api = usePrivateApi()
+
+
+  function compararPorData(a, b) {
+    const dataA = new Date(a.created_at);
+    const dataB = new Date(b.created_at);
+    return dataA - dataB;
+}
+
   
-  const {data: ticket, isFetching, error, isLoading } = useQuery('tickets', async () => {
+  const {data: ticket, isFetching, error, isLoading } = useQuery({
+    queryKey: 'ticket', 
+    queryFn: async () => {
     const { id } = router.query;
     const response = await api.get(`/api/tarefa/${id}`,);
 
     console.log(response.data)
 
+    const mergedList = [
+      ...response.data.comments,
+      ...response.data.actions,
+    ];
+
+    mergedList.sort(compararPorData)
+
+    console.log(mergedList)
+
     return response.data;
-    
+
+  },
+    refetchOnWindowFocus: false,
   })
+
+  // useEffect(() => {
+  //   console.log(actionsAndComments)
+  // }, [actionsAndComments, SetactionsAndComments])
   
   console.log(ticket, isFetching, error, isLoading)
-
-  if (isLoading || isFetching){
-
-    return(
-      <MainLayout>
-      <BurredBackground>
-        <span className='border-[3px] border-t-pink-700 rounded-full w-10 h-10 animate-spin'>
-
-        </span>
-      </BurredBackground>
-    </MainLayout>
-    )
-  }
 
   function handleReturnCard(){
     if(ticket?.cadMedico.length > 0){
@@ -121,11 +135,24 @@ export default function TicketPage() {
    return (
 
     <MainLayout>
+
+
+      {isLoading || isFetching &&
+      
+      <BurredBackground>
+        <span className='border-[3px] border-t-pink-700 rounded-full w-10 h-10 animate-spin'>
+
+        </span>
+      </BurredBackground>
+      
+      }
+
+
       <section className='p-10'>
 
       {!isFetching && ticket && 
       
-        <div className='flex flex-col max-md:max-w-7xl  m-auto'>
+        <div className='flex flex-col m-auto'>
           {/* xl:w-1/2 */}
           <div className='w-full  bg-white px-3 py-5 rounded-md shadow-md border border-border-default'>
 
@@ -145,7 +172,7 @@ export default function TicketPage() {
                 </div>
               </div>
 
-              <ActionGear/>
+              <ActionGear ticket={ticket}/>
 
             </div>
 
@@ -226,25 +253,24 @@ export default function TicketPage() {
               </div>
           </div>
 
-          <div className='xl:grow flex flex-col'>
+          <div className='grow flex flex-col'>
           {ticket?.comments?.map((comment, index) => {
             return(
 
                 //xl:mt-0
-                <div className='flex gap-20 my-12  relative ' key={index}>
+                <div className='grid grid-cols-[1fr,15fr] gap-20 my-12  relative ' key={index}>
 
                   <div className='w-60  h-10 text-center flex justify-center items-center bg-white rounded-md z-10 shadow-md'>
                     {format(new Date(comment.created_at), 'dd-MM-yyyy')} ás {format(new Date(comment.created_at), 'HH:mm')}
                   </div>
-                  <span className='absolute bg-blue-500 w-20 h-1 left-60 top-4 z-0'>
+                  <span className='absolute bg-blue-400 w-20 h-1 left-60 top-4 z-0'>
 
                   </span>
-                  <span className='absolute bg-blue-500 w-3 h-3 left-[313.5px] top-[11.5px] rotate-45'>
-
+                  <span className='absolute bg-blue-400 w-3 h-3 left-[314px] top-[11.5px] rotate-45'>
                   </span>
                 
                   <div className='flex grow bg-white rounded-md p-5 space-x-4 shadow-md'>
-                    <div>
+                    <div className='w-16 h-16'>
                       <Image 
                       src={`http://127.0.0.1:8000${comment.author.profile.cover_profile}`} 
                       alt=""
@@ -253,11 +279,11 @@ export default function TicketPage() {
                       height={500}
                       />
                     </div>
-                    <div className='flex flex-col justify-start grow'>
+                    <div className='flex flex-col justify-start w-full'>
                       <h3 className='border-b border-b-border-default text-md font-medium w-full py-3' >{comment.author.first_name} {comment.author.last_name}</h3>
 
-                      <div className='w-full py-5'>
-                        <div className="break-words" dangerouslySetInnerHTML={{__html: comment.comment}}></div>
+                      <div className='py-5'>
+                        <div className="break-all" dangerouslySetInnerHTML={{__html: comment.comment.replace(/<img/g, '<img class="w-[50%]"')}}></div>
                       </div>
                     </div>
                     
@@ -270,7 +296,7 @@ export default function TicketPage() {
 
         </div>
 
-        <NewComment taskId={ticket.id}/>
+        <NewComment ticket={ticket}/>
 
         </div>
       }

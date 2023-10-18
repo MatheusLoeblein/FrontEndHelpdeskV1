@@ -46,7 +46,7 @@ export function MainLayout({children}: MainLayout){
       </header>
 
 
-      <div className="fixed top-28 right-5 flex flex-col gap-2 z-10">
+      <div className="fixed top-28 right-5 flex flex-col gap-2 z-[60]">
                  
         { messages && messages.map((message, index) =>{ 
           return(

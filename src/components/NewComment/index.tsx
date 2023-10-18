@@ -4,23 +4,24 @@ import dynamic from 'next/dynamic'
 import { BurredBackground } from '../BurredBackground'
 import { GoPaperclip } from 'react-icons/go'
 import { CgComment } from 'react-icons/cg'
-import { useMutation } from 'react-query'
+import { useMutation, useQueryClient } from 'react-query';
 import { usePrivateApi } from '@/hooks/usePrivateApi';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object, string } from 'yup';
 import { useForm, Controller, FormProvider } from 'react-hook-form'
 import { AuthContext } from '@/context/AuthContext'
-
+import { toast } from 'react-toastify';
 
 const Editor = dynamic(() => import('../Editor'), {
   ssr: false
 });
 
 
-export function NewComment({taskId}) {
+export function NewComment({ ticket }) {
   const [ open, setOpen ] = useState(false)
   const { setMessages } = useContext(AuthContext)
-
+  const queryClient = useQueryClient();
+  
   const handleEditorChange = (html) => {
     setValue("comment", html);
   };
@@ -47,39 +48,30 @@ export function NewComment({taskId}) {
   const { register, handleSubmit, control, setValue, formState: { errors }, clearErrors, reset } = methods;
 
   const api = usePrivateApi()
-  const {mutate, isLoading: postLoading, isSuccess} = useMutation('CreateComment', async (data) => {
-    const response = await api.post('/api/comment/create/', data)
-    
-    return response.data
-  }
-  )
-
-  useEffect(() => {
-    if(!postLoading && isSuccess){
-      setOpen(false)
-      if (isSuccess){
-        setMessages([{
-          text: "Observação adicionada com sucesso!",
-          type: "success"
-        }])
-      }
+  const { mutate, isLoading: postLoading, isSuccess } = useMutation(
+    'CreateComment',
+    async (data) => {
+      const response = await api.post('/api/comment/create/', data);
+      return response.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('ticket');
+        toast.success('Observação adicionada com sucesso!')
+      },
     }
-  },
-  [postLoading, isSuccess, setMessages]
-  )
-
+  );
 
   function handleCreateComment(data){
     mutate({
-      Tarefa: taskId,
+      Tarefa: ticket.id,
       ...data
     })
     console.log('Comentario adicionado', {
-      Tarefa: taskId,
+      Tarefa: ticket.id,
       ...data
     })
   }
-
 
 
   return(

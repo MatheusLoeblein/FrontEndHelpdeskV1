@@ -5,7 +5,9 @@ import '../app/globals.css';
 import Head from 'next/head';
 import { QueryClientProvider } from 'react-query'
 import { queryClient } from '@/services/queryClient';
+import { ToastContainer } from 'react-toastify'
 
+import 'react-toastify/ReactToastify.min.css'
 
 function HelpDesk({ Component, pageProps }) {
   return (
@@ -17,6 +19,8 @@ function HelpDesk({ Component, pageProps }) {
             <link rel="icon" href="assets/helpicon.png" />
           </Head>
           <Component {...pageProps}/>
+
+          <ToastContainer/>
         </LayoutProvider>
       </AuthProvider>
     </QueryClientProvider>

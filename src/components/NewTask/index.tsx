@@ -5,7 +5,7 @@ import {DropDownSelect} from '../DropDownSelect'
 import { useForm, FormProvider, Controller } from 'react-hook-form';
 import React from 'react'
 import { usePrivateApi } from '@/hooks/usePrivateApi';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { AuthContext } from '@/context/AuthContext';
 import { TaskFields } from "../TaskFields"
 import { NewTaskContext } from '@/context/NewTaskContext';
@@ -15,6 +15,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { object, string } from 'yup';
 import { BurredBackground } from '../BurredBackground'
 import { BiTask } from 'react-icons/bi'
+import { toast } from 'react-toastify';
 
 
 const Editor = dynamic(() => import('../Editor'), {
@@ -22,7 +23,6 @@ const Editor = dynamic(() => import('../Editor'), {
 });
 
 export function NewTask() {
-  const [ editorContent, setEditorContent ] = useState("");
   const [ openForm, setOpenForm ] = useState(false);
   const { setMessages } = useContext(AuthContext);
   const { menuOver } = useContext(LayoutContext);
@@ -56,14 +56,28 @@ export function NewTask() {
 
   const { register, handleSubmit, control, setValue, formState: { errors }, clearErrors, reset } = methods;
 
-  const {mutate, isLoading: postLoading, isSuccess, data: teste} = useMutation('CreateTicket', async (data) => {
-    const response = await api.post('/api/tarefa/create/', data)
-    
-    return response.data
-  }
-  )
-
   const api = usePrivateApi()
+  const queryClient = useQueryClient()
+
+  const { mutate, isLoading: postLoading, isSuccess } = useMutation(
+    'CreateTicket',
+    async (data) => {
+      const response = await api.post('/api/tarefa/create/', data)
+      return response.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('tickets');
+        toast.success('Ticket criado com sucesso!')
+        setOpenForm(false)
+      },
+
+      onError: () => {
+        toast.error('Erro a criar ticket.')
+      }
+    }
+  );
+
   const {data: tipes} = useQuery('tipes', async () => {
     const response = await api.get('/api/tarefa/tipes/')
     return response.data
@@ -73,27 +87,12 @@ export function NewTask() {
   }
   )
 
-  useEffect(() => {
-    if(!postLoading && isSuccess){
-      setOpenForm(false)
-      if (isSuccess){
-        setMessages([{
-          text: "Ticket criado com sucesso!",
-          type: "success"
-        }])
-      }
-    }
-  },
-  [postLoading, isSuccess, setMessages]
-  )
-
   function CreateTask(data){
     if(requiredFieldsPerType.includes(type)){
       if(addtionalData.length >= 1){
         const dataGroup = { ...data, addtionalData} 
         mutate(dataGroup)
         console.log(dataGroup);
-        console.log(teste)
       }else{
         setFormError(true)
       }
@@ -102,11 +101,9 @@ export function NewTask() {
     mutate(data)
     console.log(data);
     console.log(addtionalData)
-    console.log(teste)
   }
 
   const handleEditorChange = (html) => {
-    setEditorContent(html);
     setValue("description", html);
   };
 

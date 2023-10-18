@@ -1,12 +1,15 @@
 import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'
 import { RxGear } from 'react-icons/rx'
+import { useMutation, useQueryClient } from 'react-query';
+import { toast } from 'react-toastify';
+import { usePrivateApi } from '@/hooks/usePrivateApi';
 
-
-export function ActionGear(){
-
+export function ActionGear({ticket}){
   const  [open, setOpen] = useState(false)
   const actionGearRef = useRef(null);
+  const api = usePrivateApi()
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -20,6 +23,41 @@ export function ActionGear(){
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+
+  const { mutate, isLoading: postLoading, isSuccess } = useMutation(
+    'TicketAction',
+    async (data) => {
+      const response = await api.post('/api/tarefa/action/', data);
+      return response.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('ticket');
+        toast.success('Ação efetuada com sucesso!')
+      },
+      onError: () => {
+        toast.error('Erro ao efetuar ação')
+      },
+    }
+  );
+
+  function initTicket(){
+   const data = {
+      action_type: 'I',
+      tarefa: ticket.id
+    }
+
+    if(ticket.status != "Aberto"){
+      return toast.error('Ticket ja foi iniciado')
+    }
+    mutate(data)
+
+    if(isSuccess){
+      toast.info(`Você iniciau o atendimento para o ticket # ${ticket.id}`)
+    }
+
+  }
 
 
   return(
@@ -54,6 +92,7 @@ export function ActionGear(){
 
           <div className='flex flex-col space-y-2 font-medium'>
             <span className='py-1 px-5 cursor-pointer hover:bg-blue-100 rounded-md'
+            onClick={initTicket}
             >
               Iniciar atendimento
             </span>
