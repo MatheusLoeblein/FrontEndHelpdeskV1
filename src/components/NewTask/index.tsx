@@ -102,38 +102,37 @@ export function NewTask() {
   }
   )
 
-  function convert2base64 = file => {
-    const reader = new FileReader();
-
-    reader.onloadend = () => {};
-
-    reader.readAsDataURL(file);
-  };
 
   function CreateTask(data){
 
-    console.log(data.file)
+
+    const formData = new FormData();
 
     if(data.file.length > 0){
-      
-
-      convert2base64(data.file[0])
-
+      formData.append('file', data.file);
     }
 
-    if(requiredFieldsPerType.includes(type)){
-      if(addtionalData.length >= 1){
-        const dataGroup = { ...data, addtionalData} 
-        mutate(dataGroup)
-        console.log(dataGroup);
-      }else{
-        setFormError(true)
-      }
-      return
-    }
-    mutate(data)
-    console.log(data);
-    console.log(addtionalData)
+    formData.append('titulo', data.titulo);
+    formData.append('tipe', data.tipe);
+    formData.append('prioridade', data.tipe);
+    formData.append('description', data.description);
+
+    mutate(formData)
+
+
+    // if(requiredFieldsPerType.includes(type)){
+    //   if(addtionalData.length >= 1){
+    //     const dataGroup = { ...data, addtionalData} 
+    //     mutate(dataGroup)
+    //     console.log(dataGroup);
+    //   }else{
+    //     setFormError(true)
+    //   }
+    //   return
+    // }
+    // mutate(data)
+    // console.log(data);
+    // console.log(addtionalData)
   }
 
   const handleEditorChange = (html) => {
