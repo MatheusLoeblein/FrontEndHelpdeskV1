@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useState, useRef } from 'react'
 import { setCookie, parseCookies, destroyCookie } from 'nookies';
 import Router from 'next/router'
 import jwt_decode from "jwt-decode";
@@ -53,6 +53,7 @@ export function AuthProvider({ children }: AuthProviderType) {
   const [user, setUser] = useState<User | null>(null);
   const [refreshToken, setRefreshToken ] = useState<string | null>(null)
   const [authError, setAuthError] = useState<string | null>(null);
+  const ToastId = useRef(null)
 
   const isAuthenticated = !!user;
 
@@ -85,6 +86,8 @@ export function AuthProvider({ children }: AuthProviderType) {
 
   async function signIn({username, password}: SignInData) {
 
+    ToastId.current = toast.loading('Entrando...')
+
     await api.post('/authors/api/token/', {
       username: username,
       password: password
@@ -109,7 +112,15 @@ export function AuthProvider({ children }: AuthProviderType) {
         )
       
       Router.push('/dashboard')
-      toast.success('Login efetuado com sucesso!')
+
+      
+      toast.update(ToastId.current, {
+        render: 'Login efetuado com sucesso!',
+        isLoading: false,
+        type: 'success',
+        autoClose: true,
+        closeButton: true
+      })
       
         
     }).catch(
@@ -123,7 +134,13 @@ export function AuthProvider({ children }: AuthProviderType) {
           setAuthError(obj.response.data.detail)
         }
 
-        toast.error('Erro ao efetuar login.')
+        toast.update(ToastId.current, {
+          render: 'Erro ao efetuar login.',
+          isLoading: false,
+          type: 'error',
+          autoClose: true,
+          closeButton: true
+        })
         toast.warning('Verifique login e senha.')
         
       }

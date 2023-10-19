@@ -10,7 +10,7 @@ import { AuthContext } from '@/context/AuthContext';
 import { LayoutContext } from '@/context/LayoutContext';
 import { Message } from '@/components/Message';
 import Link from 'next/link'
-import { getServerSideProps } from '@/pages';
+import { motion } from 'framer-motion';
 
 interface MainLayout {
   children: ReactNode;
@@ -54,20 +54,14 @@ export function MainLayout({children}: MainLayout){
           )
         })}
 
-      </div>
-        
-       
-
+      </div>    
         
         <MenuSideBar />
-        <div className='grid grid-cols-[auto,1fr] mt-20'>
+        <div className='grid grid-cols-[auto,1fr] mt-20 overflow-hidden'>
 
           <div className={` duration-300 ${menuOver ? 'w-16' : 'w-72'}`}/>
 
-          
-          {children}
-
-
+            {children}
 
         </div>
 

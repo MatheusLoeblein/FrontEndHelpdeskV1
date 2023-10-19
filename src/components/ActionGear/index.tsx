@@ -5,11 +5,13 @@ import { useMutation, useQueryClient } from 'react-query';
 import { toast } from 'react-toastify';
 import { usePrivateApi } from '@/hooks/usePrivateApi';
 
+
 export function ActionGear({ticket}){
   const  [open, setOpen] = useState(false)
   const actionGearRef = useRef(null);
   const api = usePrivateApi()
   const queryClient = useQueryClient()
+  const toastId = useRef(null)
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -28,35 +30,43 @@ export function ActionGear({ticket}){
   const { mutate, isLoading: postLoading, isSuccess } = useMutation(
     'TicketAction',
     async (data) => {
+      toastId.current = toast.loading('Executando ação...')
       const response = await api.post('/api/tarefa/action/', data);
       return response.data;
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries('ticket');
-        toast.success('Ação efetuada com sucesso!')
+        toast.update(toastId.current, {
+          render: "Ação efetuada com sucesso!",
+          type: "success",
+          isLoading: false,
+          closeButton: true,
+          autoClose: true
+      })
+
       },
       onError: () => {
-        toast.error('Erro ao efetuar ação')
+        toast.update(toastId.current, {
+          render: "'Erro ao efetuar ação'",
+          type: "error",
+          isLoading: false,
+          closeButton: true,
+          autoClose: true
+      })
       },
     }
   );
 
   function initTicket(){
+    if(ticket.status != "Aberto"){
+      toast.error('Ticket esta encontra em estado de execução.')
+    }
    const data = {
       action_type: 'I',
       tarefa: ticket.id
     }
-
-    if(ticket.status != "Aberto"){
-      return toast.error('Ticket ja foi iniciado')
-    }
     mutate(data)
-
-    if(isSuccess){
-      toast.info(`Você iniciau o atendimento para o ticket # ${ticket.id}`)
-    }
-
   }
 
 

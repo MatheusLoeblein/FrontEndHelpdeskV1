@@ -5,8 +5,7 @@ import { MainLayout } from '@/components/MainLayout';
 import { Charts } from '@/components/Charts';
 import { NewTask } from '@/components/NewTask';
 import { NewTaskProvider } from '@/context/NewTaskContext';
-
-
+import { motion } from 'framer-motion';
 
 
 export default function dashboard() {
@@ -14,7 +13,12 @@ export default function dashboard() {
   return (
     
       <MainLayout>
-        <section id='dash' className="flex flex-col gap-4">
+        <motion.section
+          initial={{ x: 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: 100, opacity: 0 }}
+        
+        id='dash' className="flex flex-col gap-4">
           <Charts/>
 
           <Tickets/>
@@ -23,7 +27,7 @@ export default function dashboard() {
             <NewTask/>
           </NewTaskProvider> 
 
-        </section>
+        </motion.section>
         
       </MainLayout>
 

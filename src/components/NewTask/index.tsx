@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useRef, useContext } from 'react';
 import { motion, AnimatePresence } from "framer-motion"
 import dynamic from 'next/dynamic';
 import {DropDownSelect} from '../DropDownSelect'
@@ -26,6 +26,7 @@ export function NewTask() {
   const [ openForm, setOpenForm ] = useState(false);
   const { setMessages } = useContext(AuthContext);
   const { menuOver } = useContext(LayoutContext);
+  const toastId = useRef(null);
 
   const { addtionalData, 
     setEditIndex, setAddtionalData, 
@@ -62,18 +63,31 @@ export function NewTask() {
   const { mutate, isLoading: postLoading, isSuccess } = useMutation(
     'CreateTicket',
     async (data) => {
+      toastId.current = toast.loading('Criando ticket...')
       const response = await api.post('/api/tarefa/create/', data)
       return response.data;
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries('tickets');
-        toast.success('Ticket criado com sucesso!')
+        toast.update(toastId.current, {
+          render: "Ticket criado com sucesso!",
+          type: "success",
+          isLoading: false,
+          closeButton: true,
+          autoClose: true
+      })
         setOpenForm(false)
       },
 
       onError: () => {
-        toast.error('Erro a criar ticket.')
+        toast.update(toastId.current, {
+          render: "Erro ao criar ticket",
+          type: "error",
+          isLoading: false,
+          closeButton: true,
+          autoClose: true
+      })
       }
     }
   );
@@ -112,6 +126,8 @@ export function NewTask() {
     <>
       { !openForm &&
         <motion.div 
+        initial={{scale: 0}}
+        animate={{scale: 1}}
         whileHover={{ scale: 1.05 }}
         transition={{ type: "spring", stiffness: 400, damping: 10 }}
         className='fixed bottom-10 right-10 bg-white px-7 py-2 border border-border-default rounded-lg shadow-md cursor-pointer'
@@ -139,7 +155,7 @@ export function NewTask() {
           >
             <FormProvider {...methods}>
               <motion.div
-                className='w-[550px]   bg-white rounded-md shadow-md border text-sm border-border-default py-5 px-8 space-y-4' 
+                className='w-[550px] bg-white rounded-md shadow-md border text-sm border-border-default py-5 px-8 space-y-4' 
                 initial={{          
                   opacity: 0, 
                   scale: 0 

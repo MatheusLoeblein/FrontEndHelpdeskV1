@@ -12,7 +12,14 @@ import { CardMedTicket } from '../../components/CardMedTicket'
 import { BurredBackground } from '@/components/BurredBackground';
 import { CardColabTicket } from '@/components/CardColabTicket';
 import { NewComment } from '../../components/NewComment'
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+
+import { CgComment } from 'react-icons/cg'
+import { AiOutlineInteraction } from 'react-icons/ai'
+import { BsCalendar2Date } from 'react-icons/bs';
+
+
 
 export default function TicketPage() {
   const [actionsAndComments, SetactionsAndComments] = useState();
@@ -44,6 +51,7 @@ export default function TicketPage() {
     mergedList.sort(compararPorData)
 
     console.log(mergedList)
+    SetactionsAndComments(mergedList)
 
     return response.data;
 
@@ -132,6 +140,43 @@ export default function TicketPage() {
     }
   }
 
+  function verifyImagePrefix(originalURL:string){
+
+    const prefix = "http://127.0.0.1:8000";
+
+    if (!originalURL.startsWith(prefix)) {
+
+      const finalURL = `${prefix}${originalURL}`;
+      return finalURL
+    } else {
+
+      return originalURL
+    }
+      }
+
+
+
+  const container = {
+    hidden: { opacity: 1, scale: 0 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delayChildren: 0.3,
+        staggerChildren: 0.2
+      }
+    }
+  }
+    
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1
+    }
+  }
+    
+
    return (
 
     <MainLayout>
@@ -148,7 +193,11 @@ export default function TicketPage() {
       }
 
 
-      <section className='p-10'>
+      <motion.section
+        initial={{ x: 100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: 100, opacity: 0 }}
+      className='p-10'>
 
       {!isFetching && ticket && 
       
@@ -253,26 +302,47 @@ export default function TicketPage() {
               </div>
           </div>
 
-          <div className='grow flex flex-col'>
-          {ticket?.comments?.map((comment, index) => {
+          <motion.div 
+          variants={container}
+          initial="hidden"
+          animate="visible"
+          className='grow flex flex-col'
+          >
+          {actionsAndComments?.map((actionOrComment, index) => {
+
+            const ProfileImgUrl = verifyImagePrefix(actionOrComment.author.profile.cover_profile)
+
+            const isComment = actionOrComment.comment ? true : false
+            
             return(
 
                 //xl:mt-0
-                <div className='grid grid-cols-[1fr,15fr] gap-20 my-12  relative ' key={index}>
+                <motion.div 
+                variants={item}
+                className='grid grid-cols-[1fr,15fr] gap-20 my-12  relative ' key={index}>
 
-                  <div className='w-60  h-10 text-center flex justify-center items-center bg-white rounded-md z-10 shadow-md'>
-                    {format(new Date(comment.created_at), 'dd-MM-yyyy')} ás {format(new Date(comment.created_at), 'HH:mm')}
+                  <div className='w-60  h-10 text-center flex justify-between px-10 items-center bg-white rounded-md z-10 shadow-md text-sm'>
+                    <span >{format(new Date(actionOrComment.created_at), 'dd-MM-yyyy')} ás {format(new Date(actionOrComment.created_at), 'HH:mm')}</span>
+                    <span className="text-blue-400"><BsCalendar2Date size={14} /></span>
                   </div>
                   <span className='absolute bg-blue-400 w-20 h-1 left-60 top-4 z-0'>
 
                   </span>
-                  <span className='absolute bg-blue-400 w-3 h-3 left-[314px] top-[11.5px] rotate-45'>
+                  <span className='absolute bg-blue-400 w-3 h-3 left-[314px] top-[11.5px] rotate-45 z-10'>
                   </span>
                 
-                  <div className='flex grow bg-white rounded-md p-5 space-x-4 shadow-md'>
-                    <div className='w-16 h-16'>
-                      <Image 
-                      src={`http://127.0.0.1:8000${comment.author.profile.cover_profile}`} 
+                  <div className='flex grow bg-white rounded-md p-5 space-x-4 shadow-md relative'>
+
+                  {isComment ?
+
+                    <h3 className='absolute top-5 right-5 text-xs text-blue-400 '> <CgComment size={18}/></h3>
+                    :
+                    <h3 className='absolute top-5 right-5 text-xs text-blue-400 '> <AiOutlineInteraction size={18}/></h3>
+                  }
+
+                    <div className='w-20 h-20'>
+                      <Image
+                      src={ProfileImgUrl} 
                       alt=""
                       className='w-16 h-16 rounded-full object-cover'
                       width={500}
@@ -280,30 +350,38 @@ export default function TicketPage() {
                       />
                     </div>
                     <div className='flex flex-col justify-start w-full'>
-                      <h3 className='border-b border-b-border-default text-md font-medium w-full py-3' >{comment.author.first_name} {comment.author.last_name}</h3>
+                      <h3 className='border-b border-b-border-default text-md font-medium w-full py-3' >{actionOrComment.author.first_name} {actionOrComment.author.last_name}</h3>
 
                       <div className='py-5'>
-                        <div className="break-all" dangerouslySetInnerHTML={{__html: comment.comment.replace(/<img/g, '<img class="w-[50%]"')}}></div>
+                        {
+                          isComment ?
+
+                          <div className="break-all" dangerouslySetInnerHTML={{__html: actionOrComment.comment.replace(/<img/g, '<img class="w-[50%]"')}}></div>
+
+                          :
+
+                          <div className="break-all" > {actionOrComment?.action_message} </div>
+                        }
                       </div>
+
                     </div>
                     
 
                   </div> 
-                </div>
+                </motion.div>
             )
           })
         }
 
-        </div>
+        </motion.div >
 
-        <NewComment ticket={ticket}/>
 
         </div>
       }
 
+      </motion.section>
 
-
-      </section>
+      <NewComment ticket={ticket}/>
     </MainLayout>
    
   );

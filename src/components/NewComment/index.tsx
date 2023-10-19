@@ -1,5 +1,5 @@
 import { motion, AnimatePresence} from 'framer-motion'
-import { useEffect, useState, useContext } from 'react'
+import { useRef, useState, useContext } from 'react'
 import dynamic from 'next/dynamic'
 import { BurredBackground } from '../BurredBackground'
 import { GoPaperclip } from 'react-icons/go'
@@ -21,6 +21,7 @@ export function NewComment({ ticket }) {
   const [ open, setOpen ] = useState(false)
   const { setMessages } = useContext(AuthContext)
   const queryClient = useQueryClient();
+  const toastId = useRef(null)
   
   const handleEditorChange = (html) => {
     setValue("comment", html);
@@ -51,18 +52,38 @@ export function NewComment({ ticket }) {
   const { mutate, isLoading: postLoading, isSuccess } = useMutation(
     'CreateComment',
     async (data) => {
+      toastId.current = toast.loading('Adicionando observação...')
       const response = await api.post('/api/comment/create/', data);
       return response.data;
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries('ticket');
-        toast.success('Observação adicionada com sucesso!')
+          toast.update(toastId.current, {
+          render: "Observação adicionada com sucesso!",
+          type: "success",
+          isLoading: false,
+          closeButton: true,
+          autoClose: true
+        })
+        setOpen(false)
+      },
+       onError: () => {
+        toast.update(toastId.current, {
+          render: "Erro ao adicionada observação",
+          type: "error",
+          isLoading: false,
+          closeButton: true,
+          autoClose: true
+      })
       },
     }
   );
 
   function handleCreateComment(data){
+    if(ticket.status == "Aberto"){
+      return toast.error('O Atendimento ao ticket precisa ser iniciado primeiramente.')
+    }
     mutate({
       Tarefa: ticket.id,
       ...data
@@ -79,6 +100,8 @@ export function NewComment({ ticket }) {
   {
     !open &&
     <motion.div 
+    initial={{scale: 0}}
+    animate={{scale: 1}}
     whileHover={{ scale: 1.05 }}
     transition={{ type: "spring", stiffness: 400, damping: 10 }}
     className='fixed bottom-10 right-10 bg-white px-7 py-2 border border-border-default rounded-lg shadow-md cursor-pointer'
