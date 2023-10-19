@@ -16,7 +16,7 @@ import { object, string } from 'yup';
 import { BurredBackground } from '../BurredBackground'
 import { BiTask } from 'react-icons/bi'
 import { toast } from 'react-toastify';
-
+import { FileUploader } from '../FileInput'
 
 const Editor = dynamic(() => import('../Editor'), {
   ssr: false
@@ -256,7 +256,7 @@ export function NewTask() {
               </div>
 
               <div>
-                <input type="file" name="" id="" />
+                <FileUploader />
               </div>
 
               {

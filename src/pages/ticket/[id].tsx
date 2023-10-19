@@ -58,10 +58,6 @@ export default function TicketPage() {
   },
     refetchOnWindowFocus: false,
   })
-
-  // useEffect(() => {
-  //   console.log(actionsAndComments)
-  // }, [actionsAndComments, SetactionsAndComments])
   
   console.log(ticket, isFetching, error, isLoading)
 
@@ -280,19 +276,6 @@ export default function TicketPage() {
                 <h2 className="pt-3 text-gray-600"><strong>Descrição</strong></h2>
 
                 <div className='container py-3 pb-5 break-words ' dangerouslySetInnerHTML={{__html: ticket.description}}></div>
-
-                {/* <div className='flex flex-col gap-5'>
-                  {
-                    ticket?.additinalData?.map(({tarefa, nome, value}, index) => {
-                      return(
-                        value && 
-                          <div key={index} className='flex flex-row gap-5'>
-                            <span>{nome.charAt(0).toUpperCase() + nome.slice(1)}</span> <span>{value}</span>
-                          </div>
-                      )
-                    }) 
-                  }
-                </div> */}
 
                 <div>
                  {
