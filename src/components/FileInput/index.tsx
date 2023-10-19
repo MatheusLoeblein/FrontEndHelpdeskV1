@@ -3,19 +3,31 @@ import { GoPaperclip } from 'react-icons/go';
 import { BsFillFileEarmarkCheckFill } from 'react-icons/bs';
 import { AiOutlineClose } from 'react-icons/ai';
 import { motion } from 'framer-motion'
+import {useFormContext} from 'react-hook-form'
 
 export const FileUploader = () => {
   const [ fileInInput, setFileInInput ] = useState(null);
   const fileInputRef = useRef(null);
 
+  const {register, resetField} = useFormContext()
 
   const resetFileInput = () => {
     setFileInInput(null);
-    // Reset the input value
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    resetField('file')
   };
+
+  function reduxNameFile(fileName){
+
+    if(fileName.length > 49 ){
+      
+      const newFileName = fileName.slice(0, 42) + '..' + fileName.slice(-4)
+
+      return newFileName
+
+    }
+
+    return fileName
+  }
 
   return (
       <div className='flex gap-3'>
@@ -30,13 +42,13 @@ export const FileUploader = () => {
 
           <input 
           type="file" 
-          className="hidden" 
+          // className="hidden" 
           id="file-input" 
-          ref={fileInputRef}
+          {...register('file')}
           onChange={({target : { files }}) => {
             files[0] && setFileInInput(files[0].name)
-            console.log(files)
           }}
+          
           />
           {
             fileInInput &&
@@ -50,7 +62,7 @@ export const FileUploader = () => {
                 <AiOutlineClose size={15}/>
               </motion.span>
               <span>
-                {fileInInput}
+                {reduxNameFile(fileInInput)}
               </span>
               <span className='text-primary-formedica'>
                 <BsFillFileEarmarkCheckFill size={15}/>

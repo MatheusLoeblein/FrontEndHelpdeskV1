@@ -17,6 +17,7 @@ import { BurredBackground } from '../BurredBackground'
 import { BiTask } from 'react-icons/bi'
 import { toast } from 'react-toastify';
 import { FileUploader } from '../FileInput'
+import { read } from 'fs';
 
 const Editor = dynamic(() => import('../Editor'), {
   ssr: false
@@ -101,7 +102,25 @@ export function NewTask() {
   }
   )
 
+  function convert2base64 = file => {
+    const reader = new FileReader();
+
+    reader.onloadend = () => {};
+
+    reader.readAsDataURL(file);
+  };
+
   function CreateTask(data){
+
+    console.log(data.file)
+
+    if(data.file.length > 0){
+      
+
+      convert2base64(data.file[0])
+
+    }
+
     if(requiredFieldsPerType.includes(type)){
       if(addtionalData.length >= 1){
         const dataGroup = { ...data, addtionalData} 
