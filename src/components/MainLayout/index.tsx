@@ -10,7 +10,7 @@ import { AuthContext } from '@/context/AuthContext';
 import { LayoutContext } from '@/context/LayoutContext';
 import { Message } from '@/components/Message';
 import Link from 'next/link'
-import { motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 interface MainLayout {
   children: ReactNode;
@@ -24,7 +24,7 @@ export function MainLayout({children}: MainLayout){
   
   return(
 
-  <>
+  <AnimatePresence>
       <header className='flex px-5 fixed top-0 h-20 z-10 bg-white space-x-4 md:space-x-0 md:justify-between md:px-10 items-center  w-screen  py-2 border-b border-b-border-default'>
 
         <IoMdMenu className="block md:hidden w-8 h-8  text-gray-600" />
@@ -66,6 +66,6 @@ export function MainLayout({children}: MainLayout){
         </div>
 
 
-  </>
+  </AnimatePresence>
   )
 }

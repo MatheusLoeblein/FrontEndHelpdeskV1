@@ -16,7 +16,7 @@ export default function dashboard() {
         <motion.section
           initial={{ x: 100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 100, opacity: 0 }}
+          exit={{ x: -1000, opacity: 0 }}
         
         id='dash' className="flex flex-col gap-4">
           <Charts/>

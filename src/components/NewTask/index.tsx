@@ -255,6 +255,10 @@ export function NewTask() {
                 </span>
               </div>
 
+              <div>
+                <input type="file" name="" id="" />
+              </div>
+
               {
                 addtionalData.length > 0 &&
                 <MiniMenu/>
