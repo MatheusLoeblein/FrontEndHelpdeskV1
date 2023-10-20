@@ -7,7 +7,6 @@ import {useFormContext} from 'react-hook-form'
 
 export const FileUploader = () => {
   const [ fileInInput, setFileInInput ] = useState(null);
-  const fileInputRef = useRef(null);
 
   const {register, resetField} = useFormContext()
 

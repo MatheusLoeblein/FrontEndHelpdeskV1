@@ -14,7 +14,7 @@ import { CardColabTicket } from '@/components/CardColabTicket';
 import { NewComment } from '../../components/NewComment'
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-
+import { GoPaperclip } from 'react-icons/go';
 import { CgComment } from 'react-icons/cg'
 import { AiOutlineInteraction } from 'react-icons/ai'
 import { BsCalendar2Date } from 'react-icons/bs';
@@ -32,9 +32,15 @@ export default function TicketPage() {
     const dataA = new Date(a.created_at);
     const dataB = new Date(b.created_at);
     return dataA - dataB;
-}
+  }
 
-  
+  function getFileName(fileLink){
+    const linkParts = fileLink.split('/');
+    const fileName = linkParts[linkParts.length - 1];
+    return fileName;
+
+  } 
+
   const {data: ticket, isFetching, error, isLoading } = useQuery({
     queryKey: 'ticket', 
     queryFn: async () => {
@@ -282,84 +288,109 @@ export default function TicketPage() {
                   handleReturnCard()
                  }
                 </div>
+
+
+                {
+                  ticket.file &&
+
+                  <div className='flex gap-4 flex-col border-t border-border-default w-full'>
+                    <h2 className="pt-3 text-gray-600"><strong>Arquivos anexados</strong></h2>
+
+                    <div className='flex gap-2 items-center'>
+                      <span className=' text-blue-400 '>
+
+                      <GoPaperclip size={10}/>
+                      </span>
+                      <a 
+                      className='text-sm hover:underline'
+                      target='_blank'
+                      href={ticket.file}
+                      >
+                        {getFileName(ticket.file)}
+                      </a>
+                    </div>
+                    
+                  </div>
+                }
               </div>
           </div>
 
-          <motion.div 
+        <motion.div 
           variants={container}
           initial="hidden"
           animate="visible"
           className='grow flex flex-col'
-          >
-          {actionsAndComments?.map((actionOrComment, index) => {
+        >
+              {actionsAndComments?.map((actionOrComment, index) => {
 
-            const ProfileImgUrl = verifyImagePrefix(actionOrComment.author.profile.cover_profile)
+                const ProfileImgUrl = verifyImagePrefix(actionOrComment.author.profile.cover_profile)
 
-            const isComment = actionOrComment.comment ? true : false
-            
-            return(
-
-                //xl:mt-0
-                <motion.div 
-                variants={item}
-                className='grid grid-cols-[1fr,15fr] gap-20 my-12  relative ' key={index}>
-
-                  <div className='w-60  h-10 text-center flex justify-between px-10 items-center bg-white rounded-md z-10 shadow-md text-sm'>
-                    <span >{format(new Date(actionOrComment.created_at), 'dd-MM-yyyy')} ás {format(new Date(actionOrComment.created_at), 'HH:mm')}</span>
-                    <span className="text-blue-400"><BsCalendar2Date size={14} /></span>
-                  </div>
-                  <span className='absolute bg-blue-400 w-20 h-1 left-60 top-4 z-0'>
-
-                  </span>
-                  <span className='absolute bg-blue-400 w-3 h-3 left-[314px] top-[11.5px] rotate-45 z-10'>
-                  </span>
+                const isComment = actionOrComment.comment ? true : false
                 
-                  <div className='flex grow bg-white rounded-md p-5 space-x-4 shadow-md relative'>
+                return(
 
-                  {isComment ?
+                    //xl:mt-0
+                    <motion.div 
+                    className='grid grid-cols-[1fr,15fr] gap-20 my-12  relative ' 
+                    key={index} 
+                    variants={item}>
 
-                    <h3 className='absolute top-5 right-5 text-xs text-blue-400 '> <CgComment size={18}/></h3>
-                    :
-                    <h3 className='absolute top-5 right-5 text-xs text-blue-400 '> <AiOutlineInteraction size={18}/></h3>
-                  }
-
-                    <div className='w-20 h-20'>
-                      <Image
-                      src={ProfileImgUrl} 
-                      alt=""
-                      className='w-16 h-16 rounded-full object-cover'
-                      width={500}
-                      height={500}
-                      />
-                    </div>
-                    <div className='flex flex-col justify-start w-full'>
-                      <h3 className='border-b border-b-border-default text-md font-medium w-full py-3' >{actionOrComment.author.first_name} {actionOrComment.author.last_name}</h3>
-
-                      <div className='py-5'>
-                        {
-                          isComment ?
-
-                          <div className="break-all" dangerouslySetInnerHTML={{__html: actionOrComment.comment.replace(/<img/g, '<img class="w-[50%]"')}}></div>
-
-                          :
-
-                          <div className="break-all" > {actionOrComment?.action_message} </div>
-                        }
+                      <div className='w-60  h-10 text-center flex justify-between px-10 items-center bg-white rounded-md z-10 shadow-md text-sm'>
+                        <span >{format(new Date(actionOrComment.created_at), 'dd-MM-yyyy')} ás {format(new Date(actionOrComment.created_at), 'HH:mm')}</span>
+                        <span className="text-blue-400"><BsCalendar2Date size={14} /></span>
                       </div>
+                      <span className='absolute bg-blue-400 w-20 h-1 left-60 top-4 z-0'>
 
-                    </div>
+                      </span>
+                      <span className='absolute bg-blue-400 w-3 h-3 left-[314px] top-[11.5px] rotate-45 z-10'>
+                      </span>
                     
+                      <div className='flex grow bg-white rounded-md p-5 space-x-4 shadow-md relative'>
 
-                  </div> 
-                </motion.div>
-            )
-          })
-        }
+                      {isComment ?
+
+                        <h3 className='absolute top-5 right-5 text-xs text-blue-400 '> <CgComment size={18}/></h3>
+                        :
+                        <h3 className='absolute top-5 right-5 text-xs text-blue-400 '> <AiOutlineInteraction size={18}/></h3>
+                      }
+
+                        <div className='w-20 h-20'>
+                          <Image
+                          src={ProfileImgUrl} 
+                          alt=""
+                          className='w-16 h-16 rounded-full object-cover'
+                          width={500}
+                          height={500}
+                          />
+                        </div>
+                        <div className='flex flex-col justify-start w-full'>
+                          <h3 className='border-b border-b-border-default text-md font-medium w-full py-3' >{actionOrComment.author.first_name} {actionOrComment.author.last_name}</h3>
+
+                          <div className='py-5'>
+                            {
+                              isComment ?
+
+                              <div className="break-all" dangerouslySetInnerHTML={{__html: actionOrComment.comment.replace(/<img/g, '<img class="w-[50%]"')}}></div>
+
+                              :
+
+                              <div className="break-all text-blue-400" > {actionOrComment?.action_message} </div>
+                            }
+                          </div>
+
+                        </div>
+                        
+
+                      </div> 
+                    </motion.div>
+                  )
+                })
+              }
 
         </motion.div >
 
 
-        </div>
+      </div>
       }
 
       </motion.section>

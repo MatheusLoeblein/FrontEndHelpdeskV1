@@ -109,12 +109,12 @@ export function NewTask() {
     const formData = new FormData();
 
     if(data.file.length > 0){
-      formData.append('file', data.file);
+      formData.append('file', data.file[0]);
     }
 
     formData.append('titulo', data.titulo);
     formData.append('tipe', data.tipe);
-    formData.append('prioridade', data.tipe);
+    formData.append('prioridade', data.prioridade);
     formData.append('description', data.description);
 
     mutate(formData)

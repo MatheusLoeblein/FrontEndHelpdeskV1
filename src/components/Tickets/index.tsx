@@ -6,7 +6,7 @@ import {useQuery} from 'react-query';
 import Image from 'next/image'
 import {AiOutlineCloseCircle, AiOutlineDownCircle  } from 'react-icons/ai'
 import { usePrivateApi } from '@/hooks/usePrivateApi';
-
+import { motion } from 'framer-motion';
 
 
 export const status = {
@@ -83,6 +83,26 @@ export function Tickets() {
     };
   }, []);
 
+  const container = {
+    hidden: { opacity: 1, scale: 0 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delayChildren: 0.3,
+        staggerChildren: 0.2
+      }
+    }
+  };
+  
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1
+    }
+  };
+
 
   return(
 
@@ -130,17 +150,25 @@ export function Tickets() {
       </div>
 
     </div>
-    <div className='min-h-[300px]'>
+    <motion.div className='min-h-[300px]'
+    variants={container}
+    initial="hidden"
+    animate="visible"
+    >
       {!isFetching && tickets &&
-        tickets?.map(ticket => {
+        tickets?.map((ticket, index) => {
           
-          const formattedDate = format(new Date(ticket.data_up_at), 'dd/MM/yyyy HH:mm');
-          return(
-          <div key={ticket.id}>
-            <div className="flex flex-col py-1 border-b border-b-border-default"  >
-  
+        const formattedDate = format(new Date(ticket.data_up_at), 'dd/MM/yyyy HH:mm');
+
+        return(
+        <motion.div 
+        key={index}
+        variants={item}
+        >
+          <div className="flex flex-col py-1 border-b border-b-border-default"  >
+
             <div className="grid grid-cols-[4fr,2fr,3fr,1fr] w-full py-1 items-center">
-  
+
               <div className="flex flex-col gap-3 w-96 border-b border-b-border-default py-2 ">
                 <h3 className='text-md font-semibold '>
                   
@@ -149,14 +177,15 @@ export function Tickets() {
                   as={`/ticket/${ticket.id}`}
                   ># {ticket.id} | {ticket.tipe?.tipe}</Link>
                 </h3>
-  
+
                 <p className='text-xs'>
                 Último feedback | {formattedDate}
                 </p>
-  
+
               </div>
+
               <div className="flex items-center gap-2">
-  
+
                   {  ticket?.author?.profile?.cover_profile ?
                       <Image 
                       className="w-7 h-7  text-sm rounded-full object-cover align-middle "
@@ -170,13 +199,14 @@ export function Tickets() {
                       className="w-7 h-7 rounded-full bg-gray-500 "/>
                       
                   }
-  
+
                   
                     {ticket?.author?.first_name} {ticket?.author?.last_name}
               </div>
+
               <div className="flex items-center gap-2 justify-center">
-  
-  
+
+
               { ticket.users ? 
                 ticket.users.map((user, index) => {
 
@@ -209,72 +239,73 @@ export function Tickets() {
                 <span> -- </span>
                 
               }
-  
+
               </div>
+
               <div className="flex">
-  
+
                 <span className={`px-3 py-[3px] w-32 text-center text-sm rounded-md text-white shadow-md ${prioridade[ticket.prioridade]}`}>
                 {ticket.prioridade}
                 </span>
               </div>
+
             </div>
-  
-  
-  
+
             <div className="py-1 flex gap-2">
-  
-            <span className=' text-sm px-5 py-[3px] rounded-md text-white bg-gray-400 shadow-md'>
-                {ticket.Category.name}
-            </span>
-            <span className={` text-sm px-5 py-[3px] rounded-md text-white shadow-md ${status[ticket.status]} `}>
-                {ticket.status}
-            </span>
-  
-          </div>
-  
+
+              <span className=' text-sm px-5 py-[3px] rounded-md text-white bg-gray-400 shadow-md'>
+                  {ticket.Category.name}
+              </span>
+              <span className={` text-sm px-5 py-[3px] rounded-md text-white shadow-md ${status[ticket.status]} `}>
+                  {ticket.status}
+              </span>
+
+            </div>
+
           </div>
 
 
-        </div>
-          
-          )
-          })
+        </motion.div>
+        
+        )
+        })
       }
 
-    { isFetching  &&
-      <div className='flex h-96 items-center justify-center'>
+    </motion.div>
 
-        <span className='w-10 h-10 rounded-full border-4 border-border-default border-t-pink-500 animate-spin'>
+        { isFetching  &&
+          <div className='flex h-96 items-center justify-center'>
+
+            <span className='w-10 h-10 rounded-full border-4 border-border-default border-t-pink-500 animate-spin'>
+              
+            </span>
+            
+          </div>
+        }
+
+
+    { !isLoading && tickets &&
+
+      <div className='flex justify-between items-center pt-5'>
+
+        <div className="space-x-5">
+          <span><strong>Pagina atual</strong> {page} </span>
+          <span><strong>Items na pagina</strong> {tickets.length}</span>
+          <span><strong>Total</strong> {data?.data?.count}</span>
+          <span><strong>Paginas</strong> {Math.ceil(data?.data?.count / 20)}</span>
+        </div>
+
+        <div className="flex font-semibold text-md space-x-4">
+          <button
+          className={` transition ${!data?.data?.previous ? 'text-gray-400' : 'hover:underline hover:text-primary-formedica cursor-pointer' }`} 
+          onClick={() => setPage(page - 1)} disabled={!data?.data?.previous} 
           
-        </span>
-        
+          >{'<'} Anterior</button>
+          <button className='cursor-pointer hover:underline hover:text-primary-formedica transition' onClick={() => setPage(page + 1)} disabled={!data?.data?.next}>Proxima {'>'}</button>
+        </div>
+
       </div>
     }
-
-      </div>
-
-      { !isLoading && tickets &&
-
-        <div className='flex justify-between items-center pt-5'>
-
-          <div className="space-x-5">
-            <span><strong>Pagina atual</strong> {page} </span>
-            <span><strong>Items na pagina</strong> {tickets.length}</span>
-            <span><strong>Total</strong> {data?.data?.count}</span>
-            <span><strong>Paginas</strong> {Math.ceil(data?.data?.count / 20)}</span>
-          </div>
-
-          <div className="flex font-semibold text-md space-x-4">
-            <button
-            className={` transition ${!data?.data?.previous ? 'text-gray-400' : 'hover:underline hover:text-primary-formedica cursor-pointer' }`} 
-            onClick={() => setPage(page - 1)} disabled={!data?.data?.previous} 
-            
-            >{'<'} Anterior</button>
-            <button className='cursor-pointer hover:underline hover:text-primary-formedica transition' onClick={() => setPage(page + 1)} disabled={!data?.data?.next}>Proxima {'>'}</button>
-          </div>
-
-        </div>
-        }
       
     </div>
     
