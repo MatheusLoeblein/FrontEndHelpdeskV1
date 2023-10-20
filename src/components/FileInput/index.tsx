@@ -30,25 +30,26 @@ export const FileUploader = () => {
 
   return (
       <div className='flex gap-3'>
-        <motion.div 
-          className='text-sm cursor-pointer flex border border-border-default rounded-md shadow-sm p-2' onClick={() => document.querySelector('#file-input').click()}
+        <motion.label
+          className='text-sm cursor-pointer flex border border-border-default rounded-md shadow-sm p-2'
           whileHover={{ scale: 1.1 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          for="file"
         >
           <GoPaperclip size={15}/>
 
-        </motion.div>
-
           <input 
           type="file" 
-          // className="hidden" 
-          id="file-input" 
-          {...register('file')}
-          onChange={({target : { files }}) => {
-            files[0] && setFileInInput(files[0].name)
-          }}
-          
+          id="file"
+          hidden
+          {...register('file', {onChange: ({target : { files }}) => {
+            files[0] && setFileInInput(files[0].name)            
+          } })}
+
           />
+
+        </motion.label>
+
           {
             fileInInput &&
             <div className='text-xs p-2 grow border border-border-default rounded-md shadow-sm flex justify-between'>

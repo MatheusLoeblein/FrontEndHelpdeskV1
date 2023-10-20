@@ -1,4 +1,4 @@
-import { useState, useRef, useContext } from 'react';
+import { useState, useRef, useContext, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion"
 import dynamic from 'next/dynamic';
 import {DropDownSelect} from '../DropDownSelect'
@@ -18,6 +18,7 @@ import { BiTask } from 'react-icons/bi'
 import { toast } from 'react-toastify';
 import { FileUploader } from '../FileInput'
 import { read } from 'fs';
+import Router from 'next/router';
 
 const Editor = dynamic(() => import('../Editor'), {
   ssr: false
@@ -61,7 +62,7 @@ export function NewTask() {
   const api = usePrivateApi()
   const queryClient = useQueryClient()
 
-  const { mutate, isLoading: postLoading, isSuccess } = useMutation(
+  const { mutate, isLoading: postLoading, isSuccess, data:ticket } = useMutation(
     'CreateTicket',
     async (data) => {
       toastId.current = toast.loading('Criando ticket...')
@@ -93,6 +94,13 @@ export function NewTask() {
     }
   );
 
+  useEffect(() => {
+    if(isSuccess && ticket?.id){
+       Router.push(`/ticket/${ticket.id}`)
+    }
+  }, [isSuccess])
+
+
   const {data: tipes} = useQuery('tipes', async () => {
     const response = await api.get('/api/tarefa/tipes/')
     return response.data
@@ -102,13 +110,11 @@ export function NewTask() {
   }
   )
 
-
   function CreateTask(data){
-
 
     const formData = new FormData();
 
-    if(data.file.length > 0){
+    if(data.file && data.file.length > 0){
       formData.append('file', data.file[0]);
     }
 
@@ -117,22 +123,18 @@ export function NewTask() {
     formData.append('prioridade', data.prioridade);
     formData.append('description', data.description);
 
+    if(requiredFieldsPerType.includes(type)){
+      if(addtionalData.length >= 1){
+        formData.append('addtionalData', JSON.stringify(addtionalData))
+        console.log(addtionalData)
+      }else{
+        setFormError(true)
+      }
+    }
+    formData.forEach(function(value, key) {
+      console.log(key + ": " + value);
+    });
     mutate(formData)
-
-
-    // if(requiredFieldsPerType.includes(type)){
-    //   if(addtionalData.length >= 1){
-    //     const dataGroup = { ...data, addtionalData} 
-    //     mutate(dataGroup)
-    //     console.log(dataGroup);
-    //   }else{
-    //     setFormError(true)
-    //   }
-    //   return
-    // }
-    // mutate(data)
-    // console.log(data);
-    // console.log(addtionalData)
   }
 
   const handleEditorChange = (html) => {

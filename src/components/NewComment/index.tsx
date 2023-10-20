@@ -11,6 +11,8 @@ import { object, string } from 'yup';
 import { useForm, Controller, FormProvider } from 'react-hook-form'
 import { AuthContext } from '@/context/AuthContext'
 import { toast } from 'react-toastify';
+import { FileUploader } from '../FileInput'
+
 
 const Editor = dynamic(() => import('../Editor'), {
   ssr: false
@@ -82,6 +84,7 @@ export function NewComment({ ticket }) {
 
   function handleCreateComment(data){
     if(ticket.status == "Aberto"){
+      setOpen(false)
       return toast.error('O Atendimento ao ticket precisa ser iniciado primeiramente.')
     }
     mutate({
