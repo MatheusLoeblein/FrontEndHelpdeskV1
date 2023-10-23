@@ -59,10 +59,10 @@ export function NewComment({ ticket }) {
       return response.data;
     },
     {
-      onSuccess: () => {
+      onSuccess: (responseData) => {
         queryClient.invalidateQueries('ticket');
           toast.update(toastId.current, {
-          render: "Observação adicionada com sucesso!",
+          render: responseData.message,
           type: "success",
           isLoading: false,
           closeButton: true,
@@ -70,9 +70,10 @@ export function NewComment({ ticket }) {
         })
         setOpen(false)
       },
-       onError: () => {
+       onError: (error) => {
+        const errroMessage = error?.response?.data?.error
         toast.update(toastId.current, {
-          render: "Erro ao adicionada observação",
+          render: errroMessage,
           type: "error",
           isLoading: false,
           closeButton: true,

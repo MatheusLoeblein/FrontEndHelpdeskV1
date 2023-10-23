@@ -36,8 +36,7 @@ export function usePrivateApi(){
     return () => {
       privateApi.interceptors.request.eject(requestInteceptor)
     }
-    
-  },[])
+  }, [])
 
   function isTokenExpired(expTime: number){
   

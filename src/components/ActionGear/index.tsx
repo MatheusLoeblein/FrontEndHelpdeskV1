@@ -8,15 +8,22 @@ import { usePrivateApi } from '@/hooks/usePrivateApi';
 
 export function ActionGear({ticket}){
   const  [open, setOpen] = useState(false)
+  const [statusSubOpen, setStatusSubOpen] = useState(false)
+  const [prioridadeSubOpen, setPrioridadeSubOpen] = useState(false)
+
   const actionGearRef = useRef(null);
+  const toastId = useRef(null)
+
   const api = usePrivateApi()
   const queryClient = useQueryClient()
-  const toastId = useRef(null)
+  
 
   useEffect(() => {
     function handleClickOutside(event) {
       if (actionGearRef.current && !actionGearRef.current.contains(event.target)) {
         setOpen(false);
+        setStatusSubOpen(false);
+        setPrioridadeSubOpen(false);
       }
     }
 
@@ -27,7 +34,7 @@ export function ActionGear({ticket}){
   }, []);
 
 
-  const { mutate, isLoading: postLoading, isSuccess } = useMutation(
+  const { mutate, isLoading, isSuccess, data: ticketCreatedData, error } = useMutation(
     'TicketAction',
     async (data) => {
       toastId.current = toast.loading('Executando ação...')
@@ -35,10 +42,10 @@ export function ActionGear({ticket}){
       return response.data;
     },
     {
-      onSuccess: () => {
+      onSuccess: (responseData) => {
         queryClient.invalidateQueries('ticket');
         toast.update(toastId.current, {
-          render: "Ação efetuada com sucesso!",
+          render: responseData.message,
           type: "success",
           isLoading: false,
           closeButton: true,
@@ -46,9 +53,10 @@ export function ActionGear({ticket}){
       })
 
       },
-      onError: () => {
+      onError: (error) => {
+        const errorMessage = error.response?.data?.error
         toast.update(toastId.current, {
-          render: "'Erro ao efetuar ação'",
+          render: errorMessage,
           type: "error",
           isLoading: false,
           closeButton: true,
@@ -58,17 +66,40 @@ export function ActionGear({ticket}){
     }
   );
 
+
   function initTicket(){
-    if(ticket.status != "Aberto"){
-      toast.error('Ticket esta encontra em estado de execução.')
-    }
-   const data = {
+    const data = {
       action_type: 'I',
       tarefa: ticket.id
     }
+
     mutate(data)
   }
 
+
+  function changeStatus(status){
+
+    const data = {
+      action_type: 'GS',
+      tarefa: ticket.id,
+      status: status
+    }
+
+    mutate(data)
+  }
+
+
+  function changePrioridade(prioridade){
+
+    const data = {
+      action_type: 'GP',
+      tarefa: ticket.id,
+      prioridade: prioridade
+    }
+
+    mutate(data)
+  
+  }
 
   return(
     <div className='relative self-start'
@@ -78,7 +109,11 @@ export function ActionGear({ticket}){
       className="flex items-center  justify-center rounded-md shadow-md p-1 border border-border-default cursor-pointer"
       whileHover={{ scale: 1.1 }}
       transition={{ type: "spring", stiffness: 400, damping: 10 }}
-      onClick={() => { setOpen(!open) }}
+      onClick={() => { 
+        setOpen(!open)
+        setStatusSubOpen(false);
+        setPrioridadeSubOpen(false);
+      }}
       >
         <span className='text-primary-formedica'>
           <RxGear size={20} />
@@ -106,22 +141,98 @@ export function ActionGear({ticket}){
             >
               Iniciar atendimento
             </span>
+
             <span className='py-1 px-5 cursor-pointer hover:bg-blue-100 rounded-md'
+            onClick={() => {
+              setStatusSubOpen(!statusSubOpen)
+              setPrioridadeSubOpen(false)
+            }}
             >
               Gerenciar status
             </span>
+
+            <AnimatePresence>
+
+              { statusSubOpen && 
+
+                <motion.div 
+                className='text-xs flex flex-col px-3 gap-4'
+                initial={{height: 0, opacity: 0, scale: 0}}
+                animate={{height: 'auto', opacity: 1, scale: 1}}
+                transition={{ type: undefined, stiffness: undefined, damping: undefined, duration: 0.2  }}
+                exit={{height: 0, opacity: 0, scale: 0}}
+                >
+                  <span 
+                  onClick={() => {
+                    changeStatus('Aguardando Retorno')
+                  }}
+                  className='cursor-pointer hover:bg-blue-100 px-6 rounded-md p-1'
+                  >Aguardando Retorno</span>
+                  <span
+                    onClick={() => {
+                      changeStatus('Finalizado')
+                    }}
+                  className='cursor-pointer hover:bg-blue-100 px-6 rounded-md p-1'
+                  >Finalizado</span>
+
+                </motion.div>
+              }
+
+            </AnimatePresence>
+
             <span className='py-1 px-5 cursor-pointer hover:bg-blue-100 rounded-md'
+            onClick={() => {
+              setPrioridadeSubOpen(!prioridadeSubOpen)
+              setStatusSubOpen(false)
+            }}
             >
               Gerenciar prioridade
             </span>
-            <span className='py-1 px-5 cursor-pointer hover:bg-blue-100 rounded-md'
+
+            <AnimatePresence>
+
+              { prioridadeSubOpen && 
+
+              <motion.div className='text-xs flex flex-col px-3 gap-4'
+              initial={{height: 0, opacity: 0, scale: 0}}
+              animate={{height: 'auto', opacity: 1, scale: 1}}
+              transition={{ type: undefined, stiffness: undefined, damping: undefined, duration: 0.2 }}
+              exit={{height: 0, opacity: 0, scale: 0}}
+              >
+                <span 
+                className='cursor-pointer hover:bg-blue-100 px-6 rounded-md p-1'
+                onClick={() => changePrioridade("Baixa")}
+                >Baixa</span>
+                <span 
+                onClick={() => changePrioridade("Moderada")}
+                className='cursor-pointer hover:bg-blue-100 px-6 rounded-md p-1'
+                >Moderada</span>
+                <span 
+                onClick={() => changePrioridade("Alta")}
+                className='cursor-pointer hover:bg-blue-100 px-6 rounded-md p-1'
+                >Alta</span>
+                <span 
+                onClick={() => changePrioridade("Urgente")}
+                className='cursor-pointer hover:bg-blue-100 px-6 rounded-md p-1'
+                >Urgente</span>
+              </motion.div>
+              }
+            
+            </AnimatePresence>
+            
+
+            {/* TODO implementar futuramente */}
+            {/* <span className='py-1 px-5 cursor-pointer hover:bg-blue-100 rounded-md'
             >
               Corrigir informação
             </span>
             <span className='py-1 px-5 cursor-pointer hover:bg-blue-100 rounded-md'
             >
               Mover ticket
-            </span>
+            </span> */}
+
+            {/* TODO Falta o delete do ticket tbm */}
+
             <span className='py-1 px-5 cursor-pointer  bg-gray-200 hover:bg-red-500 hover:text-white rounded-md'
             >
               Deletar ticket

@@ -60,7 +60,7 @@ export function DelReq(){
       const dataToEdit = addtionalData[editIndex];
       setValue('reqs', dataToEdit.reqs); 
     }
-  }, [editIndex, setEditIndex])
+  }, [editIndex, setEditIndex ])
   
   return(
 

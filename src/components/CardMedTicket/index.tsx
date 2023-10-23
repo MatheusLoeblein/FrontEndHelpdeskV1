@@ -39,7 +39,7 @@ export function CardMedTicket({ medico }) {
         <motion.div
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        className={`flex border  shadow-sm rounded-md px-2 space-x-2 items-center cursor-pointer ${oppened ? 'border-emerald-200' :  'border-border-default '}`}
+        className={`flex border max-w-[200px] shadow-sm rounded-md px-2 space-x-2 items-center cursor-pointer ${oppened ? 'border-emerald-200' :  'border-border-default '}`}
         onClick={() => handleOpen()}
         >
           <span className={`text-xs border-r  pr-2 py-2 ${ oppened ? 'border-r-emerald-200  text-emerald-400 ' : ' border-r-border-default text-blue-400 '} `}>CRM</span>

@@ -18,6 +18,19 @@ import { GoPaperclip } from 'react-icons/go';
 import { CgComment } from 'react-icons/cg'
 import { AiOutlineInteraction } from 'react-icons/ai'
 import { BsCalendar2Date } from 'react-icons/bs';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { TicketComment } from '@/components/TicketComment';
+import { TicketAction } from '@/components/TicketAction';
+
+
+//TODO CRIAR COMPONENT
+function ImageRenderer({src}){
+  return(
+    <div className=''>
+      <img src={src} alt={src} className=' max-w-[30%] cursor-pointer'/>
+    </div>
+  )
+}
 
 
 
@@ -64,14 +77,31 @@ export default function TicketPage() {
   },
     refetchOnWindowFocus: false,
   })
+
+//TODO CRIAR MODULO
+  function extractImagesAndText(html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const imgElements = doc.querySelectorAll('img');
   
+    Array.from(imgElements).forEach((img) => {
+      const imageComponent = <ImageRenderer src={img.getAttribute('src')} />;
+      img.outerHTML = renderToStaticMarkup(imageComponent);
+    });
+  
+    const htmlWithImagesReplaced = doc.documentElement.outerHTML;
+  
+    return htmlWithImagesReplaced;
+  }
+
+
   console.log(ticket, isFetching, error, isLoading)
 
   function handleReturnCard(){
     if(ticket?.cadMedico.length > 0){
       return (
 
-        <div className='flex flex-col border-t border-t-border-default space-y-4'>
+        <div className='flex flex-col border-t border-t-border-default space-y-4 mb-5'>
           <h3 className="pt-3 text-gray-600" ><strong>Dados cadastrais médicos</strong></h3>
           <span className='text-xs text-yellow-500' >
             Clique no card para exibir a modal de informações detalhadas.
@@ -80,9 +110,9 @@ export default function TicketPage() {
           <div className='flex space-x-4'>
 
             {
-              ticket?.cadMedico.map((medico) => {
+              ticket?.cadMedico.map((medico, index) => {
                 return(
-                  <CardMedTicket medico={medico}/>
+                  <CardMedTicket medico={medico} key={index}/>
                   )
                 })
             }
@@ -95,18 +125,18 @@ export default function TicketPage() {
     if(ticket?.cadColaborador.length > 0){
       return (
 
-        <div className='flex flex-col border-t border-t-border-default space-y-4'>
+        <div className='flex flex-col border-t border-t-border-default space-y-4 mb-5'>
           <h3 className="pt-3 text-gray-600" ><strong>Dados cadastrais colaboradores</strong></h3>
           <span className='text-xs text-yellow-500' >
             Clique no card para exibir a modal de informações detalhadas.
           </span>
 
-          <div className='flex space-x-4'>
+          <div className='grid lg:grid-cols-4 md:grid-cols-2 gap-4 lg:max-w-4xl md:max-w-lg'>
 
             {
-              ticket?.cadColaborador.map((colab) => {
+              ticket?.cadColaborador.map((colab, index) => {
                 return(
-                  <CardColabTicket colab={colab}/>
+                  <CardColabTicket colab={colab} key={index}/>
                   )
                 })
             }
@@ -120,7 +150,7 @@ export default function TicketPage() {
     if(ticket?.ex_reqs.length > 0){
       return (
 
-        <div className='flex flex-col border-t border-t-border-default space-y-4'>
+        <div className='flex flex-col border-t border-t-border-default space-y-4 mb-5'>
           <h3 className="pt-3 text-gray-600" ><strong>Requisições para exclusão</strong></h3>
 
           <div className='flex space-x-4'>
@@ -141,21 +171,6 @@ export default function TicketPage() {
       )
     }
   }
-
-  function verifyImagePrefix(originalURL:string){
-
-    const prefix = "http://127.0.0.1:8000";
-
-    if (!originalURL.startsWith(prefix)) {
-
-      const finalURL = `${prefix}${originalURL}`;
-      return finalURL
-    } else {
-
-      return originalURL
-    }
-      }
-
 
 
   const container = {
@@ -323,66 +338,19 @@ export default function TicketPage() {
         >
               {actionsAndComments?.map((actionOrComment, index) => {
 
-                const ProfileImgUrl = verifyImagePrefix(actionOrComment.author.profile.cover_profile)
-
                 const isComment = actionOrComment.comment ? true : false
+                  
                 
                 return(
 
-                    //xl:mt-0
-                    <motion.div 
-                    className='grid grid-cols-[1fr,15fr] gap-20 my-12  relative ' 
-                    key={index} 
-                    variants={item}>
+                    isComment ?
 
-                      <div className='w-60  h-10 text-center flex justify-between px-10 items-center bg-white rounded-md z-10 shadow-md text-sm'>
-                        <span >{format(new Date(actionOrComment.created_at), 'dd-MM-yyyy')} ás {format(new Date(actionOrComment.created_at), 'HH:mm')}</span>
-                        <span className="text-blue-400"><BsCalendar2Date size={14} /></span>
-                      </div>
-                      <span className='absolute bg-blue-400 w-20 h-1 left-60 top-4 z-0'>
+                    <TicketComment comment={actionOrComment} variants={item} key={index}/>
 
-                      </span>
-                      <span className='absolute bg-blue-400 w-3 h-3 left-[314px] top-[11.5px] rotate-45 z-10'>
-                      </span>
-                    
-                      <div className='flex grow bg-white rounded-md p-5 space-x-4 shadow-md relative'>
+                    :
 
-                      {isComment ?
-
-                        <h3 className='absolute top-5 right-5 text-xs text-blue-400 '> <CgComment size={18}/></h3>
-                        :
-                        <h3 className='absolute top-5 right-5 text-xs text-blue-400 '> <AiOutlineInteraction size={18}/></h3>
-                      }
-
-                        <div className='w-20 h-20'>
-                          <Image
-                          src={ProfileImgUrl} 
-                          alt=""
-                          className='w-16 h-16 rounded-full object-cover'
-                          width={500}
-                          height={500}
-                          />
-                        </div>
-                        <div className='flex flex-col justify-start w-full'>
-                          <h3 className='border-b border-b-border-default text-md font-medium w-full py-3' >{actionOrComment.author.first_name} {actionOrComment.author.last_name}</h3>
-
-                          <div className='py-5'>
-                            {
-                              isComment ?
-
-                              <div className="break-all" dangerouslySetInnerHTML={{__html: actionOrComment.comment.replace(/<img/g, '<img class="w-[50%]"')}}></div>
-
-                              :
-
-                              <div className="break-all text-blue-400" > {actionOrComment?.action_message} </div>
-                            }
-                          </div>
-
-                        </div>
-                        
-
-                      </div> 
-                    </motion.div>
+                    <TicketAction action={actionOrComment} variants={item} key={index}/>
+                   
                   )
                 })
               }
@@ -396,6 +364,8 @@ export default function TicketPage() {
       </motion.section>
 
       <NewComment ticket={ticket}/>
+
+
     </MainLayout>
    
   );

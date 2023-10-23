@@ -98,7 +98,7 @@ export function NewTask() {
     if(isSuccess && ticket?.id){
        Router.push(`/ticket/${ticket.id}`)
     }
-  }, [isSuccess])
+  }, [isSuccess, ticket?.id])
 
 
   const {data: tipes} = useQuery('tipes', async () => {
