@@ -15,23 +15,8 @@ import { NewComment } from '../../components/NewComment'
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { GoPaperclip } from 'react-icons/go';
-import { CgComment } from 'react-icons/cg'
-import { AiOutlineInteraction } from 'react-icons/ai'
-import { BsCalendar2Date } from 'react-icons/bs';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { TicketComment } from '@/components/TicketComment';
 import { TicketAction } from '@/components/TicketAction';
-
-
-//TODO CRIAR COMPONENT
-function ImageRenderer({src}){
-  return(
-    <div className=''>
-      <img src={src} alt={src} className=' max-w-[30%] cursor-pointer'/>
-    </div>
-  )
-}
-
 
 
 export default function TicketPage() {
@@ -77,22 +62,6 @@ export default function TicketPage() {
   },
     refetchOnWindowFocus: false,
   })
-
-//TODO CRIAR MODULO
-  function extractImagesAndText(html) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    const imgElements = doc.querySelectorAll('img');
-  
-    Array.from(imgElements).forEach((img) => {
-      const imageComponent = <ImageRenderer src={img.getAttribute('src')} />;
-      img.outerHTML = renderToStaticMarkup(imageComponent);
-    });
-  
-    const htmlWithImagesReplaced = doc.documentElement.outerHTML;
-  
-    return htmlWithImagesReplaced;
-  }
 
 
   console.log(ticket, isFetching, error, isLoading)

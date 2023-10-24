@@ -1,15 +1,19 @@
 import { motion } from 'framer-motion';
 import format from 'date-fns/format';
-import { AiOutlineInteraction } from 'react-icons/ai';
 import { BsCalendar2Date } from 'react-icons/bs';
 import { CgComment } from 'react-icons/cg';
 import { verifyImagePrefix } from '@/utils/verifyImagePrefix';
 import Image from 'next/image'
+import { extractImageUrlsAndCleanHtml } from '@/utils/HtmlTextImageTools';
+import { Gallery } from '../ImageCard';
+
 
 export function TicketComment({comment, variants}){
 
   const ProfileImgUrl = verifyImagePrefix(comment?.author?.profile?.cover_profile)
-  
+
+  const { imageUrls, cleanHtml } = extractImageUrlsAndCleanHtml(comment?.comment)
+
   return(
     <motion.div 
     className='grid grid-cols-[1fr,15fr] gap-20 my-12  relative ' 
@@ -44,8 +48,14 @@ export function TicketComment({comment, variants}){
           <h3 className='border-b border-b-border-default text-md font-medium w-full py-3' >{comment.author.first_name} {comment.author.last_name}</h3>
 
           <div className='py-5'>
-            <div className="break-all" dangerouslySetInnerHTML={{__html: comment?.comment}}></div>
+            <div className="break-all" dangerouslySetInnerHTML={{__html: cleanHtml}}></div>
           </div>
+
+         {
+
+          imageUrls.length > 0 &&
+           <Gallery imageUrls={imageUrls} />
+         }
 
         </div>
         
