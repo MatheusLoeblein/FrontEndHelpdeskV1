@@ -5,7 +5,7 @@ import { CgComment } from 'react-icons/cg';
 import { verifyImagePrefix } from '@/utils/verifyImagePrefix';
 import Image from 'next/image'
 import { extractImageUrlsAndCleanHtml } from '@/utils/HtmlTextImageTools';
-import { Gallery } from '../ImageCard';
+import { Gallery } from '../Gallery';
 
 
 export function TicketComment({comment, variants}){
@@ -45,7 +45,7 @@ export function TicketComment({comment, variants}){
         </div>
 
         <div className='flex flex-col justify-start w-full'>
-          <h3 className='border-b border-b-border-default text-md font-medium w-full py-3' >{comment.author.first_name} {comment.author.last_name}</h3>
+          <h3 className='border-b border-b-border-default text-md font-medium w-full py-3 text-gray-600' >{comment.author.first_name} {comment.author.last_name}</h3>
 
           <div className='py-5'>
             <div className="break-all" dangerouslySetInnerHTML={{__html: cleanHtml}}></div>
@@ -54,7 +54,7 @@ export function TicketComment({comment, variants}){
          {
 
           imageUrls.length > 0 &&
-           <Gallery imageUrls={imageUrls} />
+           <Gallery imageUrls={imageUrls} Author={comment.author} authorImageUrl={ProfileImgUrl} />
          }
 
         </div>

@@ -17,14 +17,18 @@ import { motion } from 'framer-motion';
 import { GoPaperclip } from 'react-icons/go';
 import { TicketComment } from '@/components/TicketComment';
 import { TicketAction } from '@/components/TicketAction';
+import { Gallery } from '@/components/Gallery';
+import { extractImageUrlsAndCleanHtml } from '@/utils/HtmlTextImageTools';
+
 
 
 export default function TicketPage() {
-  const [actionsAndComments, SetactionsAndComments] = useState();
+  const [actionsAndComments, setactionsAndComments] = useState();
+  const [ticketDescription, setTicketDescription] = useState();
+  const [ticketImgs, setTicketImgs] = useState();
+
   const router = useRouter();
-
   const api = usePrivateApi()
-
 
   function compararPorData(a, b) {
     const dataA = new Date(a.created_at);
@@ -53,9 +57,13 @@ export default function TicketPage() {
     ];
 
     mergedList.sort(compararPorData)
+    
+    const {imageUrls, cleanHtml} = extractImageUrlsAndCleanHtml(response.data.description)
+    
+    setactionsAndComments(mergedList)
+    setTicketDescription(cleanHtml)
+    setTicketImgs(imageUrls)
 
-    console.log(mergedList)
-    SetactionsAndComments(mergedList)
 
     return response.data;
 
@@ -261,11 +269,16 @@ export default function TicketPage() {
 
               </div>
 
-              <div className="">
+              <div className="relative ">
 
-                <h2 className="pt-3 text-gray-600"><strong>Descrição</strong></h2>
+                <h3 className=' text-md font-medium pr-2 bg-white position text-gray-600 absolute top-[-21px] left-0'><strong>Descrição</strong></h3>
 
-                <div className='container py-3 pb-5 break-words ' dangerouslySetInnerHTML={{__html: ticket.description}}></div>
+                <div className='container py-3 pb-5 mt-2 break-words ' dangerouslySetInnerHTML={{__html: ticketDescription}}></div>
+
+                {
+                  ticketImgs?.length > 0 &&
+
+                  <Gallery imageUrls={ticketImgs} Author={ticket.author} authorImageUrl={ticket.author?.profile.cover_profile} />}
 
                 <div>
                  {
