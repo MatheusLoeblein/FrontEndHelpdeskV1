@@ -14,19 +14,19 @@ export function TicketAction({action, variants}){
     className='grid grid-cols-[1fr,15fr] gap-20 my-12  relative ' 
     variants={variants}>
 
-      <div className='w-60  h-10 text-center flex justify-between px-10 items-center bg-white rounded-md z-10 shadow-md text-sm'>
+      <div className='w-60  h-10 text-center flex justify-between px-10 items-center bg-white rounded-md z-10 shadow-md text-sm border border-border-default'>
         <span >{format(new Date(action.created_at), 'dd-MM-yyyy')} ás {format(new Date(action.created_at), 'HH:mm')}</span>
-        <span className="text-blue-400"><BsCalendar2Date size={14} /></span>
+        <span className="text-primary-formedica"><BsCalendar2Date size={14} /></span>
       </div>
-      <span className='absolute bg-blue-400 w-20 h-1 left-60 top-4 z-0'>
+      <span className='absolute bg-primary-formedica w-20 h-1 left-60 top-4 z-0'>
 
       </span>
-      <span className='absolute bg-blue-400 w-3 h-3 left-[314px] top-[11.5px] rotate-45 z-10'>
+      <span className='absolute bg-primary-formedica w-3 h-3 left-[314px] top-[11.5px] rotate-45 z-10'>
       </span>
     
-      <div className='flex grow bg-white rounded-md p-5 space-x-4 shadow-md relative'>
+      <div className='flex grow bg-white rounded-md p-5 space-x-4 shadow-md relative border border-border-default'>
 
-        <h3 className='absolute top-5 right-5 text-xs text-blue-400 '> <AiOutlineInteraction size={18}/></h3>
+        <h3 className='absolute top-5 right-5 text-xs text-primary-formedica '> <AiOutlineInteraction size={18}/></h3>
 
         <div className='w-20 h-20'>
           <Image
@@ -41,7 +41,7 @@ export function TicketAction({action, variants}){
           <h3 className='border-b border-b-border-default text-md font-medium w-full py-3' >{action.author.first_name} {action.author.last_name}</h3>
 
           <div className='py-5'>
-              <div className="break-all text-blue-400" > {action?.action_message} </div>
+              <div className="break-all text-primary-formedica" > {action?.action_message} </div>
           </div>
 
         </div>

@@ -13,19 +13,21 @@ import { BurredBackground } from '@/components/BurredBackground';
 import { CardColabTicket } from '@/components/CardColabTicket';
 import { NewComment } from '../../components/NewComment'
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { GoPaperclip } from 'react-icons/go';
 import { TicketComment } from '@/components/TicketComment';
 import { TicketAction } from '@/components/TicketAction';
 import { Gallery } from '@/components/Gallery';
 import { extractImageUrlsAndCleanHtml } from '@/utils/HtmlTextImageTools';
-
-
+import { CgComment } from 'react-icons/cg';
+import { AiOutlineInteraction } from 'react-icons/ai';
 
 export default function TicketPage() {
   const [actionsAndComments, setactionsAndComments] = useState();
   const [ticketDescription, setTicketDescription] = useState();
   const [ticketImgs, setTicketImgs] = useState();
+  const [showActions, setShowActions] = useState(true);
+  const [showComments, setShowComments] = useState(true);
 
   const router = useRouter();
   const api = usePrivateApi()
@@ -78,8 +80,8 @@ export default function TicketPage() {
     if(ticket?.cadMedico.length > 0){
       return (
 
-        <div className='flex flex-col border-t border-t-border-default space-y-4 mb-5'>
-          <h3 className="pt-3 text-gray-600" ><strong>Dados cadastrais médicos</strong></h3>
+        <div className='flex flex-col border-t border-t-border-default relative space-y-4 mb-5 relative '>
+          <h3 className="pt-3 text-gray-600 absolute pr-2 -top-2" ><strong>Dados cadastrais médicos</strong></h3>
           <span className='text-xs text-yellow-500' >
             Clique no card para exibir a modal de informações detalhadas.
           </span>
@@ -127,8 +129,8 @@ export default function TicketPage() {
     if(ticket?.ex_reqs.length > 0){
       return (
 
-        <div className='flex flex-col border-t border-t-border-default space-y-4 mb-5'>
-          <h3 className="pt-3 text-gray-600" ><strong>Requisições para exclusão</strong></h3>
+        <div className='flex flex-col border-t border-t-border-default space-y-4  mt-2 relative mb-5'>
+          <h3 className=" text-gray-600 bg-white absolute pr-2 -top-4 " ><strong>Requisições para exclusão</strong></h3>
 
           <div className='flex space-x-4'>
 
@@ -197,7 +199,7 @@ export default function TicketPage() {
       
         <div className='flex flex-col m-auto'>
           {/* xl:w-1/2 */}
-          <div className='w-full  bg-white px-3 py-5 rounded-md shadow-md border border-border-default'>
+          <div className=' flex flex-col w-full relative bg-white px-3 py-5 rounded-md shadow-md border border-border-default'>
 
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
@@ -250,7 +252,7 @@ export default function TicketPage() {
                   <div className='flex justify-between items-center'>
                       <span><strong>Status</strong></span>
                       <div className="flex items-center">
-                        <span className={`min-w-[100px] px-5 py-[5px] text-xs text-center  rounded-md text-white shadow-md ${status[ticket.status]}`}>
+                        <span className={`min-w-[100px] px-5 py-[5px] text-xs text-center rounded-md text-white shadow-md ${status[ticket.status]}`}>
                         {ticket.status}
                         </span>
                       </div>
@@ -258,7 +260,7 @@ export default function TicketPage() {
                   <div className='flex justify-between items-center'>
                       <span><strong>Prioridade</strong></span>
                       <div className="flex items-center">
-                        <span className={`min-w-[100px] px-5 py-[5px] text-xs text-center  rounded-md text-white shadow-md ${prioridade[ticket.prioridade]}`}>
+                        <span className={`min-w-[100px] px-5 py-[5px] text-xs text-center rounded-md text-white shadow-md ${prioridade[ticket.prioridade]}`}>
                         {ticket.prioridade}
                         </span>
                       </div>
@@ -269,9 +271,9 @@ export default function TicketPage() {
 
               </div>
 
-              <div className="relative ">
+              <div className="relative">
 
-                <h3 className=' text-md font-medium pr-2 bg-white position text-gray-600 absolute top-[-21px] left-0'><strong>Descrição</strong></h3>
+                <h3 className=' text-md font-medium pr-2 bg-white position text-gray-600 absolute top-[-17px] left-0'><strong>Descrição</strong></h3>
 
                 <div className='container py-3 pb-5 mt-2 break-words ' dangerouslySetInnerHTML={{__html: ticketDescription}}></div>
 
@@ -290,10 +292,10 @@ export default function TicketPage() {
                 {
                   ticket.file &&
 
-                  <div className='flex gap-4 flex-col border-t border-border-default w-full'>
-                    <h2 className="pt-3 text-gray-600"><strong>Arquivos anexados</strong></h2>
+                  <div className='flex gap-4 flex-col border-t border-border-default w-full relative mt-10'>
+                    <h3 className=' text-md font-medium pr-2 bg-white position text-gray-600 absolute -top-3 left-0'><strong>Arquivos anexados</strong></h3>
 
-                    <div className='flex gap-2 items-center'>
+                    <div className='flex gap-2 items-center  mt-5'>
                       <span className=' text-blue-400 '>
 
                       <GoPaperclip size={10}/>
@@ -310,37 +312,154 @@ export default function TicketPage() {
                   </div>
                 }
               </div>
+
+
           </div>
 
-        <motion.div 
-          variants={container}
-          initial="hidden"
-          animate="visible"
-          className='grow flex flex-col'
-        >
-              {actionsAndComments?.map((actionOrComment, index) => {
+          {
+            actionsAndComments?.length > 0 && 
+            <div className='self-end mt-5  bg-white flex border-b border-b-border-default rounded-md shadow-md'>
+              <button
+              className={`px-7 py-2 items-center gap-2 flex relative ${ showActions && showComments ? 'bg-primary-formedica text-white rounded-l-md' : 'cursor-pointer'} `}
+              onClick={() => {
+                setShowActions(true)
+                setShowComments(true)
+              }}
+              disabled={showActions && showComments}
+              >
+                <span>Tratativas</span>
+                <span className='flex'>
+                  <span className={`${ showActions && showComments ? 'bg-primary-formedica' : 'bg-white'}`}>
+                  <CgComment/>
+                  </span>
+                  <span className={` ml-[-6px] ${ showActions && showComments ? 'bg-primary-formedica' : 'bg-white'}`}>
+                  <AiOutlineInteraction/>
+                  </span>
+                </span>
 
-                const isComment = actionOrComment.comment ? true : false
-                  
+                { showActions && showComments &&
+                  <span className='bg-primary-formedica w-5 h-5 absolute -bottom-2 left-4 rotate-45'></span>
+                }
                 
-                return(
+                </button>
+              <button
+              className={`px-7 py-2 items-center gap-2 flex relative ${ticket.comments.length < 1 ? 'cursor-default' : 'cursor-pointer'} ${ !showActions && showComments && 'bg-primary-formedica text-white' } `}
+              onClick={() => {
+                setShowActions(false)
+                setShowComments(true)
+              }}
+              disabled={ticket.comments.length < 1}
+              >
+                <span>Comentarios</span>
+                <CgComment/>  
 
-                    isComment ?
+                { !showActions && showComments &&
+                  <span className='bg-primary-formedica w-5 h-5 absolute -bottom-2 left-4 rotate-45'></span>
+                }
+                
+              </button>
+              <button 
+              className={`px-7 py-2 items-center gap-2 flex relative ${ticket.actions.length < 1 ? 'cursor-default' : 'cursor-pointer'} ${ showActions && !showComments && 'bg-primary-formedica text-white rounded-r-md'} `}
+              onClick={() => {
+                setShowActions(true)
+                setShowComments(false)
+              }}
+              disabled={ticket.actions.length < 1}
+              > 
+              <span>Ações</span>
+              <AiOutlineInteraction/> 
 
-                    <TicketComment comment={actionOrComment} variants={item} key={index}/>
-
-                    :
-
-                    <TicketAction action={actionOrComment} variants={item} key={index}/>
-                   
-                  )
-                })
+              { showActions && !showComments &&
+                  <span className='bg-primary-formedica w-5 h-5 absolute -bottom-2 left-4 rotate-45'></span>
               }
 
-        </motion.div >
+              </button>
+            </div>
+
+          }
+
+            <AnimatePresence>
+
+              { showActions && showComments && 
+
+                <motion.div 
+                  variants={container}
+                  initial="hidden"
+                  animate="visible"
+                  exit={{opacity: 0 , height: 0}}
+                  className='grow flex flex-col'
+                  >
+                    {actionsAndComments?.map((actionOrComment, index) => {
+
+                      const isComment = actionOrComment.comment ? true : false
+                        
+                      return(
+                          isComment ?
+                          <TicketComment comment={actionOrComment} variants={item} key={index}/>
+
+                          :
+
+                          <TicketAction action={actionOrComment} variants={item} key={index}/>
+                        
+                        )
+                      })}
+
+                </motion.div >
+
+              }
+            </AnimatePresence>
+
+            <AnimatePresence>
+
+              { !showActions && showComments && 
+
+                <motion.div 
+                  variants={container}
+                  initial="hidden"
+                  animate="visible"
+                  className='grow flex flex-col'>
+                  
+                  {
+                    ticket.comments?.map((comment, index) => {
+                      
+                      return(
+                        <TicketComment comment={comment} variants={item} key={index}/>
+                        )
+                      })
+                    }
+
+                </motion.div>
+              }
 
 
-      </div>
+            </AnimatePresence>
+
+            <AnimatePresence>
+              
+
+              { showActions && !showComments && 
+
+              <motion.div 
+                variants={container}
+                initial="hidden"
+                animate="visible"
+                className='grow flex flex-col'>
+                {
+                  ticket.actions?.map((action, index) => {
+                    
+                    return(
+                      <TicketAction action={action} variants={item} key={index}/>
+                      )
+                    })
+                  }
+              </motion.div>
+              }
+
+            </AnimatePresence>
+
+
+        </div>
+
       }
 
       </motion.section>

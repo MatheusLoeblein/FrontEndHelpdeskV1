@@ -13,9 +13,7 @@ const navLinks = [
   {
     title: 'Tickets',
     subtitles: [
-      { subtitle: 'Favoritos', link: 'link' },
-      { subtitle: 'Finalizados', link: 'link' },
-      { subtitle: 'Meus Tickets', link: 'link' }
+      { subtitle: 'Dashboard', link: '/dashboard' },
     ],
     children: <BiTask className='w-5 h-5' />
   },
@@ -58,7 +56,6 @@ export function MenuSideBar() {
 
   const { menuOver, handleMenuOver } = useContext(LayoutContext);
 
-  const [sideSubVisible, setSideSubVisible] = useState(-1);
 
   const [activeMenuIndex, setActiveMenuIndex] = useState(-1);
 
@@ -87,7 +84,6 @@ export function MenuSideBar() {
               texts={navLink}
               onClick={() => navLink.link ? navLink.link() : setActiveMenuIndex(activeMenuIndex == index ? -1 : index)}
               sideOver={menuOver}
-              sideSubVisible={index === sideSubVisible}
               onMouseOver={() => setSideSubVisible(index)}
               onMouseLeave={handleNavMouseLeave}
             />
@@ -108,7 +104,10 @@ export function MenuSideBar() {
           :
           <div className=' bottom-5 w-60 fixed'>
             <span className='flex gap-3  pl-6 py-2 items-center cursor-pointer rounded-md hover:bg-gray-200'
-              onClick={() => handleMenuOver(!menuOver)}
+              onClick={() => {
+                handleMenuOver(!menuOver)
+                setActiveMenuIndex(-1)
+              }}
             >
               <BiSolidArrowToLeft className="w-5 h-5" />
               Esconder

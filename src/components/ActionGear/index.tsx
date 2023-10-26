@@ -126,7 +126,7 @@ export function ActionGear({ticket}){
 
         <motion.div 
         
-        className='absolute right-0 top-8 w-56 bg-white border border-border-default rounded-md shadow-md text-sm flex flex-col px-3 py-2'
+        className='absolute right-0 top-8 w-56 bg-white border border-border-default rounded-md shadow-md text-sm flex flex-col px-3 py-2 z-40'
         initial={{ opacity: 0}}
         animate={{ opacity: 1}}
         exit={{ opacity: 0}}

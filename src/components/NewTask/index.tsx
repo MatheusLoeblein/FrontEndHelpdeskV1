@@ -129,11 +129,10 @@ export function NewTask() {
         console.log(addtionalData)
       }else{
         setFormError(true)
+        return
       }
     }
-    formData.forEach(function(value, key) {
-      console.log(key + ": " + value);
-    });
+
     mutate(formData)
   }
 

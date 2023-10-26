@@ -30,7 +30,7 @@ export function Gallery({imageUrls, Author, authorImageUrl}){
     handleImgSize(imageUrls[index])
   }
 
-  function handleImgSize(imageUrl){
+  function handleImgSize(imageUrl:URL){
     fetch(imageUrl)
     .then((response) => {
       if (response.headers.get('content-length')) {
@@ -40,7 +40,7 @@ export function Gallery({imageUrls, Author, authorImageUrl}){
         
         setImageInfo({
           size: sizeInKilobytes >= 1000 ? `${sizeInMegabytes.toFixed(3)} MB` : `${sizeInKilobytes.toFixed(3)} KB`,
-          name: imageUrl.split('/').slice(-1)
+          name: imageUrl.toString().split('/').slice(-1)
         }) 
 
       } else {
@@ -94,7 +94,6 @@ export function Gallery({imageUrls, Author, authorImageUrl}){
       animate={{opacity: 1}} 
       exit={{opacity: 0}}
       onMouseEnter={() => {
-        // clearTimeout(timer)
         setShowInfo(true)
       }}
       onMouseLeave={handleMouseLeave}
@@ -148,49 +147,52 @@ export function Gallery({imageUrls, Author, authorImageUrl}){
           }
         </AnimatePresence>
 
-      {
+          <AnimatePresence>
+            {
+              showInfo &&
+              <motion.div 
+              initial={{opacity: 0}} 
+              animate={{opacity: 1}}
+              transition={{ delay: 0.5 }}
+              exit={{opacity: 0}}
+              className='flex justify-between text-xs text-white bg-[#2c2c2cda] w-full absolute p-2 rounded-t-md shadow-md items-center gap-4'>
+                
+                <div className='text-xs text-white flex gap-2 items-center'>
+                  <div className='w-12 h-10 rounded-full flex justify-center items-center'>
+                      <Image
+                      src={authorImageUrl} 
+                      alt=""
+                      className='w-7 h-7 rounded-full object-cover'
+                      width={500}
+                      height={500}
+                      
+                      />
+                </div>
 
-        showInfo &&
-          <motion.div 
-          initial={{opacity: 0}} 
-          animate={{opacity: 1}} 
-          exit={{opacity: 0}}
-          className='flex justify-between text-xs text-white bg-[#2c2c2cda] w-full absolute p-2 rounded-t-md shadow-md items-center gap-4'>
-            
-            <div className='text-xs text-white flex gap-2 items-center'>
-              <div className='w-12 h-10 rounded-full flex justify-center items-center'>
-                  <Image
-                  src={authorImageUrl} 
-                  alt=""
-                  className='w-7 h-7 rounded-full object-cover'
-                  width={500}
-                  height={500}
-                  
-                  />
-            </div>
-  
-              <h3 className=' text-xs text-white font-medium w-full py-3' >{Author.first_name} {Author.last_name}</h3>
-            </div>
-  
-            <div className='flex gap-4'>
-              <span>
-              {imageInfo?.name}
-              </span>
-              <span>
-              {imageInfo?.size}
-              </span>
-  
-              <a
-              href={imageUrls[currentImg]}
-              download={imageInfo?.name}
-              >
-                <FaDownload/>
-              </a>
-            </div>
-  
-          </motion.div>
-      }
+                  <h3 className=' text-xs text-white font-medium w-full py-3' >{Author.first_name} {Author.last_name}</h3>
+                </div>
 
+                <div className='flex gap-4'>
+                  <span>
+                  {imageInfo?.name}
+                  </span>
+                  <span>
+                  {imageInfo?.size}
+                  </span>
+
+                  <a
+                  href={imageUrls[currentImg]}
+                  download={imageInfo?.name}
+                  target='_blank'
+                  >
+                    <FaDownload/>
+                  </a>
+                </div>
+
+              </motion.div>
+            }
+
+          </AnimatePresence>
         </div>
 
       </motion.div>

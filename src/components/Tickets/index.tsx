@@ -6,7 +6,7 @@ import {useQuery} from 'react-query';
 import Image from 'next/image'
 import {AiOutlineCloseCircle, AiOutlineDownCircle  } from 'react-icons/ai'
 import { usePrivateApi } from '@/hooks/usePrivateApi';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 
 export const status = {
@@ -150,130 +150,134 @@ export function Tickets() {
       </div>
 
     </div>
-    <motion.div className='min-h-[300px]'
-    variants={container}
-    initial="hidden"
-    animate="visible"
-    >
-      {!isFetching && tickets &&
-        tickets?.map((ticket, index) => {
-          
-        const formattedDate = format(new Date(ticket.data_up_at), 'dd/MM/yyyy HH:mm');
 
-        return(
-        <motion.div 
-        key={index}
-        variants={item}
-        >
-          <div className="flex flex-col py-1 border-b border-b-border-default"  >
+    <AnimatePresence>
 
-            <div className="grid grid-cols-[4fr,2fr,3fr,1fr] w-full py-1 items-center">
+    
+      <motion.div className='min-h-[300px]'
+      variants={container}
+      initial="hidden"
+      animate="visible"
+      >
+        {!isFetching && tickets &&
+          tickets?.map((ticket, index) => {
+            
+          const formattedDate = format(new Date(ticket.data_up_at), 'dd/MM/yyyy HH:mm');
 
-              <div className="flex flex-col gap-3 w-96 border-b border-b-border-default py-2 ">
-                <h3 className='text-md font-semibold '>
-                  
-                  <Link
-                  href="/ticket/[id]" 
-                  as={`/ticket/${ticket.id}`}
-                  ># {ticket.id} | {ticket.tipe?.tipe}</Link>
-                </h3>
+          return(
+          <motion.div 
+          key={index}
+          variants={item}
+          >
+            <div className="flex flex-col py-1 border-b border-b-border-default"  >
 
-                <p className='text-xs'>
-                Último feedback | {formattedDate}
-                </p>
+              <div className="grid grid-cols-[4fr,2fr,3fr,1fr] w-full py-1 items-center">
 
-              </div>
+                <div className="flex flex-col gap-3 w-96 border-b border-b-border-default py-2 ">
+                  <h3 className='text-md font-semibold '>
+                    
+                    <Link
+                    href="/ticket/[id]" 
+                    as={`/ticket/${ticket.id}`}
+                    ># {ticket.id} | {ticket.tipe?.tipe}</Link>
+                  </h3>
 
-              <div className="flex items-center gap-2">
+                  <p className='text-xs'>
+                  Último feedback | {formattedDate}
+                  </p>
 
-                  {  ticket?.author?.profile?.cover_profile ?
-                      <Image 
-                      className="w-7 h-7  text-sm rounded-full object-cover align-middle "
-                      src={ticket.author.profile.cover_profile} 
-                      alt="Teste" 
-                      width={100}
-                      height={100}
-                      />
-                      :
+                </div>
+
+                <div className="flex items-center gap-2">
+
+                    {  ticket?.author?.profile?.cover_profile ?
+                        <Image 
+                        className="w-7 h-7  text-sm rounded-full object-cover align-middle "
+                        src={ticket.author.profile.cover_profile} 
+                        alt="Teste" 
+                        width={100}
+                        height={100}
+                        />
+                        :
+                        <div
+                        className="w-7 h-7 rounded-full bg-gray-500 "/>
+                        
+                    }
+
+                    
+                      {ticket?.author?.first_name} {ticket?.author?.last_name}
+                </div>
+
+                <div className="flex items-center gap-2 justify-center">
+
+
+                { ticket.users ? 
+                  ticket.users.map((user, index) => {
+
+                    if(user.profile.cover_profile){
+
+                      return(
+                        <div key={index + 5}>
+                        <Image 
+                        className="w-7 h-7 rounded-full object-cover align-middle "
+                        src={user.profile.cover_profile} 
+                        alt={user.profile.cover_profile}
+                        width={100}
+                        height={100}
+                        />
+                        </div>
+                      )
+
+                    }else{
+                      return(
+                        <div key={index + 5}>
                       <div
-                      className="w-7 h-7 rounded-full bg-gray-500 "/>
-                      
-                  }
-
-                  
-                    {ticket?.author?.first_name} {ticket?.author?.last_name}
-              </div>
-
-              <div className="flex items-center gap-2 justify-center">
-
-
-              { ticket.users ? 
-                ticket.users.map((user, index) => {
-
-                  if(user.profile.cover_profile){
-
-                    return(
-                      <div key={index + 5}>
-                      <Image 
-                      className="w-7 h-7 rounded-full object-cover align-middle "
-                      src={user.profile.cover_profile} 
-                      alt={user.profile.cover_profile}
-                      width={100}
-                      height={100}
+                      className="w-7 h-7 rounded-full bg-gray-500 "
                       />
                       </div>
-                    )
-
-                  }else{
-                    return(
-                      <div key={index + 5}>
-                    <div
-                    className="w-7 h-7 rounded-full bg-gray-500 "
-                    />
-                    </div>
-                  )                    
+                    )                    
+                  }
+                  })
+                  :
+                  
+                  <span> -- </span>
+                  
                 }
-                })
-                :
-                
-                <span> -- </span>
-                
-              }
+
+                </div>
+
+                <div className="flex">
+
+                  <span className={`px-3 py-[3px] w-32 text-center text-sm rounded-md text-white shadow-md ${prioridade[ticket.prioridade]}`}>
+                  {ticket.prioridade}
+                  </span>
+                </div>
 
               </div>
 
-              <div className="flex">
+              <div className="py-1 flex gap-2">
 
-                <span className={`px-3 py-[3px] w-32 text-center text-sm rounded-md text-white shadow-md ${prioridade[ticket.prioridade]}`}>
-                {ticket.prioridade}
+                <span className=' text-sm px-5 py-[3px] rounded-md text-white bg-gray-400 shadow-md'>
+                    {ticket.Category.name}
                 </span>
+                <span className={` text-sm px-5 py-[3px] rounded-md text-white shadow-md ${status[ticket.status]} `}>
+                    {ticket.status}
+                </span>
+
               </div>
 
             </div>
 
-            <div className="py-1 flex gap-2">
 
-              <span className=' text-sm px-5 py-[3px] rounded-md text-white bg-gray-400 shadow-md'>
-                  {ticket.Category.name}
-              </span>
-              <span className={` text-sm px-5 py-[3px] rounded-md text-white shadow-md ${status[ticket.status]} `}>
-                  {ticket.status}
-              </span>
+          </motion.div>
+          
+          )
+          })
+        }
 
-            </div>
+      </motion.div>
 
-          </div>
-
-
-        </motion.div>
-        
-        )
-        })
-      }
-
-    </motion.div>
-
-        { isFetching  &&
+      { isFetching  &&
           <div className='flex h-96 items-center justify-center'>
 
             <span className='w-10 h-10 rounded-full border-4 border-border-default border-t-pink-500 animate-spin'>
@@ -281,7 +285,11 @@ export function Tickets() {
             </span>
             
           </div>
-        }
+      }
+
+
+    </AnimatePresence>
+
 
 
     { !isLoading && tickets &&
