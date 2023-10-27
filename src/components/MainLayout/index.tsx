@@ -8,9 +8,12 @@ import { MenuSideBar } from '@/components/MenuSideBar';
 import { ReactNode, useContext } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 import { LayoutContext } from '@/context/LayoutContext';
-import { Message } from '@/components/Message';
 import Link from 'next/link'
 import { AnimatePresence } from 'framer-motion';
+import { FaReact } from 'react-icons/fa'
+import { SiDjango } from 'react-icons/si'
+import { BiLogoTailwindCss } from 'react-icons/bi'
+import { VscVersions } from 'react-icons/vsc'
 
 interface MainLayout {
   children: ReactNode;
@@ -20,7 +23,6 @@ interface MainLayout {
 export function MainLayout({children}: MainLayout){
 
   const { menuOver } = useContext(LayoutContext);
-  const { messages } = useContext(AuthContext);
   
   return(
 
@@ -43,27 +45,48 @@ export function MainLayout({children}: MainLayout){
 
         </div>
 
-      </header>
-
-
-      <div className="fixed top-28 right-5 flex flex-col gap-2 z-[60]">
-                 
-        { messages && messages.map((message, index) =>{ 
-          return(
-            <Message message={message.text} type={message.type} key={index}/>
-          )
-        })}
-
-      </div>    
+      </header> 
         
         <MenuSideBar />
-        <div className='grid grid-cols-[auto,1fr] mt-20 overflow-hidden'>
+        <main className='grid grid-cols-[auto,1fr] mt-20 overflow-hidden'>
 
           <div className={` duration-300 ${menuOver ? 'w-16' : 'w-72'}`}/>
 
+          <div className='min-h-screen flex flex-col justify-between'>
             {children}
 
-        </div>
+            <footer className='flex p-8 w-full border-t border-t-border-default bg-white font-medium text-primary-formedica'>
+              <div className='flex justify-between w-full items-center'>
+                <a className='flex text-xs items-center gap-3'
+                href='https://matheusloeblein.com/'
+                target='_blank'
+                >
+                  <img src="/assets/MLSOFTWARE.svg" alt="" className='w-12 h-12'/>
+                  <div className='flex flex-col'>
+                    <span className='text-sm'>Matheus Loeblein</span>
+                    <span className='text-xs'>Software Engineer</span>
+                    
+                  </div>
+                </a>
+                <div className='flex flex-col items-center justify-center gap-2'>
+                  <div className='flex gap-2'>
+                        <SiDjango size={27}/>
+                        <FaReact size={27}/>
+                        <BiLogoTailwindCss size={27}/>
+                  </div>
+                      <span className='text-sm'>Powered By Django, React, Tailwind</span>  
+                </div>
+                <div className='font-medium text-sm flex gap-1 items-center'><VscVersions size={20}/> <span>v2.0</span></div>
+              </div>
+
+            </footer>
+
+          </div>
+
+
+        </main>
+
+
 
 
   </AnimatePresence>

@@ -80,10 +80,10 @@ export function NavLink({visible, texts, onClick, sideOver}: NavLinkProps) {
           { subtitles?.length > 0 &&
             <div >
             <ul className='flex gap-2 flex-col text-xs'>
-            { subtitles.map((obj: { subtitle: string, link: string,}) => {
+            { subtitles.map((obj: { subtitle: string, link: string,}, index) => {
             return(
-                <Link  href={obj.link} as={obj.link}>
-                  <li key={obj.subtitle} className=' w-full px-3 py-2 pl-5 hover:bg-blue-100 cursor-pointer' >
+                <Link key={index} href={obj.link} as={obj.link}>
+                  <li className=' w-full px-3 py-2 pl-5 hover:bg-blue-100 cursor-pointer' >
                     {obj.subtitle}
                   </li>
                 </Link>

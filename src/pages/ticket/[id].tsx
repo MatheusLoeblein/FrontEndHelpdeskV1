@@ -80,8 +80,8 @@ export default function TicketPage() {
     if(ticket?.cadMedico.length > 0){
       return (
 
-        <div className='flex flex-col border-t border-t-border-default relative space-y-4 mb-5 relative '>
-          <h3 className="pt-3 text-gray-600 absolute pr-2 -top-2" ><strong>Dados cadastrais médicos</strong></h3>
+        <div className='flex flex-col border-t border-t-border-default relative space-y-4 my-5 relative '>
+          <h3 className="text-gray-600 bg-white absolute pr-2 -top-4" ><strong>Dados cadastrais médicos</strong></h3>
           <span className='text-xs text-yellow-500' >
             Clique no card para exibir a modal de informações detalhadas.
           </span>
@@ -104,8 +104,8 @@ export default function TicketPage() {
     if(ticket?.cadColaborador.length > 0){
       return (
 
-        <div className='flex flex-col border-t border-t-border-default space-y-4 mb-5'>
-          <h3 className="pt-3 text-gray-600" ><strong>Dados cadastrais colaboradores</strong></h3>
+        <div className='flex flex-col border-t border-t-border-default space-y-4 relative my-5'>
+          <h3 className="text-gray-600 bg-white absolute pr-2 -top-4" ><strong>Dados cadastrais colaboradores</strong></h3>
           <span className='text-xs text-yellow-500' >
             Clique no card para exibir a modal de informações detalhadas.
           </span>
@@ -129,7 +129,7 @@ export default function TicketPage() {
     if(ticket?.ex_reqs.length > 0){
       return (
 
-        <div className='flex flex-col border-t border-t-border-default space-y-4  mt-2 relative mb-5'>
+        <div className='flex flex-col border-t border-t-border-default space-y-4 relative my-5'>
           <h3 className=" text-gray-600 bg-white absolute pr-2 -top-4 " ><strong>Requisições para exclusão</strong></h3>
 
           <div className='flex space-x-4'>
@@ -231,8 +231,8 @@ export default function TicketPage() {
                     <span># {ticket.id}</span>
                   </div>
                   <div className='flex justify-between items-center'>
-                    <span><strong>Setor</strong></span>
-                    <span>{ticket.Category.name ? ticket.Category.name : '--'}</span>
+                    <span><strong>Setor do Autor</strong></span>
+                    <span>{ticket.author?.profile?.Category?.name ? ticket.author.profile.Category.name : '--'}</span>
                   </div>
                   <div className='flex justify-between items-center'>
                     <span><strong>Anydesk</strong></span>
@@ -247,7 +247,8 @@ export default function TicketPage() {
                   </div>
                   <div className='flex justify-between items-center'>
                     <span><strong>Setor Atribuido</strong></span>
-                    <span>{ticket.author.profile.Category ? ticket.author.profile.Category : '--'}</span>
+                    
+                    <span>{ticket.Category.name ? ticket.Category.name : '--'}</span>
                   </div>
                   <div className='flex justify-between items-center'>
                       <span><strong>Status</strong></span>

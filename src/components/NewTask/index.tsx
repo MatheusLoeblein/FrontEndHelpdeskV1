@@ -149,7 +149,7 @@ export function NewTask() {
         animate={{scale: 1}}
         whileHover={{ scale: 1.05 }}
         transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        className='fixed bottom-10 right-10 bg-white px-7 py-2 border border-border-default rounded-lg shadow-md cursor-pointer'
+        className='fixed bottom-20 right-12 bg-white px-7 py-2 border border-border-default rounded-lg shadow-md cursor-pointer'
         onClick={() => setOpenForm(true)}
         >
           <h2 className='flex space-x-4 items-center text-lg text-primary-formedica font-medium'>

@@ -108,7 +108,7 @@ export function NewComment({ ticket }) {
     animate={{scale: 1}}
     whileHover={{ scale: 1.05 }}
     transition={{ type: "spring", stiffness: 400, damping: 10 }}
-    className='fixed bottom-10 right-10 bg-white px-7 py-2 border border-border-default rounded-lg shadow-md cursor-pointer'
+    className='fixed bottom-20 right-12 bg-white px-7 py-2 border border-border-default rounded-lg shadow-md cursor-pointer'
     onClick={() => setOpen(true)}
     >
         <h2 className='text-lg text-primary-formedica font-medium flex items-center space-x-2'> <span>Anexar Tratativa</span> <CgComment/></h2>
