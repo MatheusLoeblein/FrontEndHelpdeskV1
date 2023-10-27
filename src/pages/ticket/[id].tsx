@@ -151,7 +151,6 @@ export default function TicketPage() {
     }
   }
 
-
   const container = {
     hidden: { opacity: 1, scale: 0 },
     visible: {
@@ -213,7 +212,8 @@ export default function TicketPage() {
 
                 <div className="">
                   <h1 className='text-xl font-medium'>{ticket.tipe.tipe}</h1>
-                  <p>adicionado por <strong>{ticket.author.first_name} {ticket.author.last_name}</strong> em {format(new Date(ticket.data_at), 'dd-MM-yyyy')} ás {format(new Date(ticket.data_at), 'HH:mm')}</p>
+                  <p>adicionado por <strong>{ticket.author.first_name} {ticket.author.last_name}</strong> em 
+                  {format(new Date(ticket.data_at), 'dd-MM-yyyy')} ás {format(new Date(ticket.data_at), 'HH:mm')}</p>
                 </div>
               </div>
 
@@ -276,7 +276,7 @@ export default function TicketPage() {
 
                 <h3 className=' text-md font-medium pr-2 bg-white position text-gray-600 absolute top-[-17px] left-0'><strong>Descrição</strong></h3>
 
-                <div className='container py-3 pb-5 mt-2 break-words ' dangerouslySetInnerHTML={{__html: ticketDescription}}></div>
+                <div className='container py-3 pb-5 mt-2 break-words break-all ' dangerouslySetInnerHTML={{__html: ticketDescription}}></div>
 
                 {
                   ticketImgs?.length > 0 &&
@@ -344,7 +344,8 @@ export default function TicketPage() {
                 
                 </button>
               <button
-              className={`px-7 py-2 items-center gap-2 flex relative ${ticket.comments.length < 1 ? 'cursor-default' : 'cursor-pointer'} ${ !showActions && showComments && 'bg-primary-formedica text-white' } `}
+              className={`px-7 py-2 items-center gap-2 flex relative ${ticket.comments.length < 1 ? 'cursor-default' : 'cursor-pointer'} 
+              ${ !showActions && showComments && 'bg-primary-formedica text-white' } `}
               onClick={() => {
                 setShowActions(false)
                 setShowComments(true)
@@ -360,7 +361,8 @@ export default function TicketPage() {
                 
               </button>
               <button 
-              className={`px-7 py-2 items-center gap-2 flex relative ${ticket.actions.length < 1 ? 'cursor-default' : 'cursor-pointer'} ${ showActions && !showComments && 'bg-primary-formedica text-white rounded-r-md'} `}
+              className={`px-7 py-2 items-center gap-2 flex relative ${ticket.actions.length < 1 ? 'cursor-default' : 'cursor-pointer'} 
+              ${ showActions && !showComments && 'bg-primary-formedica text-white rounded-r-md'} `}
               onClick={() => {
                 setShowActions(true)
                 setShowComments(false)

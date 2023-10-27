@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic';
 import { useQuery } from 'react-query'
 import { usePrivateApi } from '@/hooks/usePrivateApi';
+import { motion } from 'framer-motion';
 
 
 const Chart = dynamic(() => import('react-apexcharts'), {
@@ -34,12 +35,40 @@ export function Charts() {
 
   const colors = ['#436EB3', '#c95e81']
 
+  const container = {
+    hidden: { opacity: 1, scale: 0 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delayChildren: 0.3,
+        staggerChildren: 0.2
+      }
+    }
+  }
+    
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1
+    }
+  }  
+
   return (
 
-    <div className="flex p-5 flex-col xl:flex-row xl:justify-between gap-5 z-0" id="graphs">
-    <div className=" flex flex-col gap-4">
+    <div
+    className="flex p-5 flex-col xl:flex-row xl:justify-between gap-5 z-0" id="graphs">
+    <motion.div 
+      className=" flex flex-col gap-4"
+    >
 
-      <div className="flex flex-col border-b border-b-border-default">
+      <motion.div 
+      initial={{opacity: 0, y: 20}}
+      animate={{opacity: 1, y: 0}}
+      transition={{delay: 0.3}}
+
+      className="flex flex-col border-b border-b-border-default">
 
         <h2 className="text-2xl font-medium">Tickets Status</h2>
         <p className="text-sm font-normal">Aqui estão quantidades de tickets por status ja abertos</p>
@@ -88,8 +117,13 @@ export function Charts() {
           </div>
         </div>
 
-      </div>
-      <div className="">
+      </motion.div>
+
+      <motion.div 
+      initial={{opacity: 0, y: 20}}
+      animate={{opacity: 1, y: 0}}
+      transition={{delay: 0.5}}
+      className="">
         <h2 className="text-2xl font-medium">Total de tickets por mês</h2>
         <p className="text-sm font-normal">Aqui estão as quantidades de tickets mensal</p>
 
@@ -108,41 +142,48 @@ export function Charts() {
               ]} type="area" width="700" />            
           }
         </div>
-
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
 
     <div className="container flex flex-col gap-4 t">
 
-      <div className="bg-white rounded-md shadow-md flex-col p-3 h-max justify-center items-center">
-      <h3 className='text-lg font-medium'>
-                Usuarios Finalizadores dos Tickets
-              </h3>
-        <p className='text-sm font-regular pb-5'>
-          Relação de usuarios por quantidades de tickets finalizados
-        </p>
+      <motion.div 
+      initial={{opacity: 0, y: 20}}
+      animate={{opacity: 1, y: 0}}
+      transition={{delay: 0.7}}
+      className="bg-white rounded-md shadow-md flex-col p-3 h-max justify-center items-center">
+        <h3 className='text-lg font-medium'>
+                  Usuarios Finalizadores dos Tickets
+                </h3>
+          <p className='text-sm font-regular pb-5'>
+            Relação de usuarios por quantidades de tickets finalizados
+          </p>
 
-        <div className="flex justify-center items-center self-center">
+          <div className="flex justify-center items-center self-center">
 
-          { 
-            !isFetching && data &&
+            { 
+              !isFetching && data &&
 
-            <div className=''>
+              <div className=''>
 
 
-            <Chart options={{
-            labels: data?.taskPerUser.users,
-            colors
-            }} series={ data?.taskPerUser.tarefas_per_user } type="donut" width="400" />
-            </div>
-            
-          }
+              <Chart options={{
+              labels: data?.taskPerUser.users,
+              colors
+              }} series={ data?.taskPerUser.tarefas_per_user } type="donut" width="400" />
+              </div>
+              
+            }
 
-        </div>
+          </div>
 
-      </div>
+      </motion.div>
 
-      <div className="bg-white rounded-md shadow-md flex-col p-3 h-max justify-center items-center">
+      <motion.div 
+      initial={{opacity: 0, y: 20}}
+      animate={{opacity: 1, y: 0}}
+      transition={{delay: 1}}
+      className="bg-white rounded-md shadow-md flex-col p-3 h-max justify-center items-center">
 
         <h3 className='text-lg font-medium'>
                   Total de tickets por mês
@@ -176,7 +217,7 @@ export function Charts() {
               
         }
 
-      </div>
+      </motion.div>
       {/* <div className="bg-white rounded-md shadow-md flex h-max justify-center items-center">
       </div>
       <div className="bg-white rounded-md shadow-md flex h-max justify-center items-center">

@@ -17,15 +17,22 @@ export default function dashboard() {
           initial={{ x: 100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -1000, opacity: 0 }}
-        
-        id='dash' className="flex flex-col gap-4">
+          id='dash' className="flex flex-col gap-4">
           <Charts/>
 
-          <Tickets/>
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{delay: 1.2}}
+          >
+            <Tickets/>
           
-          <NewTaskProvider>
-            <NewTask/>
-          </NewTaskProvider> 
+          
+            <NewTaskProvider>
+              <NewTask/>
+            </NewTaskProvider> 
+
+          </motion.div>
 
         </motion.section>
         
