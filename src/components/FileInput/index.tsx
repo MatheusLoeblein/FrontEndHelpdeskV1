@@ -29,7 +29,7 @@ export const FileUploader = () => {
   }
 
   return (
-      <div className='flex gap-3'>
+      <div className='flex gap-3' title='Anexar arquivo'>
         <motion.label
           className='text-sm cursor-pointer flex border border-border-default rounded-md shadow-sm p-2'
           whileHover={{ scale: 1.1 }}
