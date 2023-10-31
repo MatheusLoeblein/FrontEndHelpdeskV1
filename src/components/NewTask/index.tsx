@@ -42,7 +42,7 @@ export function NewTask() {
   }
   
   const schema = object({
-    titulo: string().required("Campo obrigatório."),
+    title: string().required("Campo obrigatório."),
     description: string()
       .required("Campo obrigatório.")
       .test('minimum-text', 'Descrição deve conter pelo menos 25 caracteres.', (value) => {
@@ -118,7 +118,7 @@ export function NewTask() {
       formData.append('file', data.file[0]);
     }
 
-    formData.append('titulo', data.titulo);
+    formData.append('title', data.title);
     formData.append('tipe', data.tipe);
     formData.append('prioridade', data.prioridade);
     formData.append('description', data.description);
@@ -211,10 +211,10 @@ export function NewTask() {
                 <input 
                 type="text"
                 className='py-1 px-3 h-9 w-96 rounded-md border border-border-default shadow-sm outline-primary-formedica outline-1'
-                {...register('titulo') }
+                {...register('title') }
                 />
                 <span className='text-red-500 text-xs'>
-                  {errors?.titulo?.message}
+                  {errors?.title?.message}
                 </span>
               </div>
 

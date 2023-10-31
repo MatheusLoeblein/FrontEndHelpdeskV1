@@ -8,9 +8,10 @@ import { BiSolidTimeFive } from 'react-icons/bi';
 import { IoCheckmarkDoneSharp } from 'react-icons/io5';
 import { ImNotification } from 'react-icons/im';
 import { AiOutlineFieldTime } from 'react-icons/ai';
+import { DatePtTranslate } from '@/utils/datePtTranslat';
 
 export function Notification() {
-  const [contentVisible, setContentVisible] = useState(true);
+  const [contentVisible, setContentVisible] = useState(false);
   const notificationRef = useRef(null);
   const api = usePrivateApi()
 
@@ -40,8 +41,6 @@ export function Notification() {
   })
 
 
-
-
   return (
     <div className='relative' ref={notificationRef}>
       <IoMdNotificationsOutline
@@ -55,7 +54,7 @@ export function Notification() {
           <div className='w-96  bg-white border border-border-default absolute -right-3 top-12 rounded-md rounded-tl-md shadow-md '>
 
         {
-          notifications.length > 0 ?
+          notifications?.length > 0 ?
 
         <>
             
@@ -64,7 +63,7 @@ export function Notification() {
             <button className='flex text-xs z-20 text-primary-formedica hover:underline'>Marcar todas como lidas</button>
           </div>
           
-          <div className='bg-primary-bg h-96  overflow-hidden hover:overflow-y-scroll' >
+          <div className={`bg-primary-bg min-h-42 max-h-96 ${notifications?.length > 3 && 'overflow-y-scroll'}`} >
 
 
 
@@ -79,139 +78,39 @@ export function Notification() {
             { !isFetching && !isLoading &&
               notifications.map( (notification, index) => {
 
-                const formattedDate = format(new Date(notification.timestamp), 'HH:mm') + ' - ' + format(new Date(notification.timestamp), 'MMMM, dd, yyyy')
-                .replace('January', 'Janeiro')
-                .replace('February', 'Fevereiro')
-                .replace('March', 'Março')
-                .replace('April', 'Abril')
-                .replace('May', 'Maio')
-                .replace('June', 'Junho')
-                .replace('July', 'Julho')
-                .replace('August', 'Agosto')
-                .replace('September', 'Setembro')
-                .replace('October', 'Outubro')
-                .replace('November', 'Novembro')
-                .replace('December', 'Dezembro');
-                
+                const date = format(new Date(notification.timestamp), 'HH:mm') + ' - ' + format(new Date(notification.timestamp), 'MMMM, dd, yyyy')
+                const formattedDate = DatePtTranslate(date)
+
                 return(
                   <>
-                                    <div key={index} className='flex items-start justify-between border-b border-b-border-default last:border-0 bg-white hover:bg-gray-200 cursor-pointer'>
-                    <div className='flex'>
+                    <div key={index} className='flex items-start justify-between border-b border-b-border-default last:border-0 bg-white hover:bg-gray-200 cursor-pointer'>
+                      <div className='flex'>
 
-                      <div className='w-14 h-14 py-2 pl-3'>
-                        <img className='w-8 h-8 object-cover rounded-full' src={notification.sender.profile.cover_profile} alt="Profile-Cover" />
+                        <div className='w-14 h-14 py-2 pl-3'>
+                          <img className='w-8 h-8 object-cover rounded-full' src={notification.sender.profile.cover_profile} alt="Profile-Cover" />
+                        </div>
+
+                        <div className='flex flex-col py-2'>
+                          <div className='text-xs font-medium'>
+                            {notification.sender.first_name} {notification.sender.last_name}
+                          </div>
+                          <p className='text-xs py-2'>
+                            {notification.message}
+                          </p>
+
+                          <div className='text-sm py-2 flex gap-1 items-center'>
+                          <span className='text-gray-600'> <AiOutlineFieldTime size={20} /> 
+                          </span><span>{formattedDate}</span>
+                          </div>
+                        </div>
+
                       </div>
 
-                      <div className='flex flex-col py-2'>
-                        <div className='text-xs font-medium'>
-                          {notification.sender.first_name} {notification.sender.last_name}
-                        </div>
-                        <p className='text-xs py-2'>
-                          {notification.message}
-                        </p>
-
-                        <div className='text-sm py-2 flex gap-1 items-center'>
-                         <span className='text-gray-600'> <AiOutlineFieldTime size={20} /> 
-                         </span><span>{formattedDate}</span>
-                        </div>
-                      </div>
-
-
+                      <button className='border border-border-default mr-5 mt-2 flex justify-center items-center bg-white p-1 rounded-md' title='Marcar notificação como lida'>
+                        <IoCheckmarkDoneSharp size={17}/>
+                      </button>
 
                     </div>
-
-                    <button className='border border-border-default mr-5 mt-2 flex justify-center items-center bg-white p-1 rounded-md' title='Marcar notificação como lida'>
-                      <IoCheckmarkDoneSharp size={17}/>
-                    </button>
-
-                  </div>                  <div key={index} className='flex items-start justify-between border-b border-b-border-default last:border-0 bg-white hover:bg-gray-200 cursor-pointer'>
-                    <div className='flex'>
-
-                      <div className='w-14 h-14 py-2 pl-3'>
-                        <img className='w-8 h-8 object-cover rounded-full' src={notification.sender.profile.cover_profile} alt="Profile-Cover" />
-                      </div>
-
-                      <div className='flex flex-col py-2'>
-                        <div className='text-xs font-medium'>
-                          {notification.sender.first_name} {notification.sender.last_name}
-                        </div>
-                        <p className='text-xs py-2'>
-                          {notification.message}
-                        </p>
-
-                        <div className='text-sm py-2 flex gap-1 items-center'>
-                         <span className='text-gray-600'> <AiOutlineFieldTime size={20} /> 
-                         </span><span>{formattedDate}</span>
-                        </div>
-                      </div>
-
-
-
-                    </div>
-
-                    <button className='border border-border-default mr-5 mt-2 flex justify-center items-center bg-white p-1 rounded-md' title='Marcar notificação como lida'>
-                      <IoCheckmarkDoneSharp size={17}/>
-                    </button>
-
-                  </div>                  <div key={index} className='flex items-start justify-between border-b border-b-border-default last:border-0 bg-white hover:bg-gray-200 cursor-pointer'>
-                    <div className='flex'>
-
-                      <div className='w-14 h-14 py-2 pl-3'>
-                        <img className='w-8 h-8 object-cover rounded-full' src={notification.sender.profile.cover_profile} alt="Profile-Cover" />
-                      </div>
-
-                      <div className='flex flex-col py-2'>
-                        <div className='text-xs font-medium'>
-                          {notification.sender.first_name} {notification.sender.last_name}
-                        </div>
-                        <p className='text-xs py-2'>
-                          {notification.message}
-                        </p>
-
-                        <div className='text-sm py-2 flex gap-1 items-center'>
-                         <span className='text-gray-600'> <AiOutlineFieldTime size={20} /> 
-                         </span><span>{formattedDate}</span>
-                        </div>
-                      </div>
-
-
-
-                    </div>
-
-                    <button className='border border-border-default mr-5 mt-2 flex justify-center items-center bg-white p-1 rounded-md' title='Marcar notificação como lida'>
-                      <IoCheckmarkDoneSharp size={17}/>
-                    </button>
-
-                  </div>                  <div key={index} className='flex items-start justify-between border-b border-b-border-default last:border-0 bg-white hover:bg-gray-200 cursor-pointer'>
-                    <div className='flex'>
-
-                      <div className='w-14 h-14 py-2 pl-3'>
-                        <img className='w-8 h-8 object-cover rounded-full' src={notification.sender.profile.cover_profile} alt="Profile-Cover" />
-                      </div>
-
-                      <div className='flex flex-col py-2'>
-                        <div className='text-xs font-medium'>
-                          {notification.sender.first_name} {notification.sender.last_name}
-                        </div>
-                        <p className='text-xs py-2'>
-                          {notification.message}
-                        </p>
-
-                        <div className='text-sm py-2 flex gap-1 items-center'>
-                         <span className='text-gray-600'> <AiOutlineFieldTime size={20} /> 
-                         </span><span>{formattedDate}</span>
-                        </div>
-                      </div>
-
-
-
-                    </div>
-
-                    <button className='border border-border-default mr-5 mt-2 flex justify-center items-center bg-white p-1 rounded-md' title='Marcar notificação como lida'>
-                      <IoCheckmarkDoneSharp size={17}/>
-                    </button>
-
-                  </div>
                   </>
                 )
               })
