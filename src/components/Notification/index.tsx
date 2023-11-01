@@ -1,7 +1,7 @@
 
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { useState, useEffect, useRef } from 'react';
-import { useQuery, useMutation } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { usePrivateApi } from '@/hooks/usePrivateApi';
 import format from 'date-fns/format';
 import { BiSolidTimeFive } from 'react-icons/bi';
@@ -10,12 +10,20 @@ import { ImNotification } from 'react-icons/im';
 import { AiOutlineFieldTime } from 'react-icons/ai';
 import { DatePtTranslate } from '@/utils/datePtTranslat';
 import { parseCookies } from 'nookies'
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export function Notification() {
   const [contentVisible, setContentVisible] = useState(false);
   const notificationRef = useRef(null);
+  const toastId = useRef();
+
+  const router = useRouter()
   const api = usePrivateApi()
+  const queryClient = useQueryClient();
   const { 'helpdeskauth.token': token } = parseCookies();
+  const [notificationCounter, setNotificationCounter] = useState<Number>(0);
 
   useEffect(() => {
     const socket = new WebSocket(`ws://127.0.0.1:8000/ws/reload-notification/?token=${token}`);
@@ -25,8 +33,12 @@ export function Notification() {
     };
 
     socket.onmessage = (event) => {
-      const data = event.data;
+      const { data } = JSON.parse(event.data); // Destructuring e parse do JSON
       console.log('Mensagem recebida do servidor:', data);
+    
+      if (data === "reload-notifications") {
+        queryClient.invalidateQueries('notifications');
+      }
     };
 
     return () => {
@@ -54,6 +66,8 @@ export function Notification() {
     queryFn: async () => {
     const response = await api.get(`/notifications/get-user-notifications/`)
     console.log(response.data)
+
+    setNotificationCounter(response.data.length)
     return response.data;
 
   },
@@ -61,12 +75,55 @@ export function Notification() {
   })
 
 
+  const { mutate, isLoading: postLoading, isSuccess } = useMutation(
+    'notificationsviewed',
+    async (data) => {
+      const response = await api.patch(`/notifications/mark-viewed-user-notifications/${data.id}/`, data.data);
+      return response.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('notifications');
+      },
+       onError: () => {
+        toast.error('Deu ruim');
+      },
+    }
+  );
+
+
+  function handleNotificationClick(modelName, modelId){
+
+    router.push( `/ticket/${modelId}`)
+
+  }
+
+
+  
+  function handleGetCurrenteModelUrl(modelName:string, objectId:number) {
+
+    const registredModels = {
+      'ticket': `/ticket/${objectId}`,
+      'ticket-action': `/ticket/${objectId}` ,
+      'ticket-comment': `/ticket/${objectId}`
+    } 
+
+    return registredModels[modelName]
+    
+  }
+
+
   return (
     <div className='relative' ref={notificationRef}>
-      <IoMdNotificationsOutline
-        className='w-6 h-6 text-gray-700 cursor-pointer'
-        onClick={() => setContentVisible(!contentVisible)}
-      />
+      <div className='relative'
+      onClick={() => setContentVisible(!contentVisible)}
+      >
+        <IoMdNotificationsOutline className='w-6 h-6 text-gray-700 cursor-pointer'/>
+
+        { notificationCounter != 0 &&
+          <div className='absolute -top-[2px] -right-[1px] text-white  text-[10px] min-w-[15px] min-h-[15px] rounded-full bg-red-500 flex items-center justify-center'><span>{notificationCounter}</span></div>
+        }
+      </div>
 
       {contentVisible && (
         <div className='relative'>
@@ -87,13 +144,13 @@ export function Notification() {
 
 
 
-            { isFetching && isLoading &&
+            {/* { isFetching && isLoading &&
 
               <div className='h-52 flex items-center justify-center'>
                 <span className='border-[3px] border-gray-300 w-6 h-6 rounded-full border-t-primary-formedica animate-spin'></span>
               </div>
               
-            }
+            } */}
 
             { !isFetching && !isLoading &&
               notifications.map( (notification, index) => {
@@ -102,21 +159,27 @@ export function Notification() {
                 const formattedDate = DatePtTranslate(date)
 
                 const ProfileImg = notification?.sender?.profile?.cover_profile
+                
+                const modelUrl = handleGetCurrenteModelUrl(notification.model_name, notification.object_id)
 
                 return(
-                  <>
-                    <div key={index} className='flex items-start justify-between border-b border-b-border-default last:border-0 bg-white hover:bg-gray-200 cursor-pointer'>
-                      <div className='flex'>
+                  <Link
+                  href={modelUrl}
+                  as={modelUrl}
+                  >
+                    <div key={index} className='flex items-start justify-between border-b border-b-border-default bg-white hover:bg-gray-200 cursor-pointer'
+                    >
+                      <div className='flex gap-1'>
 
                         <div className='w-14 h-14 py-2 pl-3'>
                           <img className='w-8 h-8 object-cover rounded-full' src={ProfileImg ? ProfileImg : 'assets/defaultProfileImg.svg'} alt="Profile-Cover" />
                         </div>
 
-                        <div className='flex flex-col py-2'>
+                        <div className='flex flex-col grow py-2'>
                           <div className='text-xs font-medium'>
                             {notification.sender.first_name} {notification.sender.last_name}
                           </div>
-                          <p className='text-xs py-2'>
+                          <p className='w-64 text-xs py-2 break-words '>
                             {notification.message}
                           </p>
 
@@ -133,7 +196,7 @@ export function Notification() {
                       </button>
 
                     </div>
-                  </>
+                  </Link>
                 )
               })
             }
