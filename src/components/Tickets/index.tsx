@@ -190,18 +190,23 @@ export function Tickets() {
 
                 <div className="flex items-center gap-2">
 
-                    {  ticket?.author?.profile?.cover_profile ?
-                        <Image 
-                        className="w-7 h-7  text-sm rounded-full object-cover align-middle "
-                        src={ticket.author.profile.cover_profile} 
-                        alt="Teste" 
-                        width={100}
-                        height={100}
-                        />
+                    {  
+                        ticket?.author?.profile?.cover_profile ?
+                          <Image 
+                          className="w-7 h-7  text-sm rounded-full object-cover align-middle "
+                          src={ticket.author.profile.cover_profile} 
+                          alt={ticket.author.profile.cover_profile}
+                          width={100}
+                          height={100}
+                          />
                         :
-                        <div
-                        className="w-7 h-7 rounded-full bg-gray-500 "/>
-                        
+                          <Image 
+                          className="w-7 h-7  text-sm rounded-full object-cover align-middle "
+                          src='assets/defaultProfileImg.svg'
+                          alt='assets/defaultProfileImg.svg'
+                          width={100}
+                          height={100}
+                          />
                     }
 
                     
@@ -217,24 +222,28 @@ export function Tickets() {
                     if(user.profile.cover_profile){
 
                       return(
-                        <div key={index + 5}>
-                        <Image 
-                        className="w-7 h-7 rounded-full object-cover align-middle "
-                        src={user.profile.cover_profile} 
-                        alt={user.profile.cover_profile}
-                        width={100}
-                        height={100}
-                        />
+                        <div key={index}>
+                          <Image 
+                          className="w-7 h-7 rounded-full object-cover align-middle "
+                          src={user.profile.cover_profile} 
+                          alt={user.profile.cover_profile}
+                          width={100}
+                          height={100}
+                          />
                         </div>
                       )
 
                     }else{
                       return(
-                        <div key={index + 5}>
-                      <div
-                      className="w-7 h-7 rounded-full bg-gray-500 "
-                      />
-                      </div>
+                        <div key={index}>
+                          <Image 
+                          className="w-7 h-7 rounded-full object-cover align-middle "
+                          src='assets/defaultProfileImg.svg'
+                          alt='assets/defaultProfileImg.svg'
+                          width={100}
+                          height={100}
+                          />
+                        </div>
                     )                    
                   }
                   })

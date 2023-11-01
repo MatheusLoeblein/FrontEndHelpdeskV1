@@ -9,11 +9,31 @@ import { IoCheckmarkDoneSharp } from 'react-icons/io5';
 import { ImNotification } from 'react-icons/im';
 import { AiOutlineFieldTime } from 'react-icons/ai';
 import { DatePtTranslate } from '@/utils/datePtTranslat';
+import { parseCookies } from 'nookies'
 
 export function Notification() {
   const [contentVisible, setContentVisible] = useState(false);
   const notificationRef = useRef(null);
   const api = usePrivateApi()
+  const { 'helpdeskauth.token': token } = parseCookies();
+
+  useEffect(() => {
+    const socket = new WebSocket(`ws://127.0.0.1:8000/ws/reload-notification/?token=${token}`);
+
+    socket.onopen = () => {
+      console.log('Conectado ao servidor WebSocket');
+    };
+
+    socket.onmessage = (event) => {
+      const data = event.data;
+      console.log('Mensagem recebida do servidor:', data);
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, []);
+
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -81,13 +101,15 @@ export function Notification() {
                 const date = format(new Date(notification.timestamp), 'HH:mm') + ' - ' + format(new Date(notification.timestamp), 'MMMM, dd, yyyy')
                 const formattedDate = DatePtTranslate(date)
 
+                const ProfileImg = notification?.sender?.profile?.cover_profile
+
                 return(
                   <>
                     <div key={index} className='flex items-start justify-between border-b border-b-border-default last:border-0 bg-white hover:bg-gray-200 cursor-pointer'>
                       <div className='flex'>
 
                         <div className='w-14 h-14 py-2 pl-3'>
-                          <img className='w-8 h-8 object-cover rounded-full' src={notification.sender.profile.cover_profile} alt="Profile-Cover" />
+                          <img className='w-8 h-8 object-cover rounded-full' src={ProfileImg ? ProfileImg : 'assets/defaultProfileImg.svg'} alt="Profile-Cover" />
                         </div>
 
                         <div className='flex flex-col py-2'>
