@@ -13,6 +13,7 @@ import { parseCookies } from 'nookies'
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function Notification() {
   const [contentVisible, setContentVisible] = useState(false);
@@ -166,13 +167,20 @@ export function Notification() {
                   <Link
                   href={modelUrl}
                   as={modelUrl}
+                  key={index} 
                   >
-                    <div key={index} className='flex items-start justify-between border-b border-b-border-default bg-white hover:bg-gray-200 cursor-pointer'
+                    <div className='flex items-start justify-between border-b border-b-border-default bg-white hover:bg-gray-200 cursor-pointer'
                     >
                       <div className='flex gap-1'>
 
                         <div className='w-14 h-14 py-2 pl-3'>
-                          <img className='w-8 h-8 object-cover rounded-full' src={ProfileImg ? ProfileImg : 'assets/defaultProfileImg.svg'} alt="Profile-Cover" />
+                          <Image 
+                          className='w-8 h-8 object-cover rounded-full' 
+                          src={ProfileImg ? ProfileImg : 'assets/defaultProfileImg.svg'} 
+                          alt="Profile-Cover" 
+                          width={500}
+                          height={500}
+                          />
                         </div>
 
                         <div className='flex flex-col grow py-2'>

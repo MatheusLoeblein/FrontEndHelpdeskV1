@@ -1,62 +1,125 @@
-import {BiSearchAlt} from 'react-icons/bi';
-import {useState} from 'react';
+import { BiSearchAlt } from 'react-icons/bi';
+import { useState, useEffect, useRef } from 'react';
+import { MainSearchResult } from '../MainSearchResult';
+import { BurredBackground } from '../BurredBackground';
+import { AiFillCloseCircle } from 'react-icons/ai'
+import { motion, AnimatePresence } from 'framer-motion';
+
+import { useRouter } from 'next/router';
+
 
 export function MainSearch() {
-  const [isFocused, setIsFocused] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchParams, setSearchParams] = useState<string | null>(null);
+  const inputRef = useRef(null);
+  const { push } = useRouter();
 
-  const handleInputFocus = () => {
-    setIsFocused(true);
-    console.log('focuuuusss')
+  const handleInputFocus = async () => {
+    await setIsOpen(true);
+
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   };
 
-  const handleInputBlur = () => {
-    setIsFocused(false);
+  const handleSearchClose = () => {
+    setIsOpen(false);
+    setSearchParams(null)
   };
+
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      setSearchParams(event.target.value)
+    }
+  };
+
+  function handleNavigation(href){
+    push(href);
+    handleSearchClose();
+    
+  }
 
 
   return (
-    <div className='hidden w-96 relative text-sm md:block'>
-      <input
-        type="search"
-        placeholder='Pequisar...'
-        className={`w-full border-x border-t outline-none py-1 px-3 right pr-8 ${
-          isFocused ? ' rounded-t-md shadow-lg' : 'border-border-default rounded-md border-b'
-        }`}
-        onFocus={handleInputFocus}
-        onBlur={handleInputBlur}
-      />
-      <span className='absolute top-1 right-2'>
-        <BiSearchAlt
-          className={` w-5 h-5 text-gray-500`}
-        />
-      </span>
+    <div className='hidden w-96 text-sm md:block'>
 
-      {
 
-        isFocused && 
-        <div className='absolute bg-white w-full rounded-b-md shadow-lg flex flex-col border text-xs z-10' >
+      <AnimatePresence>
 
-          <div className='p-2 hover:bg-gray-200'>
-            <span>
-              Tickets
-            </span>
+        {
+            !isOpen && 
             
-          </div>
-          <div className='p-2 hover:bg-gray-200'>
-            <span>
-              Protocolos
-            </span>
+            <motion.div  
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
+            className='relative'
+            onClick={handleInputFocus}
+            >
+              <input
+                type="search"
+                placeholder='Pequisar...'
+                className='w-full border-x border-t outline-none py-1 px-3 right pr-8 border-border-default rounded-md border-b'
 
-          </div>
-          <div className='p-2 hover:bg-gray-200 rounded-b-md'>
-            <span>
-             Endereçadores
-            </span>
+                />
+              <span className='absolute top-1 right-2 cursor-pointer'>
+                <BiSearchAlt
+                  className={` w-5 h-5 text-gray-500`}
+                  />
+              </span>
+            </motion.div>
+          }
+        </AnimatePresence>
 
-          </div>
+        <AnimatePresence>
+        
+          {
+            isOpen && 
 
-        </div>
-      }
+            <BurredBackground>
+
+              <motion.div 
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+              className='w-3/4 self-start mt-10 z-10'>
+                <motion.div className='relative'
+                initial={{ top: '-100px', scaleX: 0.4}}
+                animate={{ top: 'auto', scaleX: 1}}
+                transition={{type:'tween'}}
+                exit={{ top: '-100px', scaleX: 0.4}}
+                >
+                  <input
+                    ref={inputRef}
+                    type="search"
+                    placeholder='Pequisar...'
+                    className={`w-full border outline-none py-2 px-3 right pr-8 border-border-default rounded-md shadow-md`}
+                    onFocus={handleInputFocus}
+                    onKeyDown={handleKeyPress}
+                    onChange={() => {
+                      searchParams != null &&
+                      setSearchParams(null)
+                    }}
+                    />
+                  <span className='absolute top-[5px] right-2 cursor-pointer w-7 h-7 hover:bg-gray-300 flex items-center justify-center rounded-full transition-colors'
+                  onClick={handleSearchClose}
+                  >
+                    <AiFillCloseCircle className={` w-5 h-5 text-gray-700`}/>
+                  </span>
+                </motion.div>
+
+                {
+                  searchParams &&
+                  <MainSearchResult searchParams={searchParams} onClick={handleNavigation}/> 
+                }
+            
+              </motion.div>
+
+            </BurredBackground>
+          }
+
+      </AnimatePresence>
     </div>
   ) 
 }
