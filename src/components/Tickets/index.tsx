@@ -7,7 +7,11 @@ import Image from 'next/image'
 import {AiOutlineCloseCircle, AiOutlineDownCircle  } from 'react-icons/ai'
 import { usePrivateApi } from '@/hooks/usePrivateApi';
 import { AnimatePresence, motion } from 'framer-motion';
-
+import { RiErrorWarningLine } from 'react-icons/ri';
+import { AiOutlineCheckCircle } from 'react-icons/ai';
+import { TbClockHour4 } from 'react-icons/tb';
+import { BsPlayCircle } from 'react-icons/bs';
+import { FaSlackHash } from 'react-icons/fa';
 
 export const status = {
   'Aberto': 'bg-status-ticket-open',
@@ -16,6 +20,50 @@ export const status = {
  'Finalizado': 'bg-status-ticket-finaly'
  
 }
+
+
+export function StatusAberto() {
+  return(
+    <span className={`w-max flex gap-1 items-center text-sm px-5 py-[3px] text-white rounded-md shadow-md bg-status-ticket-open `}>
+      Aberto
+      <RiErrorWarningLine size={15} className=" text-white "/>
+    </span>
+  )
+}
+export function StatusExecucao() {
+  return(
+    <span className={`w-max flex gap-1 items-center text-sm px-5 py-[3px] text-white rounded-md shadow-md bg-status-ticket-execut`}>
+      Execução
+      <BsPlayCircle size={13} className=" text-white"/>
+    </span>
+  )
+}
+export function StatusAguardandoRetorno() {
+  return(
+    <span className={`w-max flex gap-1 items-center text-sm px-5 py-[3px] text-white rounded-md shadow-md bg-status-ticket-waiting`}>
+      Aguardando Retorno
+      <TbClockHour4 size={15} className=" text-white"/>
+    </span>
+  )
+}
+export function StatusFinalizado() {
+  return(
+    <span className={`w-max flex gap-1 items-center text-sm px-5 py-[3px] text-white rounded-md shadow-md bg-status-ticket-finaly`}>
+      Finalizado
+      <AiOutlineCheckCircle size={15} className=" text-white"/>
+    </span>
+  )
+}
+
+
+export const statusComponents = {
+  'Aberto': <StatusAberto/>,
+  'Execução': <StatusExecucao/>,
+  'Aguardando Retorno': <StatusAguardandoRetorno/>,
+  'Finalizado': <StatusFinalizado/>,
+}
+
+
 
 export const prioridade = {
   'Urgente': 'bg-status-ticket-open',
@@ -179,7 +227,8 @@ export function Tickets() {
                     <Link
                     href="/ticket/[id]" 
                     as={`/ticket/${ticket.id}`}
-                    ># {ticket.id} | {ticket.tipe?.tipe}</Link>
+                    className='flex gap-1'
+                    ><span className='flex gap-1 items-center'><FaSlackHash size={12}/> {ticket.id}</span><span> | {ticket.tipe?.tipe}</span></Link>
                   </h3>
 
                   <p className='text-xs'>
@@ -269,9 +318,9 @@ export function Tickets() {
                 <span className=' text-sm px-5 py-[3px] rounded-md text-white bg-gray-400 shadow-md'>
                     {ticket.Category.name}
                 </span>
-                <span className={` text-sm px-5 py-[3px] rounded-md text-white shadow-md ${status[ticket.status]} `}>
-                    {ticket.status}
-                </span>
+
+                {statusComponents[ticket.status]}
+
 
               </div>
 

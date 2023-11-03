@@ -21,7 +21,7 @@ const navLinks = [
     title: 'Logística',
     subtitles: [
       { subtitle: 'Cotações', link: 'link' },
-      { subtitle: 'Endereçador', link: 'link' },
+      { subtitle: 'Endereçador', link: '/enderecador' },
     ],
     children: <FaTruck className='w-5 h-5' />
   },

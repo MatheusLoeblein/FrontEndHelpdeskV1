@@ -29,6 +29,6 @@ h6 {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(#436eb3c4,#436eb39c, #d11975b2);
+  background: #436eb3c4;
   border-radius: 5px;
 }

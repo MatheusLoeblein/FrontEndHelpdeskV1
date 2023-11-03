@@ -2,6 +2,10 @@ import dynamic from 'next/dynamic';
 import { useQuery } from 'react-query'
 import { usePrivateApi } from '@/hooks/usePrivateApi';
 import { motion } from 'framer-motion';
+import { RiErrorWarningLine } from 'react-icons/ri';
+import { AiOutlineCheckCircle } from 'react-icons/ai';
+import { TbClockHour4 } from 'react-icons/tb';
+import { BsPlayCircle } from 'react-icons/bs';
 
 
 const Chart = dynamic(() => import('react-apexcharts'), {
@@ -75,7 +79,11 @@ export function Charts() {
         <div className="flex gap-4 flex-col md:flex-row py-5">
           <div className="flex space-x-5 items-end">
             <div className="bg-status-ticket-open w-7 h-7 rounded-md relative -rotate-12">
-              <div className="bg-status-ticket-open w-8 h-8 -top-4 -right-4 rounded-full absolute border-primary-bg border-4"></div>
+              <div className="bg-status-ticket-open  flex items-center justify-center w-8 h-8 -top-4 -right-4 rounded-full absolute border-primary-bg border-4">
+
+                <RiErrorWarningLine size={18} className="rotate-12 text-[#f5c4c4]"/>
+
+              </div>
             </div>
 
             <div className="flex flex-col">
@@ -85,7 +93,9 @@ export function Charts() {
           </div>
           <div className="flex space-x-5 items-end">
             <div className="bg-status-ticket-execut w-7 h-7 rounded-md relative -rotate-12">
-              <div className=" bg-status-ticket-execut w-8 h-8 -top-4 -right-4  rounded-full absolute border-primary-bg border-4"></div>
+              <div className=" bg-status-ticket-execut flex items-center justify-center w-8 h-8 -top-4 -right-4  rounded-full absolute border-primary-bg border-4">
+                <BsPlayCircle size={16} className="rotate-12 text-[#f1e78b]"/>
+              </div>
             </div>
 
             <div className="flex flex-col">
@@ -96,7 +106,9 @@ export function Charts() {
 
           <div className="flex space-x-5 items-end">
             <div className=" bg-status-ticket-waiting w-7 h-7 rounded-md relative -rotate-12">
-              <div className=" bg-status-ticket-waiting  w-8 h-8  -top-4 -right-4 rounded-full absolute border-primary-bg border-4"></div>
+              <div className=" bg-status-ticket-waiting flex items-center justify-center w-8 h-8  -top-4 -right-4 rounded-full absolute border-primary-bg border-4">
+                <TbClockHour4 size={18} className="rotate-12 text-[#fcdec4]"/>
+              </div>
             </div>
 
             <div className="flex flex-col">
@@ -107,7 +119,10 @@ export function Charts() {
 
           <div className="flex space-x-5 items-end">
             <div className=" bg-status-ticket-finaly w-7 h-7 rounded-md relative -rotate-12">
-              <div className="bg-status-ticket-finaly  w-8 h-8 -top-4 -right-4 rounded-full absolute border-primary-bg border-4"></div>
+              <div className="bg-status-ticket-finaly  flex items-center justify-center w-8 h-8 -top-4 -right-4 rounded-full absolute border-primary-bg border-4">
+
+                <AiOutlineCheckCircle size={18} className="rotate-12 text-[#77ad77]"/>
+              </div>
             </div>
 
             <div className="flex flex-col">

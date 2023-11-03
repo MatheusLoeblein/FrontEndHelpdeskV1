@@ -16,9 +16,14 @@ import { extractImageUrlsAndCleanHtml } from '@/utils/HtmlTextImageTools';
 import { CgComment } from 'react-icons/cg';
 import { AiOutlineInteraction } from 'react-icons/ai';
 import { useRouter } from 'next/router';
-import {status, prioridade} from '@/components/Tickets'
+import {statusComponents, StatusAberto, StatusAguardandoRetorno, StatusExecucao, StatusFinalizado, prioridade} from '@/components/Tickets'
 import { format } from 'date-fns';
 import { useQuery, useQueryClient } from 'react-query'
+import { FaSlackHash } from 'react-icons/fa';
+import { PiHashFill } from 'react-icons/pi';
+import { BsHash } from 'react-icons/bs';
+
+
 
 export function Ticket({pageId}) {
 
@@ -197,6 +202,19 @@ export function Ticket({pageId}) {
       
         <div className='flex flex-col m-auto'>
           {/* xl:w-1/2 */}
+
+          <div className='flex gap-2 items-center py-2 text-2xl'>
+              <div className='flex items-center '>
+                    <div
+                    className='flex font-medium gap-2'><span>Ticket</span>
+                      <span
+                      className='flex items-center'
+                      ><FaSlackHash size={15}/>{ticket.id}</span>
+                    </div>
+              </div>
+            {statusComponents[ticket.status]}
+          </div>
+
           <div className=' flex flex-col w-full relative bg-white px-3 py-5 rounded-md shadow-md border border-border-default'>
 
             <div className="flex justify-between items-center">
@@ -226,8 +244,12 @@ export function Ticket({pageId}) {
 
                 <div className='flex flex-col gap-4'>
                   <div className='flex justify-between items-center'>
-                    <span><strong>Ticket</strong></span>
-                    <span># {ticket.id}</span>
+                      <span><strong>Prioridade</strong></span>
+                      <div className="flex items-center">
+                        <span className={`min-w-[100px] px-5 py-[5px] text-xs text-center rounded-md text-white shadow-md ${prioridade[ticket.prioridade]}`}>
+                        {ticket.prioridade}
+                        </span>
+                      </div>
                   </div>
                   <div className='flex justify-between items-center'>
                     <span><strong>Setor do Autor</strong></span>
@@ -249,22 +271,7 @@ export function Ticket({pageId}) {
                     
                     <span>{ticket.Category.name ? ticket.Category.name : '--'}</span>
                   </div>
-                  <div className='flex justify-between items-center'>
-                      <span><strong>Status</strong></span>
-                      <div className="flex items-center">
-                        <span className={`min-w-[100px] px-5 py-[5px] text-xs text-center rounded-md text-white shadow-md ${status[ticket.status]}`}>
-                        {ticket.status}
-                        </span>
-                      </div>
-                  </div>
-                  <div className='flex justify-between items-center'>
-                      <span><strong>Prioridade</strong></span>
-                      <div className="flex items-center">
-                        <span className={`min-w-[100px] px-5 py-[5px] text-xs text-center rounded-md text-white shadow-md ${prioridade[ticket.prioridade]}`}>
-                        {ticket.prioridade}
-                        </span>
-                      </div>
-                  </div>
+                 
                 </div>
 
                 </div>
